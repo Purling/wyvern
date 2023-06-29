@@ -27,7 +27,7 @@ public final class Interpreter {
      * require java
      * import java:wyvern.stdlib.support.CommandLineUtils.utils
      *
-     * the file is read in to memory in it's entirety, before being executed in
+     * the file is read in to memory in its entirety, before being executed in
      * an empty context. The resulting value is printed to the screen.
      */
     public static void main(String[] args) {
