@@ -1,6 +1,7 @@
 package wyvern.tools.typedAST.typedastvisitor;
 
 import wyvern.target.corewyvernIL.support.GenContext;
+import wyvern.tools.typedAST.core.expressions.WyvernException;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.parsing.DSLLit;
 import wyvern.tools.typedAST.core.Script;
@@ -244,6 +245,11 @@ public class AnnotatedEffectVisitor extends TypedASTVisitor<GenContext, Void> {
 
     @Override
     public Void visit(GenContext state, DSLLit ast) {
+        return null;
+    }
+
+    @Override
+    public Void visit(GenContext state, WyvernException e) {
         return null;
     }
 }

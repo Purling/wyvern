@@ -126,6 +126,9 @@ TOKEN : /* Keywords */
 | < AS : "as" >
 | < EFFECT : "effect" >
 | < RECUR : "recur" >
+| < TRY : "try" >
+| < WITH : "with" >
+| < THROW : "throw" > // Assert?
 }
 
 TOKEN : /* Logical Formatting */
@@ -774,8 +777,6 @@ AST LambdaFn(ExpFlags flags) :
     }
 }
 
-
-
 List<Type> TypeList() :
 { List<Type> types = new LinkedList<Type>(); Type type; }
 {
@@ -971,6 +972,9 @@ AST PrimaryExpression(ExpFlags flags) :
 |
   exp = OptionNoneValue() { return exp; }
 |
+  exp = Try() {return exp;}
+//  exp = ExceptionHandling() { return exp; } // This is the problem
+|
   t = <NEW> [ <LPAREN> selfName=<IDENTIFIER> <RPAREN> <EQARROW>] {
     String self = (selfName == null) ? null : selfName.image;
     exp = build.newObj(loc(t), self);
@@ -980,6 +984,31 @@ AST PrimaryExpression(ExpFlags flags) :
     return exp;
   }
 }
+
+//AST ExceptionHandling() :
+//{AST exp; AST exp2; Token t;}
+//{
+//  t = <TRY> exp = DeclSequence(true) <WITH> exp2 = DeclSequence(true)  { return build.exception(exp,exp2,loc(t)); } // Not sure how the building of the AST tree is supposed to work. Check this with Alex <--
+//}
+
+AST Try() :
+{Token t;}
+{
+  t = <TRY> { return build.tryExc(loc(t)); } // Not sure how the building of the AST tree is supposed to work. Check this with Alex <--
+}
+
+//AST ExceptionHandling() : // With throw
+//{AST exp; AST exp2; AST exp3; }
+//{
+//  <TRY> (exp = DeclSequence(true)) <THROW>  EffectDeclaration() (exp2 = DeclSequence(true)) <WITH> (exp3 = DeclSequence(true))  { return build.exception(exp,exp2); } // Not sure how the building of the AST tree is supposed to work. Check this with Alex <--
+//} // The xx is probably an effect(?)
+
+/**
+* Logic:
+
+Take inputs of Try __ and With __
+Pass into build(?) function
+*/
 
 void Extension(LinkedList<String> names, LinkedList<AST> args) :
 { AST exp; Token t; }
@@ -1016,7 +1045,7 @@ AST PrimaryPrefix(ExpFlags flags) :
 AST Literal() :
 { AST exp; Token lit; }
 {
- lit = <RATIONAL_LITERAL> { return build.rationalLit(lit.image, loc(lit)); }
+  lit = <RATIONAL_LITERAL> { return build.rationalLit(lit.image, loc(lit)); }
 |
   lit = <FLOATING_POINT_LITERAL> { return build.floatLit(Float.parseFloat(lit.image), loc(lit)); }
 |

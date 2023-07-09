@@ -37,6 +37,8 @@ import wyvern.tools.typedAST.core.expressions.Application;
 import wyvern.tools.typedAST.core.expressions.Assertion;
 import wyvern.tools.typedAST.core.expressions.Assignment;
 import wyvern.tools.typedAST.core.expressions.Case;
+import wyvern.tools.typedAST.core.expressions.TryExc;
+import wyvern.tools.typedAST.core.expressions.WyvernException;
 import wyvern.tools.typedAST.core.expressions.Fn;
 import wyvern.tools.typedAST.core.expressions.Invocation;
 import wyvern.tools.typedAST.core.expressions.Match;
@@ -478,6 +480,16 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
     @Override
     public TypedAST match(TypedAST exp, List cases, FileLocation loc) {
         return new Match(exp, cases, loc);
+    }
+
+    @Override
+    public TypedAST exception(TypedAST exp, TypedAST handler, FileLocation loc) {
+        return new WyvernException(exp, handler, loc);
+    }
+
+    @Override
+    public TypedAST tryExc(FileLocation loc) {
+        return new TryExc(loc);
     }
 
     @Override

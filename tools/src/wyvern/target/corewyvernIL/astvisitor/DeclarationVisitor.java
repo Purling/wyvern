@@ -203,4 +203,8 @@ public abstract class DeclarationVisitor<S, T> extends ASTVisitor<S, T> {
     public T visit(S state, FloatLiteral flt) {
         throw new RuntimeException(this.errorMessage());
     }
+
+    public T visit(S state, Exception exception) {
+        throw new RuntimeException(this.errorMessage());
+    }
 }
