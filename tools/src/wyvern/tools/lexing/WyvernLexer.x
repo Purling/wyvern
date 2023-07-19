@@ -56,6 +56,8 @@ import static wyvern.tools.parsing.coreparser.WyvernParserConstants.*;
 		  case DEF:
 		  case NEW:
 		  case MATCH:
+		  case TRY:
+          case WITH:
 		  case EQARROW:
 		  		return false;
 		  default:
@@ -205,7 +207,8 @@ import static wyvern.tools.parsing.coreparser.WyvernParserConstants.*;
 	terminal Token varKwd_t 	::= /var/ in (keywds) {: RESULT = token(VAR,lexeme); :};
 	terminal Token assertKwd_t 	::= /assert/ in (keywds) {: RESULT = token(ASSERT,lexeme); :};
 
-	terminal Token tryKwd_t 	::= /try/ in (keywds) {: RESULT = token(TRY,lexeme); :};
+	terminal Token tryKwd_t 	::= /try/ in (keywds) {: RESULT = token(TRY,lexeme); flagTok = RESULT; flagTokSet = true; :};
+	terminal Token withKwd_t 	::= /with/ in (keywds) {: RESULT = token(WITH,lexeme); flagTok = RESULT; flagTokSet = true; :};
 	
 	// inserted while keyword
 	//terminal Token whileKwd_t 	::= /while/ in (keywds) {: RESULT = token(WHILE,lexeme); :};
@@ -436,6 +439,7 @@ import static wyvern.tools.parsing.coreparser.WyvernParserConstants.*;
 	       | defKwd_t:t {: RESULT = t; :}
 	       | varKwd_t:t {: RESULT = t; :}
 	       | tryKwd_t:t {: RESULT = t; :}
+	       | withKwd_t:t {: RESULT = t; :}
 	       | assertKwd_t:t {: RESULT = t; :}
 	      // | whileKwd_t:t {: RESULT = t; :}
 	       | forwardKwd_t:t {: RESULT = t; :}

@@ -43,19 +43,19 @@ import java.util.*;
 
 public class WyvernParser<AST,Type> {
     private int number = 0;
-    
+
     public FileLocation loc(Token t) {
     	return new FileLocation(getTM().getFilename(), t.beginLine, t.beginColumn);
     }
-    
+
     public WyvernTokenManager getTM() {
     	return (WyvernTokenManager) token_source;
     }
-    
+
     public String freshName() {
     	return "ignoreme" + number++;
     }
-    
+
     private ASTBuilder<AST,Type> build;
     public void setBuilder(ASTBuilder<AST,Type> builder) { build = builder; }
 
@@ -67,22 +67,22 @@ public class WyvernParser<AST,Type> {
         public boolean isEmpty() { return exp == null; }
         public void setExp(AST a, IndentedExpKind kind) throws ParseException {
         	final IndentedExpKind INVOKE_KIND = IndentedExpKind.INVOKE_KIND;
-        
+
             // error to have two news in one expression
             if (!isEmpty() && this.kind != INVOKE_KIND && kind != INVOKE_KIND)
                 throw new ParseException("May not have two \"new\" or \"DSL literal\" expressions within the same line");
             if (kind == INVOKE_KIND && this.kind != null && this.kind != INVOKE_KIND)
             	return; // don't override a new or DSL literal with an invocation
-            // otherwise update 
+            // otherwise update
             exp = a;
             this.kind = kind;
-        } 
+        }
         public AST getExp() { return exp; }
         public IndentedExpKind getExpKind() { return kind; }
 
         private AST exp;
         private IndentedExpKind kind;
-    }    
+    }
 }
 
 PARSER_END(WyvernParser)
@@ -732,6 +732,8 @@ AST ExpressionLine(boolean makeValDecl) :
   <DEDENT> {
     return build.match(exp, cases, loc(t));
   }
+|
+  exp = TryExpression() { return exp; }
 }
 
 Object CaseArm() :
@@ -971,44 +973,38 @@ AST PrimaryExpression(ExpFlags flags) :
   }
 |
   exp = OptionNoneValue() { return exp; }
-|
-  exp = Try() {return exp;}
-//  exp = ExceptionHandling() { return exp; } // This is the problem
+//|
+//  exp = TryExpression() { return exp; }
 |
   t = <NEW> [ <LPAREN> selfName=<IDENTIFIER> <RPAREN> <EQARROW>] {
     String self = (selfName == null) ? null : selfName.image;
     exp = build.newObj(loc(t), self);
-    
+
     // store a reference to the new expression so we can fill in the fields later!
     flags.setExp(exp, IndentedExpKind.NEW_KIND);
     return exp;
   }
 }
 
-//AST ExceptionHandling() :
-//{AST exp; AST exp2; Token t;}
-//{
-//  t = <TRY> exp = DeclSequence(true) <WITH> exp2 = DeclSequence(true)  { return build.exception(exp,exp2,loc(t)); } // Not sure how the building of the AST tree is supposed to work. Check this with Alex <--
-//}
-
-AST Try() :
-{Token t;}
+AST TryExpression() :
+{ Token t; AST exp; AST handler; }
 {
-  t = <TRY> { return build.tryExc(loc(t)); } // Not sure how the building of the AST tree is supposed to work. Check this with Alex <--
+      t = <TRY>
+      <NEWLINE> <INDENT> exp = VarDeclaration() <DEDENT> <WITH>
+      <NEWLINE> <INDENT> handler = VarDeclaration() <DEDENT> {
+      return build.tryExp(exp, handler, loc(t));
+    }
 }
 
-//AST ExceptionHandling() : // With throw
-//{AST exp; AST exp2; AST exp3; }
+//AST TryExpression() :
+//{ Token t; AST exp; AST handler; }
 //{
-//  <TRY> (exp = DeclSequence(true)) <THROW>  EffectDeclaration() (exp2 = DeclSequence(true)) <WITH> (exp3 = DeclSequence(true))  { return build.exception(exp,exp2); } // Not sure how the building of the AST tree is supposed to work. Check this with Alex <--
-//} // The xx is probably an effect(?)
-
-/**
-* Logic:
-
-Take inputs of Try __ and With __
-Pass into build(?) function
-*/
+//      t = <TRY>
+//      <NEWLINE> <INDENT> exp = DeclSequence(false) <DEDENT> <WITH>
+//      <NEWLINE> <INDENT> handler = DeclSequence(false) <DEDENT> {
+//      return build.tryExp(exp, handler, loc(t));
+//    }
+//}
 
 void Extension(LinkedList<String> names, LinkedList<AST> args) :
 { AST exp; Token t; }
