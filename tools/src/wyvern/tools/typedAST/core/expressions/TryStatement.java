@@ -8,35 +8,25 @@ import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.typedAST.abs.AbstractExpressionAST;
-import wyvern.tools.typedAST.abs.Declaration;
-import wyvern.tools.typedAST.core.declarations.DeclSequence;
-import wyvern.tools.typedAST.core.declarations.VarDeclaration;
 import wyvern.tools.typedAST.interfaces.CoreAST;
+import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.typedastvisitor.TypedASTVisitor;
 
-public class TryExp extends AbstractExpressionAST implements CoreAST {
+public class TryStatement extends AbstractExpressionAST implements CoreAST {
 
     private FileLocation location = FileLocation.UNKNOWN;
-//    private final DeclSequence exp;
-//    private final DeclSequence handler;
-    private final VarDeclaration exp;
-    private final VarDeclaration handler;
+    private final ExpressionAST exp;
+    private final TypedAST handler;
 
     @Override
     public FileLocation getLocation() {
         return this.location;
     }
 
-//    public TryExp(TypedAST exp, TypedAST handler, FileLocation location) {
-//        this.exp = (DeclSequence) exp;
-//        this.handler = (DeclSequence) handler;
-//        this.location = location;
-//    }
-
-    public TryExp(TypedAST exp, TypedAST handler, FileLocation location) {
-        this.exp = (VarDeclaration) exp;
-        this.handler = (VarDeclaration) handler;
+    public TryStatement(TypedAST exp, TypedAST handler, FileLocation location) {
+        this.exp = (ExpressionAST) exp;
+        this.handler = handler;
         this.location = location;
     }
 
@@ -47,6 +37,6 @@ public class TryExp extends AbstractExpressionAST implements CoreAST {
 
     @Override
     public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
-        return null;
+        return visitor.visit(state, this);
     }
 }

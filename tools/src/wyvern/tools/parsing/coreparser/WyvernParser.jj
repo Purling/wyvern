@@ -726,7 +726,7 @@ AST ExpressionLine(boolean makeValDecl) :
     return build.match(exp, cases, loc(t));
   }
 |
-  exp = TryStatement() { return exp; }
+  exp = TryStatement(flags) { return exp; }
 }
 
 Object CaseArm() :
@@ -951,8 +951,7 @@ AST UnaryExpression(ExpFlags flags) :
 }
 
 AST PrimaryExpression(ExpFlags flags) :
-{ AST exp; Token t; Token selfName = null;
-  LinkedList<String> names = new LinkedList<String>();
+{ AST exp; LinkedList<String> names = new LinkedList<String>();
   LinkedList<AST> args = new LinkedList<AST>();
   Token r = null;
 }
@@ -966,9 +965,13 @@ AST PrimaryExpression(ExpFlags flags) :
   }
 |
   exp = OptionNoneValue() { return exp; }
-//|
-//  exp = TryExpression() { return exp; }
 |
+  exp = NewExpression(flags) {return exp; }
+}
+
+AST NewExpression(ExpFlags flags) :
+{AST exp; Token t; Token selfName = null; }
+{
   t = <NEW> [ <LPAREN> selfName=<IDENTIFIER> <RPAREN> <EQARROW>] {
     String self = (selfName == null) ? null : selfName.image;
     exp = build.newObj(loc(t), self);
@@ -979,12 +982,16 @@ AST PrimaryExpression(ExpFlags flags) :
   }
 }
 
-AST TryStatement() :
-{ Token t; AST exp; AST handler; }
+AST TryStatement(ExpFlags flags) :
+{ Type type; Token t; AST exp; AST handler;
+ Token tryName; Token withName; Token selfName = null; }
 {
   t = <TRY>
-  <NEWLINE> <INDENT> exp = ExpressionLine(false) <DEDENT> <WITH>
-  <NEWLINE> (handler = ExpressionLine(false) | <INDENT> handler = DeclSequence(false) <DEDENT>) {
+  <NEWLINE> <INDENT> tryName = <IDENTIFIER> <COLON> type = Type() <EQARROW>
+  <NEWLINE> <INDENT> exp = ExpressionLine(false) <DEDENT> <DEDENT>
+  <WITH>
+  <NEWLINE> <INDENT> withName = <IDENTIFIER> <EQUALS> newExp = NewExpression(flags)
+  <NEWLINE> <INDENT> ModuleDecl(new LinkedList<AST>()) <DEDENT> <DEDENT>  { // Not sure if the metadata is necessary
     return build.tryStatement(exp, handler, loc(t));
   }
 }
