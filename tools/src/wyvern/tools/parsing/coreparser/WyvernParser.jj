@@ -26,13 +26,6 @@ PARSER_BEGIN(WyvernParser)
 
 package wyvern.tools.parsing.coreparser;
 
-import wyvern.tools.typedAST.abs.*;
-import wyvern.tools.typedAST.interfaces.*;
-import wyvern.tools.typedAST.core.*;
-import wyvern.tools.typedAST.core.values.*;
-import wyvern.tools.typedAST.core.binding.*;
-import wyvern.tools.typedAST.core.expressions.*;
-import wyvern.tools.typedAST.core.declarations.*;
 import wyvern.tools.errors.*;
 import wyvern.tools.lexing.LexerUtils;
 import wyvern.tools.generics.*;
@@ -733,7 +726,7 @@ AST ExpressionLine(boolean makeValDecl) :
     return build.match(exp, cases, loc(t));
   }
 |
-  exp = TryExpression() { return exp; }
+  exp = TryStatement() { return exp; }
 }
 
 Object CaseArm() :
@@ -986,14 +979,14 @@ AST PrimaryExpression(ExpFlags flags) :
   }
 }
 
-AST TryExpression() :
+AST TryStatement() :
 { Token t; AST exp; AST handler; }
 {
-      t = <TRY>
-      <NEWLINE> <INDENT> exp = VarDeclaration() <DEDENT> <WITH>
-      <NEWLINE> <INDENT> handler = VarDeclaration() <DEDENT> {
-      return build.tryExp(exp, handler, loc(t));
-    }
+  t = <TRY>
+  <NEWLINE> <INDENT> exp = ExpressionLine(false) <DEDENT> <WITH>
+  <NEWLINE> (handler = ExpressionLine(false) | <INDENT> handler = DeclSequence(false) <DEDENT>) {
+    return build.tryStatement(exp, handler, loc(t));
+  }
 }
 
 //AST TryExpression() :
