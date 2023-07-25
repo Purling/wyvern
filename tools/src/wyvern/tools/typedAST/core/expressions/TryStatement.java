@@ -12,20 +12,23 @@ import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.typedastvisitor.TypedASTVisitor;
+import wyvern.tools.types.Type;
 
 public class TryStatement extends AbstractExpressionAST implements CoreAST {
 
     private FileLocation location = FileLocation.UNKNOWN;
-    private final ExpressionAST exp;
+    private final List<ExpressionAST> expressions;
     private final TypedAST handler;
+    private final Type type;
 
     @Override
     public FileLocation getLocation() {
         return this.location;
     }
 
-    public TryStatement(TypedAST exp, TypedAST handler, FileLocation location) {
-        this.exp = (ExpressionAST) exp;
+    public TryStatement(Type type, List<ExpressionAST> expressions, TypedAST handler, FileLocation location) {
+        this.type = type;
+        this.expressions = expressions;
         this.handler = handler;
         this.location = location;
     }

@@ -487,8 +487,8 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
 //    }
 
     @Override
-    public TypedAST tryStatement(TypedAST exp, TypedAST handler, FileLocation loc) {
-        return new TryStatement(exp, handler, loc);
+    public TypedAST tryStatement(Type type, List expressions, TypedAST handler, FileLocation loc) {
+        return new TryStatement(type, expressions, handler, loc);
     }
 
     @Override

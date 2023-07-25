@@ -726,7 +726,7 @@ AST ExpressionLine(boolean makeValDecl) :
     return build.match(exp, cases, loc(t));
   }
 |
-  exp = TryStatement(flags) { return exp; }
+  exp = TryStatement() { return exp; }
 }
 
 Object CaseArm() :
@@ -951,7 +951,7 @@ AST UnaryExpression(ExpFlags flags) :
 }
 
 AST PrimaryExpression(ExpFlags flags) :
-{ AST exp; LinkedList<String> names = new LinkedList<String>();
+{ Token t; Token selfName = null; AST exp; LinkedList<String> names = new LinkedList<String>();
   LinkedList<AST> args = new LinkedList<AST>();
   Token r = null;
 }
@@ -966,12 +966,6 @@ AST PrimaryExpression(ExpFlags flags) :
 |
   exp = OptionNoneValue() { return exp; }
 |
-  exp = NewExpression(flags) {return exp; }
-}
-
-AST NewExpression(ExpFlags flags) :
-{AST exp; Token t; Token selfName = null; }
-{
   t = <NEW> [ <LPAREN> selfName=<IDENTIFIER> <RPAREN> <EQARROW>] {
     String self = (selfName == null) ? null : selfName.image;
     exp = build.newObj(loc(t), self);
@@ -982,29 +976,25 @@ AST NewExpression(ExpFlags flags) :
   }
 }
 
-AST TryStatement(ExpFlags flags) :
-{ Type type; Token t; AST exp; AST handler;
- Token tryName; Token withName; Token selfName = null; }
+AST TryStatement() :
+{ Type type; Token t; AST exp; AST newExp = null;
+ Token tryName; Token withName; Token selfName = null;
+ ExpFlags flags = new ExpFlags(); List expressions; }
 {
-  t = <TRY>
-  <NEWLINE> <INDENT> tryName = <IDENTIFIER> <COLON> type = Type() <EQARROW>
-  <NEWLINE> <INDENT> exp = ExpressionLine(false) <DEDENT> <DEDENT>
+  t = <TRY> tryName = <IDENTIFIER> <COLON> type = Type() { expressions = new LinkedList(); }
+  <NEWLINE> <INDENT> (exp = ExpressionLine(false) { expressions.add(exp); } )* <DEDENT>
   <WITH>
-  <NEWLINE> <INDENT> withName = <IDENTIFIER> <EQUALS> newExp = NewExpression(flags)
-  <NEWLINE> <INDENT> ModuleDecl(new LinkedList<AST>()) <DEDENT> <DEDENT>  { // Not sure if the metadata is necessary
-    return build.tryStatement(exp, handler, loc(t));
+//  <NEWLINE> <INDENT> withName = <IDENTIFIER> <DEDENT>
+{
+//  <NEWLINE> <INDENT> withName = <IDENTIFIER> <EQUALS> <NEW> [ <LPAREN> selfName=<IDENTIFIER> <RPAREN> <EQARROW>] <DEDENT> {
+    String self = (selfName == null) ? null : selfName.image;
+    exp = build.newObj(loc(t), self);
+
+    // store a reference to the new expression so we can fill in the fields later!
+    flags.setExp(exp, IndentedExpKind.NEW_KIND);
+    return build.tryStatement(type, expressions, newExp, loc(t)); // REMEMBER TO ADD exp
   }
 }
-
-//AST TryExpression() :
-//{ Token t; AST exp; AST handler; }
-//{
-//      t = <TRY>
-//      <NEWLINE> <INDENT> exp = DeclSequence(false) <DEDENT> <WITH>
-//      <NEWLINE> <INDENT> handler = DeclSequence(false) <DEDENT> {
-//      return build.tryExp(exp, handler, loc(t));
-//    }
-//}
 
 void Extension(LinkedList<String> names, LinkedList<AST> args) :
 { AST exp; Token t; }
