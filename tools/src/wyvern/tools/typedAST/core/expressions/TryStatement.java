@@ -18,7 +18,8 @@ public class TryStatement extends AbstractExpressionAST implements CoreAST {
 
     private FileLocation location = FileLocation.UNKNOWN;
     private final List<ExpressionAST> expressions;
-    private final TypedAST handler;
+    private final TypedAST handlerObject;
+    private final TypedAST objectFields;
     private final Type type;
 
     @Override
@@ -26,10 +27,12 @@ public class TryStatement extends AbstractExpressionAST implements CoreAST {
         return this.location;
     }
 
-    public TryStatement(Type type, List<ExpressionAST> expressions, TypedAST handler, FileLocation location) {
+    public TryStatement(Type type, List<ExpressionAST> expressions, TypedAST handlerObject, TypedAST objectFields
+            , FileLocation location) {
         this.type = type;
         this.expressions = expressions;
-        this.handler = handler;
+        this.handlerObject = handlerObject;
+        this.objectFields = objectFields;
         this.location = location;
     }
 

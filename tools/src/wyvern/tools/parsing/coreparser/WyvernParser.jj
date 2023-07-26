@@ -977,22 +977,19 @@ AST PrimaryExpression(ExpFlags flags) :
 }
 
 AST TryStatement() :
-{ Type type; Token t; AST exp; AST newExp = null;
- Token tryName; Token withName; Token selfName = null;
- ExpFlags flags = new ExpFlags(); List expressions; }
+{ Type type; Token t; AST exp; AST object; AST newObj;
+ Token objectName; ExpFlags flags = new ExpFlags(); List expressions; }
 {
-  t = <TRY> tryName = <IDENTIFIER> <COLON> type = Type() { expressions = new LinkedList(); }
+  t = <TRY> <LPAREN> objectName = <IDENTIFIER> <COLON> type = Type() <RPAREN> { expressions = new LinkedList(); }
   <NEWLINE> <INDENT> (exp = ExpressionLine(false) { expressions.add(exp); } )* <DEDENT>
   <WITH>
-//  <NEWLINE> <INDENT> withName = <IDENTIFIER> <DEDENT>
-{
-//  <NEWLINE> <INDENT> withName = <IDENTIFIER> <EQUALS> <NEW> [ <LPAREN> selfName=<IDENTIFIER> <RPAREN> <EQARROW>] <DEDENT> {
-    String self = (selfName == null) ? null : selfName.image;
-    exp = build.newObj(loc(t), self);
+  <NEWLINE> <INDENT> <IDENTIFIER> <EQUALS> <NEW>
+  <NEWLINE> <INDENT> object = DeclSequence(false) <DEDENT> <DEDENT> {
+    newObj = build.newObj(loc(t), objectName.image);
 
     // store a reference to the new expression so we can fill in the fields later!
-    flags.setExp(exp, IndentedExpKind.NEW_KIND);
-    return build.tryStatement(type, expressions, newExp, loc(t)); // REMEMBER TO ADD exp
+    flags.setExp(newObj, IndentedExpKind.NEW_KIND); // <----
+    return build.tryStatement(type, expressions, newObj, object, loc(t));
   }
 }
 
