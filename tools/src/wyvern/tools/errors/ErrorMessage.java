@@ -144,7 +144,8 @@ public enum ErrorMessage {
     CONNECTOR_VAL_INCONSISTENCY("type properties and connector \"%ARG\" have inconsistent val declarations", 1),
     INVALID_CONNECTOR_METADATA("properties of connector \"%ARG\" contain invalid metadata", 1),
     INVALID_CONNECTOR_PORTS("ports of connector\"%ARG\" are incompatible", 1),
-    DUPLICATE_GENERATED_MODULES("multiple modules generated with name \"%ARG\"", 1);
+    DUPLICATE_GENERATED_MODULES("multiple modules generated with name \"%ARG\"", 1),
+    IDENTIFIER_NOT_SAME("Name of identifier \"%ARG\" in try block is not identical to \"%ARG\" in the handler with block",2);
 
     ErrorMessage(String message, int numArgs) {
         errorMessage = message;
