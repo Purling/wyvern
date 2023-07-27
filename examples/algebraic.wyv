@@ -1,0 +1,9 @@
+try (file : File)
+    file.read()
+    file.write()
+    file.what()
+with
+    file = new
+        var a : String = "a"
+        val b : String = "b"
+        def sum():Int = 0
