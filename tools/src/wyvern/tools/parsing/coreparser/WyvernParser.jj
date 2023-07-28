@@ -977,16 +977,17 @@ AST PrimaryExpression(ExpFlags flags) :
 }
 
 AST TryStatement() :
-{ Type type; Token t; AST exp; AST object; AST newObj; Token objectName;
+{ Type type; Token t; AST exp; AST decls = null; Token objectName; AST handler;
  Token objectName2; ExpFlags flags = new ExpFlags(); List expressions; } // Refactor objectName
 {
   t = <TRY> <LPAREN> objectName = <IDENTIFIER> <COLON> type = Type() <RPAREN> { expressions = new LinkedList(); }
   <NEWLINE> <INDENT> (exp = ExpressionLine(false) { expressions.add(exp); } )* <DEDENT>
   <WITH>
   <NEWLINE> <INDENT> objectName2 = <IDENTIFIER> <EQUALS> <NEW>
-  <NEWLINE> <INDENT> object = DeclSequence(false) <DEDENT> <DEDENT> {
-    newObj = build.newObj(loc(t), objectName2.image);
-    return build.tryStatement(type, expressions, newObj, object,
+  <NEWLINE> <INDENT> decls = DeclSequence(true) <DEDENT> <DEDENT> {
+    handler = build.newObj(loc(objectName2), objectName2.image);
+    build.setNewBody(handler, decls);
+    return build.tryStatement(type, expressions, handler,
      objectName.image, objectName2.image, loc(t));
   }
 }

@@ -487,9 +487,9 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
 //    }
 
     @Override
-    public TypedAST tryStatement(Type type, List expressions, TypedAST handler, TypedAST objectFields,
-                                 String tryObj, String with, FileLocation loc) {
-        return new TryStatement(type, expressions, handler, objectFields, tryObj, with, loc);
+    public TypedAST tryStatement(Type type, List expressions, TypedAST objectFields, String tryObj,
+                                 String with, FileLocation loc) {
+        return new TryStatement(type, expressions, objectFields, tryObj, with, loc);
     }
 
     @Override
