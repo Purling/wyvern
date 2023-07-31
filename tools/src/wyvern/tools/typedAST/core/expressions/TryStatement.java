@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import wyvern.target.corewyvernIL.BindingSite;
-import wyvern.target.corewyvernIL.decl.Declaration;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
