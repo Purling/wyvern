@@ -1,20 +1,19 @@
 package wyvern.tools.typedAST.core.expressions;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import wyvern.target.corewyvernIL.BindingSite;
+import wyvern.target.corewyvernIL.decl.Declaration;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
-import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
-import wyvern.target.corewyvernIL.type.StructuralType;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.typedAST.abs.AbstractExpressionAST;
-import wyvern.tools.typedAST.core.declarations.DeclSequence;
 import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
@@ -29,6 +28,7 @@ public class TryStatement extends AbstractExpressionAST implements CoreAST {
     private final Type type;
     private final String tryObj;
     private final String with;
+    private BindingSite site;
 
     @Override
     public FileLocation getLocation() {
@@ -46,35 +46,34 @@ public class TryStatement extends AbstractExpressionAST implements CoreAST {
     }
 
     @Override
-    public IExpr generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
+    public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
         // The names have to match
         if (!tryObj.equals(with)) {
             ToolError.reportError(ErrorMessage.IDENTIFIER_NOT_SAME, handler, tryObj, with);
         }
 
-        // Adding new object to the context
+        // Create the binding site
+        if (site == null) {
+            site = new BindingSite(with);
+        }
+
+        // Creating new object
         IExpr obj = handler.generateIL(ctx, null, dependencies);
-        obj.typeCheck(ctx, null);
 
-        BindingSite site = new BindingSite(with);
-//        GenContext thisContext = ctx.extend(
-//                site,
-//                new Variable(site),
-//                type
-//        );
+        // Adding the object to the context
+        GenContext thisContext = ctx.extend(site, obj.typeCheck(ctx, null));
 
-//        System.out.println("1");
+        // List to add all of the expression to
+        List<wyvern.target.corewyvernIL.expression.IExpr> exprs = new LinkedList<>();
 
         // Type check each of the expressions which
         for (ExpressionAST expression : expressions) {
-            IExpr expr = expression.generateIL(ctx, null, dependencies);
-            System.out.println("After");
-            ValueType expectedExprType = expr.typeCheck(ctx, null);
+            IExpr expr = expression.generateIL(thisContext, null, dependencies);
+            ValueType expectedExprType = expr.typeCheck(thisContext, null);
+            exprs.add(expr);
         }
 
-//        System.out.println("2");
-
-        return null;
+        return new wyvern.target.corewyvernIL.Try();
     }
 
     @Override
