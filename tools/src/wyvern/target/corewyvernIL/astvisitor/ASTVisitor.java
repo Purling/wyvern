@@ -2,6 +2,7 @@ package wyvern.target.corewyvernIL.astvisitor;
 
 import wyvern.target.corewyvernIL.Case;
 import wyvern.target.corewyvernIL.FormalArg;
+import wyvern.target.corewyvernIL.Try;
 import wyvern.target.corewyvernIL.decl.DefDeclaration;
 import wyvern.target.corewyvernIL.decl.ForwardDeclaration;
 import wyvern.target.corewyvernIL.decl.EffectDeclaration;
@@ -81,4 +82,5 @@ public abstract class ASTVisitor<S, T> {
     public abstract T visit(S state, EffectDeclType effectDeclType);
     public abstract T visit(S state, SeqExpr seqExpr);
     public abstract T visit(S state, FloatLiteral flt);
+    public abstract T visit(S state, Try tryStatement);
 }

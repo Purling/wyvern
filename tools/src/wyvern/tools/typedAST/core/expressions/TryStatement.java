@@ -72,7 +72,8 @@ public class TryStatement extends AbstractExpressionAST implements CoreAST {
             exprs.add(expr);
         }
 
-        return new wyvern.target.corewyvernIL.Try();
+        return new wyvern.target.corewyvernIL.Try(obj.typeCheck(thisContext, null),
+                location, site, obj, exprs);
     }
 
     @Override

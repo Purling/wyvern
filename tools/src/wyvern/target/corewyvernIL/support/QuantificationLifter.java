@@ -2,6 +2,7 @@ package wyvern.target.corewyvernIL.support;
 
 import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.FormalArg;
+import wyvern.target.corewyvernIL.Try;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.astvisitor.DeclTypeVisitor;
 import wyvern.target.corewyvernIL.astvisitor.DeclarationVisitor;
@@ -335,6 +336,11 @@ public final class QuantificationLifter {
             throw new RuntimeException("TypeLifter not yet implemented for DataType");
         }
 
+        @Override
+        public ValueType visit(State state, Try tryStatement) {
+            throw new RuntimeException("TypeLifter not yet implemented for TryStatement");
+        }
+
         private final class DeclTypeLifter extends DeclTypeVisitor<State, DeclType> {
             private DeclTypeLifter() {
                 super("DeclTypeLifter");
@@ -415,6 +421,11 @@ public final class QuantificationLifter {
                     newEffectSet = oldEffectSet;
                 }
                 return new EffectDeclType(effectDeclType.getName(), newEffectSet, effectDeclType.getLocation());
+            }
+
+            @Override
+            public DeclType visit(State state, Try tryStatement) {
+                throw new RuntimeException("TypeLifter not yet implemented for TryStatement");
             }
         }
     }
@@ -510,6 +521,11 @@ public final class QuantificationLifter {
                 newEffectSet = oldEffectSet;
             }
             return new EffectDeclaration(effectDeclaration.getName(), newEffectSet, effectDeclaration.getLocation());
+        }
+
+        @Override
+        public NamedDeclaration visit(State state, Try tryStatement) {
+            throw new RuntimeException("TypeLifter not yet implemented for TryStatement");
         }
     }
 }

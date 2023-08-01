@@ -8,6 +8,7 @@ import java.util.Vector;
 import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.Case;
 import wyvern.target.corewyvernIL.FormalArg;
+import wyvern.target.corewyvernIL.Try;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.decl.Declaration;
 import wyvern.target.corewyvernIL.decl.DefDeclaration;
@@ -578,5 +579,10 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
       OIRFloat oirInt = new OIRFloat(flt.getFullValue());
       oirInt.copyMetadata(flt);
       return oirInt;
+    }
+
+    @Override
+    public OIRAST visit(EmitOIRState state, Try tryStatement) {
+        return null;
     }
 }
