@@ -56,11 +56,18 @@ public class TryStatement extends AbstractExpressionAST implements CoreAST {
             site = new BindingSite(with);
         }
 
+
+//         See if the type has been defined previously
+//        System.out.println(ctx.lookupType(type.toString(), location));
+
         // Creating new object
         IExpr obj = handler.generateIL(ctx, null, dependencies);
 
         // Adding the object to the context
         GenContext thisContext = ctx.extend(site, obj.typeCheck(ctx, null));
+        GenContext typeAddedContext = thisContext.extend(site, type.getILType(thisContext));
+//        System.out.println(thisContext.lookupType(tryObj, location));
+//        System.out.println(typeAddedContext.lookupType(tryObj, location));
 
         // List to add all of the expression to
         List<wyvern.target.corewyvernIL.expression.IExpr> exprs = new LinkedList<>();

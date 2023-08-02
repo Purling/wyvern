@@ -1,3 +1,9 @@
+resource type File
+    var a : String
+    val b : String
+    def sum() : Int
+    def read() : Int
+
 try (file : File)
     file.read()
 with
