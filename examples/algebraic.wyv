@@ -1,13 +1,13 @@
-resource type File
+resource type Foo
     var a : String
     val b : String
     def sum() : Int
     def read() : Int
 
-try (file : File)
-    file.read()
+try (bar : Foo)
+    foo.read()
 with
-    file = new
+    foo = new
         var a : String = "a"
         val b : String = "b"
         def sum() : Int = 0

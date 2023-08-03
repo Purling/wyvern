@@ -11,19 +11,23 @@ import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
+import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
+import wyvern.tools.errors.ToolError;
 
 public class Try extends Expression {
 
-    private BindingSite selfSite;
+    private String tryIdentifier;
+    private String withIdentifier;
     private IExpr objectExpr;
     List<? extends IExpr> expressions;
 
-    public Try(ValueType exprType, FileLocation loc, BindingSite selfSite, IExpr objectExpr, List<? extends IExpr> expressions) {
-        super(exprType, loc);
-        this.selfSite = selfSite;
+    public Try(IExpr objectExpr, List<? extends IExpr> expressions,
+               String tryIdentifier, String withIdentifier) {
         this.objectExpr = objectExpr;
         this.expressions = expressions;
+        this.tryIdentifier = tryIdentifier;
+        this.withIdentifier = withIdentifier;
     }
 
     @Override
@@ -34,7 +38,11 @@ public class Try extends Expression {
 
     @Override
     public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-//        System.out.println("typeCheck");
+        // The names have to match or else throw error
+        if (!tryIdentifier.equals(withIdentifier)) {
+            ToolError.reportError(ErrorMessage.IDENTIFIER_NOT_SAME, objectExpr, tryIdentifier, withIdentifier);
+        }
+
         return objectExpr.typeCheck(ctx, effectAccumulator);
     }
 

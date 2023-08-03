@@ -46,28 +46,16 @@ public class TryStatement extends AbstractExpressionAST implements CoreAST {
 
     @Override
     public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
-        // The names have to match
-        if (!tryObj.equals(with)) {
-            ToolError.reportError(ErrorMessage.IDENTIFIER_NOT_SAME, handler, tryObj, with);
-        }
-
         // Create the binding site
         if (site == null) {
             site = new BindingSite(with);
         }
-
-
-//         See if the type has been defined previously
-//        System.out.println(ctx.lookupType(type.toString(), location));
 
         // Creating new object
         IExpr obj = handler.generateIL(ctx, null, dependencies);
 
         // Adding the object to the context
         GenContext thisContext = ctx.extend(site, obj.typeCheck(ctx, null));
-        GenContext typeAddedContext = thisContext.extend(site, type.getILType(thisContext));
-//        System.out.println(thisContext.lookupType(tryObj, location));
-//        System.out.println(typeAddedContext.lookupType(tryObj, location));
 
         // List to add all of the expression to
         List<wyvern.target.corewyvernIL.expression.IExpr> exprs = new LinkedList<>();
@@ -75,12 +63,10 @@ public class TryStatement extends AbstractExpressionAST implements CoreAST {
         // Type check each of the expressions which
         for (ExpressionAST expression : expressions) {
             IExpr expr = expression.generateIL(thisContext, null, dependencies);
-            ValueType expectedExprType = expr.typeCheck(thisContext, null);
             exprs.add(expr);
         }
 
-        return new wyvern.target.corewyvernIL.Try(obj.typeCheck(thisContext, null),
-                location, site, obj, exprs);
+        return new wyvern.target.corewyvernIL.Try(obj, exprs, tryObj, with);
     }
 
     @Override
