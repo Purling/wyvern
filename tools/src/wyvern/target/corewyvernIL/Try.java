@@ -32,7 +32,6 @@ public class Try extends Expression {
 
     @Override
     public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) {
-//        System.out.println("acceptVisitor");
         return visitor.visit(state, this);
     }
 
@@ -48,7 +47,6 @@ public class Try extends Expression {
 
     @Override
     public Value interpret(EvalContext ctx) {
-//        System.out.println("interpret");
         return null;
     }
 
