@@ -19,8 +19,9 @@ import wyvern.tools.typedAST.core.declarations.VarDeclaration;
 import wyvern.tools.typedAST.core.expressions.Application;
 import wyvern.tools.typedAST.core.expressions.Assertion;
 import wyvern.tools.typedAST.core.expressions.Assignment;
+import wyvern.tools.typedAST.core.expressions.Break;
 import wyvern.tools.typedAST.core.expressions.Case;
-import wyvern.tools.typedAST.core.expressions.TryStatement;
+import wyvern.tools.typedAST.core.expressions.Try;
 import wyvern.tools.typedAST.core.expressions.Fn;
 import wyvern.tools.typedAST.core.expressions.Invocation;
 import wyvern.tools.typedAST.core.expressions.LetExpr;
@@ -71,5 +72,6 @@ public abstract class TypedASTVisitor<S, T> {
     public abstract T visit(S state, Script ast);
     public abstract T visit(S state, Sequence ast);
     public abstract T visit(S state, DSLLit ast);
-    public abstract T visit(S state, TryStatement e);
+    public abstract T visit(S state, Try ast);
+    public abstract T visit(S state, Break ast);
 }

@@ -9,9 +9,7 @@ import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
-import wyvern.tools.errors.ToolError;
 import wyvern.tools.typedAST.abs.AbstractExpressionAST;
 import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
@@ -19,7 +17,7 @@ import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.typedastvisitor.TypedASTVisitor;
 import wyvern.tools.types.Type;
 
-public class TryStatement extends AbstractExpressionAST implements CoreAST {
+public class Try extends AbstractExpressionAST implements CoreAST {
 
     private FileLocation location = FileLocation.UNKNOWN;
     private final List<ExpressionAST> expressions;
@@ -34,8 +32,8 @@ public class TryStatement extends AbstractExpressionAST implements CoreAST {
         return this.location;
     }
 
-    public TryStatement(Type type, List<ExpressionAST> expressions, TypedAST handler,
-                        String tryObj, String with, FileLocation location) {
+    public Try(Type type, List<ExpressionAST> expressions, TypedAST handler,
+               String tryObj, String with, FileLocation location) {
         this.type = type;
         this.expressions = expressions;
         this.handler = (ExpressionAST) handler;

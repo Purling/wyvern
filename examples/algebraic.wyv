@@ -4,8 +4,12 @@ resource type Foo
     def sum() : Int
     def read() : Int
 
-try (bar : Foo)
+try (foo : Foo)
     foo.read()
+    break food.read()
+        foo.read()
+        foo.read()
+            foo.read()
 with
     foo = new
         var a : String = "a"

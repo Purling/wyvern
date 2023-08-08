@@ -58,6 +58,7 @@ interface ASTBuilder<AST, Type> {
     AST match(AST exp, List cases, FileLocation loc);
     AST tryStatement(Type type, List exp, AST fields, String tryObj,
                      String with, FileLocation loc);
+    AST breakExpr();
 
     Object caseArm(String name, Type type, AST exp, FileLocation loc);
     Object tagInfo(Type type, List<Type> comprises);

@@ -1,7 +1,8 @@
 package wyvern.tools.typedAST.typedastvisitor;
 
 import wyvern.target.corewyvernIL.support.GenContext;
-import wyvern.tools.typedAST.core.expressions.TryStatement;
+import wyvern.tools.typedAST.core.expressions.Break;
+import wyvern.tools.typedAST.core.expressions.Try;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.parsing.DSLLit;
 import wyvern.tools.typedAST.core.Script;
@@ -249,7 +250,12 @@ public class AnnotatedEffectVisitor extends TypedASTVisitor<GenContext, Void> {
     }
 
     @Override
-    public Void visit(GenContext state, TryStatement e) {
+    public Void visit(GenContext state, Try e) {
+        return null;
+    }
+
+    @Override
+    public Void visit(GenContext state, Break ast) {
         return null;
     }
 }

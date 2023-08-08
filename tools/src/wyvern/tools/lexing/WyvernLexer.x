@@ -209,14 +209,15 @@ import static wyvern.tools.parsing.coreparser.WyvernParserConstants.*;
 
 	terminal Token tryKwd_t 	::= /try/ in (keywds) {: RESULT = token(TRY,lexeme); flagTok = RESULT; flagTokSet = true; :};
 	terminal Token withKwd_t 	::= /with/ in (keywds) {: RESULT = token(WITH,lexeme); flagTok = RESULT; flagTokSet = true; :};
-	
+	terminal Token breakKwd_t 	::= /break/ in (keywds) {: RESULT = token(BREAK,lexeme); :};
+
 	// inserted while keyword
 	//terminal Token whileKwd_t 	::= /while/ in (keywds) {: RESULT = token(WHILE,lexeme); :};
 	
 	// inserted forward keyword
 	terminal Token forwardKwd_t::= /forward/ in (keywds) {: RESULT = token(FORWARD,lexeme); :};
 	
-  terminal Token noneKwd_t  ::= /NONE/ in (keywds) {: RESULT = token(NONE,lexeme); :};
+    terminal Token noneKwd_t  ::= /NONE/ in (keywds) {: RESULT = token(NONE,lexeme); :};
 	terminal Token toKwd_t		::= /to/ in (keywds) {: RESULT = token(TO,lexeme); :};
 	//terminal Token Kwd_t 	::= /fn/ in (keywds) {: RESULT = token(FN,lexeme); :};
 	terminal Token requireKwd_t 	::= /require/ in (keywds) {: RESULT = token(REQUIRE,lexeme); :};
@@ -440,10 +441,11 @@ import static wyvern.tools.parsing.coreparser.WyvernParserConstants.*;
 	       | varKwd_t:t {: RESULT = t; :}
 	       | tryKwd_t:t {: RESULT = t; :}
 	       | withKwd_t:t {: RESULT = t; :}
+	       | breakKwd_t:t {: RESULT = t; :}
 	       | assertKwd_t:t {: RESULT = t; :}
 	      // | whileKwd_t:t {: RESULT = t; :}
 	       | forwardKwd_t:t {: RESULT = t; :}
-         | noneKwd_t:t {: RESULT = t; :}
+           | noneKwd_t:t {: RESULT = t; :}
 	       | toKwd_t:t {: RESULT = t; :}
 //	       | fnKwd_t:t {: RESULT = t; :}
 	       | requireKwd_t:t {: RESULT = t; :}

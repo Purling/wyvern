@@ -36,8 +36,9 @@ import wyvern.tools.typedAST.core.declarations.VarDeclaration;
 import wyvern.tools.typedAST.core.expressions.Application;
 import wyvern.tools.typedAST.core.expressions.Assertion;
 import wyvern.tools.typedAST.core.expressions.Assignment;
+import wyvern.tools.typedAST.core.expressions.Break;
 import wyvern.tools.typedAST.core.expressions.Case;
-import wyvern.tools.typedAST.core.expressions.TryStatement;
+import wyvern.tools.typedAST.core.expressions.Try;
 import wyvern.tools.typedAST.core.expressions.Fn;
 import wyvern.tools.typedAST.core.expressions.Invocation;
 import wyvern.tools.typedAST.core.expressions.Match;
@@ -489,7 +490,12 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
     @Override
     public TypedAST tryStatement(Type type, List expressions, TypedAST objectFields, String tryObj,
                                  String with, FileLocation loc) {
-        return new TryStatement(type, expressions, objectFields, tryObj, with, loc);
+        return new Try(type, expressions, objectFields, tryObj, with, loc);
+    }
+
+    @Override
+    public TypedAST breakExpr() {
+        return new Break();
     }
 
     @Override

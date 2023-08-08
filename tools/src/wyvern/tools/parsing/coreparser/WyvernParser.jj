@@ -122,6 +122,7 @@ TOKEN : /* Keywords */
 | < TRY : "try" >
 | < WITH : "with" >
 | < THROW : "throw" > // Assert?
+| < BREAK : "break" >
 }
 
 TOKEN : /* Logical Formatting */
@@ -691,7 +692,7 @@ AST ExpressionLine(boolean makeValDecl) :
   [
     t2=<INDENT> decls = DeclSequence(true) <DEDENT>
   |
-    t2=DSLLines() 
+    t2=DSLLines()
   ]
   {
     if (!flags.isEmpty()) {
@@ -978,10 +979,12 @@ AST PrimaryExpression(ExpFlags flags) :
 
 AST TryStatement() :
 { Type type; Token t; AST exp; AST decls = null; Token objectName; AST handler;
- Token objectName2; ExpFlags flags = new ExpFlags(); List expressions; } // Refactor objectName
+ Token objectName2; List expressions; } // Refactor objectName
 {
-  t = <TRY> <LPAREN> objectName = <IDENTIFIER> <COLON> type = Type() <RPAREN> { expressions = new LinkedList(); }
-  <NEWLINE> <INDENT> (exp = ExpressionLine(false) { expressions.add(exp); } )* <DEDENT>
+  t = <TRY> <LPAREN> objectName = <IDENTIFIER> <COLON> type = Type() <RPAREN>
+  { expressions = new LinkedList(); returnExprs = new LinkedList(); }
+  <NEWLINE> <INDENT> (exp = ExpressionLine(false) { expressions.add(exp); })*
+                        [<BREAK> ExpressionLine(false)] <DEDENT>
   <WITH>
   <NEWLINE> <INDENT> objectName2 = <IDENTIFIER> <EQUALS> <NEW>
   <NEWLINE> <INDENT> decls = DeclSequence(true) <DEDENT> <DEDENT> {
