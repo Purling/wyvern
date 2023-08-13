@@ -7,7 +7,8 @@ import java.util.List;
 import wyvern.target.corewyvernIL.ASTNode;
 import wyvern.target.corewyvernIL.Case;
 import wyvern.target.corewyvernIL.FormalArg;
-import wyvern.target.corewyvernIL.Try;
+import wyvern.target.corewyvernIL.expression.Break;
+import wyvern.target.corewyvernIL.expression.Try;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.decl.Declaration;
 import wyvern.target.corewyvernIL.decl.DefDeclaration;
@@ -411,5 +412,10 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
     @Override
     public ASTNode visit(PSVState state, Try tryStatement) {
         return tryStatement;
+    }
+
+    @Override
+    public ASTNode visit(PSVState state, Break breakExpr) {
+        return breakExpr;
     }
 }

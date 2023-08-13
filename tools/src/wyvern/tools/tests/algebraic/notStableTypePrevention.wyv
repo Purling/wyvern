@@ -1,15 +1,13 @@
+module foo
+
 resource type Foo
     var a : String
     val b : String
     def sum() : Int
     def read() : Int
 
-resource type Bar
-    var c : String
-
-try (foo : Foo) : Int
-    foo.read()
-    break food.else()
+try (foo : Foo)
+    foo
 with
     foo : Foo = new
         var a : String = "a"

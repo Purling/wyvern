@@ -2,7 +2,8 @@ package wyvern.target.corewyvernIL.support;
 
 import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.FormalArg;
-import wyvern.target.corewyvernIL.Try;
+import wyvern.target.corewyvernIL.expression.Break;
+import wyvern.target.corewyvernIL.expression.Try;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.astvisitor.DeclTypeVisitor;
 import wyvern.target.corewyvernIL.astvisitor.DeclarationVisitor;
@@ -341,6 +342,11 @@ public final class QuantificationLifter {
             throw new RuntimeException("TypeLifter not yet implemented for TryStatement");
         }
 
+        @Override
+        public ValueType visit(State state, Break breakExpr) {
+            throw new RuntimeException("TypeLifter not yet implemented for Break");
+        }
+
         private final class DeclTypeLifter extends DeclTypeVisitor<State, DeclType> {
             private DeclTypeLifter() {
                 super("DeclTypeLifter");
@@ -426,6 +432,11 @@ public final class QuantificationLifter {
             @Override
             public DeclType visit(State state, Try tryStatement) {
                 throw new RuntimeException("TypeLifter not yet implemented for TryStatement");
+            }
+
+            @Override
+            public DeclType visit(State state, Break breakExpr) {
+                throw new RuntimeException("TypeLifter not yet implemented for Break");
             }
         }
     }
@@ -526,6 +537,11 @@ public final class QuantificationLifter {
         @Override
         public NamedDeclaration visit(State state, Try tryStatement) {
             throw new RuntimeException("TypeLifter not yet implemented for TryStatement");
+        }
+
+        @Override
+        public NamedDeclaration visit(State state, Break breakExpr) {
+            throw new RuntimeException("TypeLifter not yet implemented for Break");
         }
     }
 }

@@ -8,7 +8,8 @@ import java.util.Vector;
 import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.Case;
 import wyvern.target.corewyvernIL.FormalArg;
-import wyvern.target.corewyvernIL.Try;
+import wyvern.target.corewyvernIL.expression.Break;
+import wyvern.target.corewyvernIL.expression.Try;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.decl.Declaration;
 import wyvern.target.corewyvernIL.decl.DefDeclaration;
@@ -583,6 +584,11 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 
     @Override
     public OIRAST visit(EmitOIRState state, Try tryStatement) {
-        return null;
+        throw new RuntimeException("EMITOIRVisitor: Try -> OIR unimplemented");
+    }
+
+    @Override
+    public OIRAST visit(EmitOIRState state, Break breakExpr) {
+        throw new RuntimeException("EMITOIRVisitor: Break -> OIR unimplemented");
     }
 }

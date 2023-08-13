@@ -22,9 +22,12 @@ public class Try extends AbstractExpressionAST implements CoreAST {
     private FileLocation location = FileLocation.UNKNOWN;
     private final List<ExpressionAST> expressions;
     private final ExpressionAST handler;
-    private final Type type;
+    private final Type tryType;
+    private final Type returnType;
+    private final Type withType;
     private final String tryObj;
     private final String with;
+    private final ExpressionAST breakExpr;
     private BindingSite site;
 
     @Override
@@ -32,13 +35,16 @@ public class Try extends AbstractExpressionAST implements CoreAST {
         return this.location;
     }
 
-    public Try(Type type, List<ExpressionAST> expressions, TypedAST handler,
-               String tryObj, String with, FileLocation location) {
-        this.type = type;
+    public Try(Type tryType, Type returnType, Type withType, List<ExpressionAST> expressions, TypedAST handler,
+               String tryObj, String with, TypedAST breakExpr, FileLocation location) {
+        this.tryType = tryType;
+        this.returnType = returnType;
+        this.withType = withType;
         this.expressions = expressions;
         this.handler = (ExpressionAST) handler;
         this.tryObj = tryObj;
         this.with = with;
+        this.breakExpr = (ExpressionAST) breakExpr;
         this.location = location;
     }
 
@@ -58,13 +64,22 @@ public class Try extends AbstractExpressionAST implements CoreAST {
         // List to add all of the expression to
         List<wyvern.target.corewyvernIL.expression.IExpr> exprs = new LinkedList<>();
 
-        // Type check each of the expressions which
+        // Generate IL for each of the expressions
         for (ExpressionAST expression : expressions) {
             IExpr expr = expression.generateIL(thisContext, null, dependencies);
             exprs.add(expr);
         }
 
-        return new wyvern.target.corewyvernIL.Try(obj, exprs, tryObj, with);
+        IExpr returnExpr = null;
+
+        // Generate the IL for the break return expression if one exists
+        if (breakExpr != null) {
+            returnExpr = breakExpr.generateIL(thisContext, null, dependencies);
+        }
+
+        return new wyvern.target.corewyvernIL.expression.Try(obj, exprs, tryObj, with,
+                tryType.getILType(thisContext), withType.getILType(thisContext), returnExpr,
+                returnType.getILType(thisContext));
     }
 
     @Override
