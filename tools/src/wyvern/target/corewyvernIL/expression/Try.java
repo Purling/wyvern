@@ -63,13 +63,13 @@ public class Try extends Expression {
         // Check if the return type matches
         if (returnExpr != null &&
                 !returnExpr.typeCheck(ctx, effectAccumulator).equalsInContext(returnType, ctx, new FailureReason())) {
-            // TODO make a new and more accurate error message & make sure it actually works
-            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, tryType.desugar(ctx), withType.desugar(ctx));
-        } else if (!expressions.get(expressions.size() - 1).typeCheck(ctx, effectAccumulator).
-                               equalsInContext(returnType, ctx, new FailureReason())) {
-            // TODO make a new and more accurate error message & make sure it actually works
             ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, tryType.desugar(ctx), withType.desugar(ctx));
         }
+//        if (!expressions.get(expressions.size() - 1).typeCheck(ctx, effectAccumulator).
+//                               equalsInContext(returnType, ctx, new FailureReason())) {
+//            // TODO make a new and more accurate error message & make sure it actually works
+//            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, tryType.desugar(ctx), withType.desugar(ctx));
+//        }
 
         return objectExpr.typeCheck(ctx, effectAccumulator);
     }

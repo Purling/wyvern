@@ -9,7 +9,7 @@ resource type Bar
 
 try (foo : Foo) : Int
     foo.read()
-    break food.else()
+    break foo.sum()
 with
     foo : Foo = new
         var a : String = "a"

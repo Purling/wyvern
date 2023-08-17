@@ -21,7 +21,7 @@ public class Break extends Expression {
 
     @Override
     public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-        return null;
+        return ret.typeCheck(ctx, effectAccumulator); // Add the file to the context
     }
 
     @Override
