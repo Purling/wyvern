@@ -6,16 +6,20 @@ import java.util.List;
 import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
+import wyvern.target.corewyvernIL.expression.MethodCall;
+import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.typedAST.abs.AbstractExpressionAST;
+import wyvern.tools.typedAST.core.declarations.DefDeclaration;
 import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.typedastvisitor.TypedASTVisitor;
 import wyvern.tools.types.Type;
+import wyvern.tools.util.GetterAndSetterGeneration;
 
 public class Try extends AbstractExpressionAST implements CoreAST {
 
@@ -57,16 +61,19 @@ public class Try extends AbstractExpressionAST implements CoreAST {
 
         // Creating new object
         IExpr obj = handler.generateIL(ctx, null, dependencies);
+        ValueType objectType = obj.typeCheck(ctx, null);
 
-        // Adding the object to the context
-        GenContext thisContext = ctx.extend(site, obj.typeCheck(ctx, null));
+        // Adding the object and variable to the context
+        GenContext thisContext = ctx.extend(site, objectType);
+
+        GenContext newContext = thisContext.extend(with, new Variable(site), objectType);
 
         // List to add all of the expression to
         List<wyvern.target.corewyvernIL.expression.IExpr> exprs = new LinkedList<>();
 
         // Generate IL for each of the expressions
         for (ExpressionAST expression : expressions) {
-            IExpr expr = expression.generateIL(thisContext, null, dependencies);
+            IExpr expr = expression.generateIL(newContext, null, dependencies);
             exprs.add(expr);
         }
 
@@ -74,12 +81,12 @@ public class Try extends AbstractExpressionAST implements CoreAST {
 
         // Generate the IL for the break return expression if one exists
         if (breakExpr != null) {
-            returnExpr = breakExpr.generateIL(thisContext, null, dependencies);
+            returnExpr = breakExpr.generateIL(newContext, null, dependencies);
         }
 
-        return new wyvern.target.corewyvernIL.expression.Try(obj, exprs, tryObj, with,
-                tryType.getILType(thisContext), withType.getILType(thisContext), returnExpr,
-                returnType.getILType(thisContext));
+        return new wyvern.target.corewyvernIL.expression.Try(site, obj, exprs, tryObj, with,
+                tryType.getILType(newContext), withType.getILType(newContext), returnExpr,
+                returnType.getILType(newContext));
     }
 
     @Override

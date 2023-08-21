@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.junit.internal.runners.statements.Fail;
 import wyvern.stdlib.support.backend.BytecodeOuterClass;
+import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
 import wyvern.target.corewyvernIL.support.EvalContext;
@@ -17,6 +18,7 @@ import wyvern.tools.errors.ToolError;
 public class Try extends Expression {
 
     private final String tryIdentifier;
+    private final BindingSite site;
     private final String withIdentifier;
     private final IExpr objectExpr;
     private final ValueType tryType;
@@ -25,9 +27,10 @@ public class Try extends Expression {
     private final IExpr returnExpr;
     private final ValueType returnType;
 
-    public Try(IExpr objectExpr, List<? extends IExpr> expressions,
+    public Try(BindingSite site, IExpr objectExpr, List<? extends IExpr> expressions,
                String tryIdentifier, String withIdentifier, ValueType tryType, ValueType withType, IExpr returnExpr,
                ValueType returnType) {
+        this.site = site;
         this.objectExpr = objectExpr;
         this.expressions = expressions;
         this.tryIdentifier = tryIdentifier;
@@ -45,6 +48,11 @@ public class Try extends Expression {
 
     @Override
     public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+
+        ctx = ctx.extend(site, tryType);
+
+//        System.out.println(ctx.toString());
+
         // The names have to match or else throw error
         if (!tryIdentifier.equals(withIdentifier)) {
             ToolError.reportError(ErrorMessage.IDENTIFIER_NOT_SAME, objectExpr, tryIdentifier, withIdentifier);
@@ -64,12 +72,11 @@ public class Try extends Expression {
         if (returnExpr != null &&
                 !returnExpr.typeCheck(ctx, effectAccumulator).equalsInContext(returnType, ctx, new FailureReason())) {
             ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, tryType.desugar(ctx), withType.desugar(ctx));
+        } else if (!expressions.get(expressions.size() - 1).typeCheck(ctx, effectAccumulator).
+                               equalsInContext(returnType, ctx, new FailureReason())) {
+            // TODO CHANGE THIS ERROR MESSAGE
+            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, tryType.desugar(ctx), withType.desugar(ctx));
         }
-//        if (!expressions.get(expressions.size() - 1).typeCheck(ctx, effectAccumulator).
-//                               equalsInContext(returnType, ctx, new FailureReason())) {
-//            // TODO make a new and more accurate error message & make sure it actually works
-//            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, tryType.desugar(ctx), withType.desugar(ctx));
-//        }
 
         return objectExpr.typeCheck(ctx, effectAccumulator);
     }

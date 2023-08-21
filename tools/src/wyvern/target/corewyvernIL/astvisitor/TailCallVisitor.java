@@ -4,7 +4,6 @@ import java.util.List;
 
 import wyvern.target.corewyvernIL.Case;
 import wyvern.target.corewyvernIL.FormalArg;
-import wyvern.target.corewyvernIL.expression.Break;
 import wyvern.target.corewyvernIL.expression.Try;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.decl.Declaration;
@@ -320,11 +319,6 @@ public class TailCallVisitor extends ASTVisitor<Boolean, Void> {
 
     @Override
     public Void visit(Boolean state, Try tryStatement) {
-        return null;
-    }
-
-    @Override
-    public Void visit(Boolean state, Break breakExpr) {
         return null;
     }
 }

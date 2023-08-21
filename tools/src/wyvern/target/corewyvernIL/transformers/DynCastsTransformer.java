@@ -6,7 +6,6 @@ import java.util.List;
 import wyvern.target.corewyvernIL.ASTNode;
 import wyvern.target.corewyvernIL.Case;
 import wyvern.target.corewyvernIL.FormalArg;
-import wyvern.target.corewyvernIL.expression.Break;
 import wyvern.target.corewyvernIL.expression.Try;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decl.Declaration;
@@ -269,11 +268,6 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
     @Override
     public ASTNode visit(TypeContext state, Try tryStatement) {
         return tryStatement;
-    }
-
-    @Override
-    public ASTNode visit(TypeContext state, Break breakExpr) {
-        return breakExpr;
     }
 
     @Override
