@@ -7,7 +7,7 @@ resource type Foo
 resource type Bar
     var c : String
 
-try (foo : Foo) : Int
+try : Int
     foo.read()
     break foo.sum()
 with

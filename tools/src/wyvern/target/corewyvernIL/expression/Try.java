@@ -3,11 +3,10 @@ package wyvern.target.corewyvernIL.expression;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.internal.runners.statements.Fail;
-import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -17,26 +16,19 @@ import wyvern.tools.errors.ToolError;
 
 public class Try extends Expression {
 
-    private final String tryIdentifier;
     private final BindingSite site;
-    private final String withIdentifier;
     private final IExpr objectExpr;
-    private final ValueType tryType;
-    private final ValueType withType;
+    private final ValueType type;
     List<? extends IExpr> expressions;
     private final IExpr returnExpr;
     private final ValueType returnType;
 
-    public Try(BindingSite site, IExpr objectExpr, List<? extends IExpr> expressions,
-               String tryIdentifier, String withIdentifier, ValueType tryType, ValueType withType, IExpr returnExpr,
+    public Try(BindingSite site, IExpr objectExpr, List<? extends IExpr> expressions, ValueType type, IExpr returnExpr,
                ValueType returnType) {
         this.site = site;
         this.objectExpr = objectExpr;
         this.expressions = expressions;
-        this.tryIdentifier = tryIdentifier;
-        this.withIdentifier = withIdentifier;
-        this.tryType = tryType;
-        this.withType = withType;
+        this.type = type;
         this.returnExpr = returnExpr;
         this.returnType = returnType;
     }
@@ -49,33 +41,24 @@ public class Try extends Expression {
     @Override
     public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
 
-        ctx = ctx.extend(site, tryType);
-
-//        System.out.println(ctx.toString());
-
-        // The names have to match or else throw error
-        if (!tryIdentifier.equals(withIdentifier)) {
-            ToolError.reportError(ErrorMessage.IDENTIFIER_NOT_SAME, objectExpr, tryIdentifier, withIdentifier);
-        }
-
-        // Make sure the type of the handler object being created and the return type of the try block are the same
-        if (!tryType.equalsInContext(withType, ctx, new FailureReason())) {
-            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, tryType.desugar(ctx), withType.desugar(ctx));
-        }
+        ctx = ctx.extend(site, type);
 
         // Type check the object being defined in the handler
-        if (!tryType.equalsInContext(objectExpr.typeCheck(ctx, effectAccumulator), ctx, new FailureReason())) {
-            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, tryType.desugar(ctx), withType.desugar(ctx));
+        if (!type.equalsInContext(objectExpr.typeCheck(ctx, effectAccumulator), ctx, new FailureReason())) {
+            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, type.desugar(ctx),
+                    objectExpr.typeCheck(ctx, effectAccumulator).desugar(ctx));
         }
 
         // Check if the return type matches
         if (returnExpr != null &&
                 !returnExpr.typeCheck(ctx, effectAccumulator).equalsInContext(returnType, ctx, new FailureReason())) {
-            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, tryType.desugar(ctx), withType.desugar(ctx));
+            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr,
+                    returnExpr.typeCheck(ctx, effectAccumulator).desugar(ctx), returnType.desugar(ctx));
         } else if (!expressions.get(expressions.size() - 1).typeCheck(ctx, effectAccumulator).
                                equalsInContext(returnType, ctx, new FailureReason())) {
-            // TODO CHANGE THIS ERROR MESSAGE
-            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr, tryType.desugar(ctx), withType.desugar(ctx));
+            ToolError.reportError(ErrorMessage.TRY_TYPE_MISMATCH, objectExpr,
+                    expressions.get(expressions.size() - 1).typeCheck(ctx, effectAccumulator).
+                               desugar(ctx), returnExpr.typeCheck(ctx, effectAccumulator).desugar(ctx));
         }
 
         return objectExpr.typeCheck(ctx, effectAccumulator);
@@ -83,16 +66,34 @@ public class Try extends Expression {
 
     @Override
     public Value interpret(EvalContext ctx) {
+        try {
+            ctx = ctx.extend(site, type.getMetadata(ctx));
+
+            for (IExpr i : expressions) {
+                if (!i.equals(expressions.get(expressions.size() - 1))) {
+                    i.interpret(ctx);
+                }
+            }
+
+            if (returnExpr != null) {
+                throw new BreakException(BreakException.GetNextID(), returnExpr.interpret(ctx));
+            } else {
+                return expressions.get(expressions.size() - 1).interpret(ctx);
+            }
+        } catch (
+                BreakException e) {
+            if (e.ID != 1) {
+                return (Value) e.retVal;
+            } else {
+//                throw e;
+//            }
+            }
+        }
         return null;
     }
 
     @Override
     public Set<String> getFreeVariables() {
         return null;
-    }
-
-    @Override
-    public BytecodeOuterClass.Expression emitBytecode() {
-        return super.emitBytecode();
     }
 }

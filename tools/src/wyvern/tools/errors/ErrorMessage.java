@@ -89,7 +89,7 @@ public enum ErrorMessage {
     UNMATCHABLE_CASE("Case type %ARG is not a subtype of match expression type %ARG: %ARG", 3),
     UNMATCHED_CASE("Matched value with tag %ARG has no matching case arm", 1),
     CASE_TYPE_MISMATCH("The types of the case branches do not match: please have one return a common supertype of %ARG and %ARG", 2),
-    TRY_TYPE_MISMATCH("The types of the try block and handler do not match: %ARG and %ARG are different", 2),
+    TRY_TYPE_MISMATCH("The return type of the try block is not satisfied: %ARG and %ARG are different types", 2),
 
     // Evaluation errors
     VALUE_CANNOT_BE_APPLIED("The value %ARG cannot be applied to an argument", 1),

@@ -978,20 +978,18 @@ AST PrimaryExpression(ExpFlags flags) :
 }
 
 AST TryStatement() :
-{ Type tryType; Type returnType; Type withType; Token t; AST exp; AST decls; Token tryIdentifier; AST handler;
- Token withIdentifier; List expressions; AST breakExpr = null; }
+{ Type returnType; Type type; Token t; AST exp; AST decls; AST handler; Token withIdentifier; List expressions;
+ AST breakExpr = null; }
 {
-  t = <TRY> <LPAREN> tryIdentifier = <IDENTIFIER> <COLON> tryType = Type() <RPAREN>
-  <COLON> returnType = Type() { expressions = new LinkedList(); }
+  t = <TRY> <COLON> returnType = Type() { expressions = new LinkedList(); }
   <NEWLINE> <INDENT> (exp = ExpressionLine(false) { expressions.add(exp); })*
                         [<BREAK> breakExpr = ExpressionLine(false) ] <DEDENT>
   <WITH>
-  <NEWLINE> <INDENT> withIdentifier = <IDENTIFIER> <COLON> withType = Type() <EQUALS> <NEW>
+  <NEWLINE> <INDENT> withIdentifier = <IDENTIFIER> <COLON> type = Type() <EQUALS> <NEW>
   <NEWLINE> <INDENT> decls = DeclSequence(true) <DEDENT> <DEDENT> {
     handler = build.newObj(loc(withIdentifier), withIdentifier.image);
     build.setNewBody(handler, decls);
-    return build.tryStatement(tryType, returnType, withType, expressions, handler,
-     tryIdentifier.image, withIdentifier.image, breakExpr, loc(t));
+    return build.tryStatement(returnType, type, expressions, handler, withIdentifier.image, breakExpr, loc(t));
   }
 }
 

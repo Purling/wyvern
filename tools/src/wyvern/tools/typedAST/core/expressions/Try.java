@@ -26,10 +26,8 @@ public class Try extends AbstractExpressionAST implements CoreAST {
     private FileLocation location = FileLocation.UNKNOWN;
     private final List<ExpressionAST> expressions;
     private final ExpressionAST handler;
-    private final Type tryType;
     private final Type returnType;
-    private final Type withType;
-    private final String tryObj;
+    private final Type type;
     private final String with;
     private final ExpressionAST breakExpr;
     private BindingSite site;
@@ -39,14 +37,12 @@ public class Try extends AbstractExpressionAST implements CoreAST {
         return this.location;
     }
 
-    public Try(Type tryType, Type returnType, Type withType, List<ExpressionAST> expressions, TypedAST handler,
-               String tryObj, String with, TypedAST breakExpr, FileLocation location) {
-        this.tryType = tryType;
+    public Try(Type returnType, Type type, List<ExpressionAST> expressions, TypedAST handler,
+               String with, TypedAST breakExpr, FileLocation location) {
         this.returnType = returnType;
-        this.withType = withType;
+        this.type = type;
         this.expressions = expressions;
         this.handler = (ExpressionAST) handler;
-        this.tryObj = tryObj;
         this.with = with;
         this.breakExpr = (ExpressionAST) breakExpr;
         this.location = location;
@@ -84,8 +80,7 @@ public class Try extends AbstractExpressionAST implements CoreAST {
             returnExpr = breakExpr.generateIL(newContext, null, dependencies);
         }
 
-        return new wyvern.target.corewyvernIL.expression.Try(site, obj, exprs, tryObj, with,
-                tryType.getILType(newContext), withType.getILType(newContext), returnExpr,
+        return new wyvern.target.corewyvernIL.expression.Try(site, obj, exprs, type.getILType(newContext), returnExpr,
                 returnType.getILType(newContext));
     }
 

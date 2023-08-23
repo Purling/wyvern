@@ -481,15 +481,10 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
         return new Match(exp, cases, loc);
     }
 
-//    @Override
-//    public TypedAST tryExp(FileLocation loc) {
-//        return new TryExp(loc);
-//    }
-
     @Override
-    public TypedAST tryStatement(Type tryType, Type returnType, Type withType, List expressions, TypedAST objectFields, String tryObj,
+    public TypedAST tryStatement(Type returnType, Type type, List expressions, TypedAST objectFields,
                                  String with, TypedAST breakExpr, FileLocation loc) {
-        return new Try(tryType, returnType, withType, expressions, objectFields, tryObj, with, breakExpr, loc);
+        return new Try(returnType, type, expressions, objectFields, with, breakExpr, loc);
     }
 
     @Override
