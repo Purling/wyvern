@@ -7,6 +7,7 @@ import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Variable;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
@@ -92,22 +93,22 @@ public class Effect {
     }
 
     /** Check that an effect exists in the context, returning its corresponding effect set at the end. */
-    public EffectSet effectCheck(TypeContext ctx) {
+    public EffectSet effectCheck(TypeContext ctx) throws BreakException {
         return findEffectDeclType(ctx).getEffectSet();
     }
 
     /** Check that an effect exists in the context, returning the supereffect if there is one */
-    public EffectSet getSupereffect(TypeContext ctx) {
+    public EffectSet getSupereffect(TypeContext ctx) throws BreakException {
         return findEffectDeclType(ctx).getSupereffect();
     }
 
     /** Check that an effect exists in the context, returning the subeffect if there is one */
-    public EffectSet getSubeffect(TypeContext ctx) {
+    public EffectSet getSubeffect(TypeContext ctx) throws BreakException {
         return findEffectDeclType(ctx).getSubeffect();
     }
 
     /** Find this effect's (effect)DeclType; report error if not found, else return effectDeclType. */
-    public EffectDeclType findEffectDeclType(TypeContext ctx) {
+    public EffectDeclType findEffectDeclType(TypeContext ctx) throws BreakException {
         ValueType vt = null;
 
         // Without try/catch, this could result in a runtime exception due to EmptyGenContext
@@ -152,19 +153,19 @@ public class Effect {
         EXACT
     }
 
-    public Set<Effect> increasingAvoid(String varName, TypeContext ctx, int count) {
+    public Set<Effect> increasingAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         return doAvoid(varName, ctx, count, AvoidType.INCREASING);
     }
 
-    public Set<Effect> decreasingAvoid(String varName, TypeContext ctx, int count) {
+    public Set<Effect> decreasingAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         return doAvoid(varName, ctx, count, AvoidType.DECREASING);
     }
 
-    public Set<Effect> exactAvoid(String varName, TypeContext ctx, int count) {
+    public Set<Effect> exactAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         return doAvoid(varName, ctx, count, AvoidType.EXACT);
     }
 
-    public Set<Effect> doAvoid(String varName, TypeContext ctx, int count) {
+    public Set<Effect> doAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         return doAvoid(varName, ctx, count, AvoidType.INCREASING);
     }
 
@@ -173,7 +174,7 @@ public class Effect {
      * @param t The parameter which determine if the effect set can increase or decrease.
      * @return A effect set that doesn't contain the variable to avoid, or unscopedEffect if avoidance is not possible
      */
-    public Set<Effect> doAvoid(String varName, TypeContext ctx, int count, AvoidType t) {
+    public Set<Effect> doAvoid(String varName, TypeContext ctx, int count, AvoidType t) throws BreakException {
         if (path != null && path.getFreeVariables().contains(varName)) {
             final EffectDeclType dt = findEffectDeclType(ctx);
             EffectSet supereffect = dt.getSupereffect();
@@ -234,7 +235,7 @@ public class Effect {
     }
 
     /** replaces variables in the Effect with the corresponding gen expressions, where they exist */
-    public void adaptVariables(GenContext ctx) {
+    public void adaptVariables(GenContext ctx) throws BreakException {
         if (path == null) {
             path = ctx.getContainerForTypeAbbrev(name);
         }

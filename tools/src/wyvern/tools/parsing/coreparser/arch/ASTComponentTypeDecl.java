@@ -15,6 +15,7 @@ import wyvern.target.corewyvernIL.decltype.ValDeclType;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.New;
 import wyvern.target.corewyvernIL.modules.Module;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.StructuralType;
@@ -80,7 +81,7 @@ public class ASTComponentTypeDecl extends SimpleNode {
         }
     }
 
-    public boolean checkModule(InterpreterState state) {
+    public boolean checkModule(InterpreterState state) throws BreakException {
         if (isExternal) {
             return true;
         }

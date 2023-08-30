@@ -3,6 +3,7 @@ package wyvern.tools.types;
 import wyvern.target.corewyvernIL.expression.FieldGet;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Path;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -57,11 +58,11 @@ public class QualifiedType extends AbstractTypeImpl implements NamedType {
     }
 
     @Override
-    public ValueType getILType(GenContext ctx) {
+    public ValueType getILType(GenContext ctx) throws BreakException {
         return new NominalType(getPath(base, ctx), name, getLocation());
     }
 
-    private static Path getPathOld(ExpressionAST ast, GenContext ctx) {
+    private static Path getPathOld(ExpressionAST ast, GenContext ctx) throws BreakException {
         Path path2 = getPath(ast, ctx);
         IExpr exp = ast.generateIL(ctx, null, null);
         if (!(exp instanceof Path)) {
@@ -78,7 +79,7 @@ public class QualifiedType extends AbstractTypeImpl implements NamedType {
      * is not a variable with field dereferences after it.
      * We postpone checking that the fields are immutable until later.
      * */
-    private static Path getPath(ExpressionAST ast, GenContext ctx) {
+    private static Path getPath(ExpressionAST ast, GenContext ctx) throws BreakException {
         if (ast instanceof Variable) {
             IExpr exp = ast.generateIL(ctx, null, null);
             if (!(exp instanceof Path)) {

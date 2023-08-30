@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import wyvern.target.corewyvernIL.expression.IntegerLiteral;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
@@ -27,17 +28,17 @@ public class ReflectionTests {
     }
 
     @Test
-    public void testBase() throws ParseException {
+    public void testBase() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("reflection.base", null, null);
     }
 
     @Test
-    public void testObjectEquals() throws ParseException {
+    public void testObjectEquals() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("reflection.objectEquals", null, null);
     }
 
     @Test
-    public void testObjectTypeOf() throws ParseException {
+    public void testObjectTypeOf() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("reflection.objectTypeOf", null, null);
     }
 
@@ -69,12 +70,12 @@ public class ReflectionTests {
     }
 
     @Test
-    public void testLists() throws ParseException {
+    public void testLists() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("reflection.listClient", null, null);
     }
 
     @Test
-    public void testBools() throws ParseException {
+    public void testBools() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("reflection.boolTests", Util.intType(), new IntegerLiteral(0));
     }
 

@@ -15,6 +15,7 @@ import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.effects.Effect;
 import wyvern.target.corewyvernIL.effects.EffectSet;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
 import wyvern.tools.errors.FileLocation;
@@ -79,7 +80,7 @@ public class EffectDeclaration extends Declaration {
         return name;
     }
 
-    public EffectSet getEffectSetInContext(GenContext ctx) {
+    public EffectSet getEffectSetInContext(GenContext ctx) throws BreakException {
         if (!adapted && effectSet != null) {
             effectSet.contextualize(ctx);
             adapted = true;
@@ -87,7 +88,7 @@ public class EffectDeclaration extends Declaration {
         return effectSet;
     }
 
-    public EffectSet getSupereffectInContext(GenContext ctx) {
+    public EffectSet getSupereffectInContext(GenContext ctx) throws BreakException {
         assert (supereffect != null);
         if (!supereffectAdapted) {
             supereffect.contextualize(ctx);
@@ -96,7 +97,7 @@ public class EffectDeclaration extends Declaration {
         return supereffect;
     }
 
-    public EffectSet getSubeffectInContext(GenContext ctx) {
+    public EffectSet getSubeffectInContext(GenContext ctx) throws BreakException {
         assert (subeffect != null);
         if (!subeffectAdapted) {
             subeffect.contextualize(ctx);
@@ -106,7 +107,7 @@ public class EffectDeclaration extends Declaration {
     }
 
     @Override
-    public DeclType genILType(GenContext ctx) {
+    public DeclType genILType(GenContext ctx) throws BreakException {
         if (supereffect != null) {
             return new EffectDeclType(getName(), getSupereffectInContext(ctx), true, getLocation());
         }
@@ -119,7 +120,7 @@ public class EffectDeclaration extends Declaration {
     }
 
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
+    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) throws BreakException {
        EffectSet effectSetInContext = getEffectSetInContext(ctx);
         if (effectSetInContext != null) {
             effectSetInContext.verifyInType(ctx);
@@ -128,12 +129,12 @@ public class EffectDeclaration extends Declaration {
     }
 
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) {
+    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) throws BreakException {
         return generateDecl(ctx, ctx); // like in DefDeclaration
     }
 
     @Override
-    public void addModuleDecl(TopLevelContext tlc) {
+    public void addModuleDecl(TopLevelContext tlc) throws BreakException {
         wyvern.target.corewyvernIL.decl.Declaration decl = topLevelGen(tlc.getContext(), null);
         DeclType dt = genILType(tlc.getContext());
         tlc.addModuleDecl(decl, dt);

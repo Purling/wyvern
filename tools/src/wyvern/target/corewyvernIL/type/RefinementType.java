@@ -21,6 +21,7 @@ import wyvern.target.corewyvernIL.expression.Tag;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.generics.GenericArgument;
 import wyvern.target.corewyvernIL.generics.GenericKind;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.SubtypeAssumption;
@@ -66,7 +67,7 @@ public class RefinementType extends ValueType {
     private List<DeclType> declTypes = null; // may be computed lazily from genericArguments
     private List<GenericArgument> genericArguments;
 
-    private List<DeclType> getDeclTypes(TypeContext ctx) {
+    private List<DeclType> getDeclTypes(TypeContext ctx) throws BreakException {
         if (declTypes == null) {
             declTypes = new LinkedList<DeclType>();
             base.checkWellFormed(ctx);
@@ -127,16 +128,22 @@ public class RefinementType extends ValueType {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) throws BreakException {
         return visitor.visit(state,  this);
     }
 
     @Override
-    public ValueType adapt(View v) {
+    public ValueType adapt(View v) throws BreakException {
         ValueType newBase = base.adapt(v);
         if (declTypes == null) {
             return new RefinementType(
-                    genericArguments.stream().map(ga -> ga.adapt(v)).collect(Collectors.toList()),
+                    genericArguments.stream().map(ga -> {
+                        try {
+                            return ga.adapt(v);
+                        } catch (BreakException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).collect(Collectors.toList()),
                     newBase,
                     this
             );
@@ -149,14 +156,20 @@ public class RefinementType extends ValueType {
     }
 
     @Override
-    public ValueType doAvoid(String varName, TypeContext ctx, int depth) {
+    public ValueType doAvoid(String varName, TypeContext ctx, int depth) throws BreakException {
         List<DeclType> newDeclTypes = new LinkedList<DeclType>();
         boolean changed = false;
         ValueType newBase = base.doAvoid(varName, ctx, depth);
         if (declTypes == null) {
             return new RefinementType(
                     genericArguments.stream()
-                            .map(ga -> ga.doAvoid(varName, ctx, depth))
+                            .map(ga -> {
+                                try {
+                                    return ga.doAvoid(varName, ctx, depth);
+                                } catch (BreakException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            })
                             .collect(Collectors.toList()),
                     newBase,
                     this
@@ -179,7 +192,7 @@ public class RefinementType extends ValueType {
     private static int checkWellFormed = 0;
     
     @Override
-    public void checkWellFormed(TypeContext ctx) {
+    public void checkWellFormed(TypeContext ctx) throws BreakException {
         checkWellFormed++;
         base.checkWellFormed(ctx);
         final TypeContext selfCtx = selfSite == null ? ctx : ctx.extend(selfSite, this);
@@ -204,7 +217,7 @@ public class RefinementType extends ValueType {
     }
 
     @Override
-    public StructuralType getStructuralType(TypeContext ctx, StructuralType theDefault) {
+    public StructuralType getStructuralType(TypeContext ctx, StructuralType theDefault) throws BreakException {
         if (checkWellFormed == 0) {
             // short-circuits an infinite well-formedness check loop
             checkWellFormed(ctx);
@@ -234,7 +247,7 @@ public class RefinementType extends ValueType {
         return new StructuralType(baseST.getSelfSite(), newDTs, isResource(ctx));
     }
     @Override
-    public boolean isResource(TypeContext ctx) {
+    public boolean isResource(TypeContext ctx) throws BreakException {
         return base.isResource(ctx);
     }
     @Override
@@ -283,7 +296,7 @@ public class RefinementType extends ValueType {
     }
 
     @Override
-    public boolean isSubtypeOf(ValueType t, TypeContext ctx, FailureReason reason) {
+    public boolean isSubtypeOf(ValueType t, TypeContext ctx, FailureReason reason) throws BreakException {
         // if they are equivalent to a DynamicType or equal to us, then return true
         if (equals(t)) {
             return true;
@@ -313,7 +326,7 @@ public class RefinementType extends ValueType {
     }
 
     @Override
-    public ValueType getCanonicalType(TypeContext ctx) {
+    public ValueType getCanonicalType(TypeContext ctx) throws BreakException {
         ValueType baseCT = base.getCanonicalType(ctx);
         if (baseCT instanceof StructuralType) {
             return this.getStructuralType(ctx);
@@ -396,17 +409,17 @@ public class RefinementType extends ValueType {
     }
     
     @Override
-    public Value getMetadata(TypeContext ctx) {
+    public Value getMetadata(TypeContext ctx) throws BreakException {
         return base.getMetadata(ctx);
     }
 
     @Override
-    public Tag getTag(EvalContext ctx) {
+    public Tag getTag(EvalContext ctx) throws BreakException {
         return base.getTag(ctx);
     }
 
     @Override
-    public boolean isTagged(TypeContext ctx) {
+    public boolean isTagged(TypeContext ctx) throws BreakException {
         return base.isTagged(ctx);
     }
 
@@ -425,7 +438,7 @@ public class RefinementType extends ValueType {
      * Can be instantiated if the base type can.
      */
     @Override
-    public void canInstantiate(TypeContext ctx) {
+    public void canInstantiate(TypeContext ctx) throws BreakException {
         base.canInstantiate(ctx);
     }
 }

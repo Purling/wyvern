@@ -10,6 +10,7 @@ import wyvern.target.corewyvernIL.decltype.DeclTypeWithResult;
 import wyvern.target.corewyvernIL.decltype.ValDeclType;
 import wyvern.target.corewyvernIL.decltype.VarDeclType;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -59,7 +60,7 @@ public class FieldGet extends Expression implements Path {
     }
 
     @Override
-    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
         ValueType vt = objectExpr.typeCheck(ctx, effectAccumulator);
         if (Util.isDynamicType(vt)) {
             return Util.dynType();
@@ -83,12 +84,12 @@ public class FieldGet extends Expression implements Path {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public Value interpret(EvalContext ctx) {
+    public Value interpret(EvalContext ctx) throws BreakException {
         Value receiver = objectExpr.interpret(ctx);
         if (!(receiver instanceof Invokable)) {
             throw new RuntimeException("expected an object value at field get");
@@ -149,7 +150,7 @@ public class FieldGet extends Expression implements Path {
     }
 
     @Override
-    public Path adaptVariables(GenContext ctx) {
+    public Path adaptVariables(GenContext ctx) throws BreakException {
         if (!(objectExpr instanceof Path)) {
             throw new RuntimeException("invariant violated");
         }

@@ -43,6 +43,7 @@ import wyvern.target.corewyvernIL.expression.SeqExpr;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.target.corewyvernIL.support.ModuleResolver;
@@ -103,7 +104,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
      * @param ctx
      * @return
      */
-    public static ASTNode specializeAST(ASTNode ast, String platform, GenContext ctx) {
+    public static ASTNode specializeAST(ASTNode ast, String platform, GenContext ctx) throws BreakException {
         PSVState state = new PSVState(platform, ctx);
         ASTNode result = ast.acceptVisitor(new PlatformSpecializationVisitor(), state);
 
@@ -123,7 +124,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
         return (ASTNode) result; //resolver.wrap((IExpr) result, dependenciesList);
     }
 
-    public ASTNode visit(PSVState state, ModuleDeclaration moduleDecl) {
+    public ASTNode visit(PSVState state, ModuleDeclaration moduleDecl) throws BreakException {
         Pair<Declaration, List<TypedModuleSpec>> pair = moduleDecl.specialize(state.getPlatform(), state.getCtx());
         for (TypedModuleSpec spec : pair.getSecond()) {
             state.getDependencies().add(spec);
@@ -131,7 +132,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
         return pair.getFirst();
     }
 
-    public ASTNode visit(PSVState state, New newExpr) {
+    public ASTNode visit(PSVState state, New newExpr) throws BreakException {
         if (newExpr instanceof ObjectValue) {
             // no specialization needed of modules that have already been executed to a value
             return newExpr;
@@ -146,14 +147,14 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
         return result;
     }
 
-    public ASTNode visit(PSVState state, Case c) {
+    public ASTNode visit(PSVState state, Case c) throws BreakException {
         Expression resultBody = (Expression) c.getBody().acceptVisitor(this, state);
         Case result = new Case(c.getSite(), c.getPattern(), resultBody);
         result.copyMetadata(c);
         return result;
     }
 
-    public ASTNode visit(PSVState state, MethodCall methodCall) {
+    public ASTNode visit(PSVState state, MethodCall methodCall) throws BreakException {
         IExpr objExpr = (IExpr) methodCall.getObjectExpr().acceptVisitor(this, state);
         List<IExpr> args = new ArrayList<>();
         for (IExpr arg : methodCall.getArgs()) {
@@ -166,7 +167,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
     }
 
 
-    public ASTNode visit(PSVState state, Match match) {
+    public ASTNode visit(PSVState state, Match match) throws BreakException {
         Expression matchExpr = (Expression) match.getMatchExpr().acceptVisitor(this, state);
         Expression elseExpr = match.getElseExpr();
         elseExpr =  elseExpr == null ? null : (Expression) elseExpr.acceptVisitor(this, state);
@@ -181,7 +182,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
     }
 
 
-    public ASTNode visit(PSVState state, FieldGet fieldGet) {
+    public ASTNode visit(PSVState state, FieldGet fieldGet) throws BreakException {
         IExpr resultExpr = (IExpr) fieldGet.getObjectExpr().acceptVisitor(this, state);
         FieldGet result = new FieldGet(resultExpr, fieldGet.getName(), fieldGet.getLocation());
         result.copyMetadata(fieldGet);
@@ -189,7 +190,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
     }
 
 
-    public ASTNode visit(PSVState state, Let let) {
+    public ASTNode visit(PSVState state, Let let) throws BreakException {
         IExpr toReplace = (IExpr) let.getToReplace().acceptVisitor(this, state);
         IExpr inExpr = (IExpr) let.getInExpr().acceptVisitor(this, state);
 
@@ -199,7 +200,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
     }
 
 
-    public ASTNode visit(PSVState state, FieldSet fieldSet) {
+    public ASTNode visit(PSVState state, FieldSet fieldSet) throws BreakException {
         IExpr objectExpr = (IExpr) fieldSet.getObjectExpr().acceptVisitor(this, state);
         IExpr exprToAssign = (IExpr) fieldSet.getExprToAssign().acceptVisitor(this, state);
 
@@ -214,7 +215,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
     }
 
 
-    public ASTNode visit(PSVState state, Cast cast) {
+    public ASTNode visit(PSVState state, Cast cast) throws BreakException {
         IExpr resultExpr = (IExpr) cast.getToCastExpr().acceptVisitor(this, state);
         Cast result = new Cast(resultExpr, cast.getType());
         result.copyMetadata(cast);
@@ -222,14 +223,14 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
     }
 
 
-    public ASTNode visit(PSVState state, VarDeclaration varDecl) {
+    public ASTNode visit(PSVState state, VarDeclaration varDecl) throws BreakException {
         ASTNode resultDefinition = (ASTNode) varDecl.getDefinition().acceptVisitor(this, state);
         VarDeclaration result = new VarDeclaration(varDecl.getName(), varDecl.getType(), (IExpr) resultDefinition, varDecl.getLocation());
         result.copyMetadata(varDecl);
         return result;
     }
 
-    public ASTNode visit(PSVState state, DefDeclaration defDecl) {
+    public ASTNode visit(PSVState state, DefDeclaration defDecl) throws BreakException {
         ASTNode resultBody = (ASTNode) defDecl.getBody().acceptVisitor(this, state);
         DefDeclaration result = new DefDeclaration(
                 defDecl.getName(),
@@ -243,7 +244,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
         return result;
     }
 
-    public ASTNode visit(PSVState state, ValDeclaration valDecl) {
+    public ASTNode visit(PSVState state, ValDeclaration valDecl) throws BreakException {
         ASTNode resultDefinition = (ASTNode) valDecl.getDefinition().acceptVisitor(this, state);
         ValDeclaration result = new ValDeclaration(valDecl.getName(), valDecl.getType(), (IExpr) resultDefinition, valDecl.getLocation());
         result.copyMetadata(valDecl);
@@ -318,7 +319,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
     }
 
     @Override
-    public ASTNode visit(PSVState state, Bind bind) {
+    public ASTNode visit(PSVState state, Bind bind) throws BreakException {
         List<VarBinding> bindings = new ArrayList<>();
         for (VarBinding binding : bind.getBindings()) {
             bindings.add(new VarBinding(binding.getVarName(),
@@ -378,7 +379,7 @@ public class PlatformSpecializationVisitor extends ASTVisitor<PSVState, ASTNode>
     }
 
     @Override
-    public ASTNode visit(PSVState state, SeqExpr seqExpr) {
+    public ASTNode visit(PSVState state, SeqExpr seqExpr) throws BreakException {
         SeqExpr newExpr = new SeqExpr();
         for (HasLocation hl : seqExpr.getElements()) {
             if (hl instanceof IExpr) {

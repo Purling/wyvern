@@ -4,6 +4,7 @@ import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.ASTNode;
 import wyvern.target.corewyvernIL.IASTNode;
 import wyvern.target.corewyvernIL.expression.Value;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -20,22 +21,22 @@ public abstract class DeclType extends ASTNode implements IASTNode {
         return name;
     }
 
-    public abstract boolean isSubtypeOf(DeclType dt, TypeContext ctx, FailureReason reason);
+    public abstract boolean isSubtypeOf(DeclType dt, TypeContext ctx, FailureReason reason) throws BreakException;
 
-    public abstract DeclType adapt(View v);
+    public abstract DeclType adapt(View v) throws BreakException;
     /**
      * 
      * @param ctx
      * @return true iff this is a var, or if this is a val that is of resource type
      */
-    public boolean containsResource(TypeContext ctx) {
+    public boolean containsResource(TypeContext ctx) throws BreakException {
         return false;
     }
 
     /**
      * Evaluates any metadata that might be present in this type to a value
      */
-    public DeclType interpret(EvalContext ctx) {
+    public DeclType interpret(EvalContext ctx) throws BreakException {
         return this;
     }
 
@@ -47,14 +48,14 @@ public abstract class DeclType extends ASTNode implements IASTNode {
         return null;
     }
 
-    public abstract void checkWellFormed(TypeContext ctx);
+    public abstract void checkWellFormed(TypeContext ctx) throws BreakException;
 
     /**
      * Avoids the specified variable.  Returns the original DeclType object
      * if the variable was not used.
      * @param count TODO
      */
-    public abstract DeclType doAvoid(String varName, TypeContext ctx, int count);
+    public abstract DeclType doAvoid(String varName, TypeContext ctx, int count) throws BreakException;
 
     public abstract boolean isTypeOrEffectDecl();
 

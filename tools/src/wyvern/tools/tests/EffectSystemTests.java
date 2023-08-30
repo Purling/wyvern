@@ -13,6 +13,7 @@ import org.junit.rules.ExpectedException;
 import wyvern.stdlib.Globals;
 import wyvern.target.corewyvernIL.expression.IntegerLiteral;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.imports.extensions.WyvernResolver;
@@ -42,13 +43,13 @@ public class EffectSystemTests {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void testDataProcessor() throws ParseException {
+    public void testDataProcessor() throws ParseException, BreakException {
         /* Involve effect abstraction ("effect process = {net.receive}"). */
         TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor", Util.stringType(), new StringLiteral(""));
     }
 
     @Test
-    public void testDataProcessor2() throws ParseException {
+    public void testDataProcessor2() throws ParseException, BreakException {
         /* Involve even more effect abstractions: effect send = {net.send}, effect process = {net.receive, send}. */
         TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor2", Util.stringType(), new StringLiteral("From dataProcessor2"));
     }
@@ -72,13 +73,13 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testDataProcessor5() throws ParseException {
+    public void testDataProcessor5() throws ParseException, BreakException {
         /* A module has two effects that have the same name but different paths. */
         TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor5", Util.stringType(), new StringLiteral("From dataProcessor5"));
     }
 
     @Test
-    public void testDataProcessor6() throws ParseException {
+    public void testDataProcessor6() throws ParseException, BreakException {
         /* Method effect annotation is missing an effect. */
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString("Effect annotation {"));
@@ -92,57 +93,57 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testDataProcessor7() throws ParseException {
+    public void testDataProcessor7() throws ParseException, BreakException {
         /* Method processData() is annotated with more effects than it actually produces
          * (and does not know that "net.send" is empty). */
         TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor7", Util.stringType(), new StringLiteral(""));
     }
 
     @Test
-    public void testBasic() throws ParseException {
+    public void testBasic() throws ParseException, BreakException {
         /* Does not use any outside objects, types, or functions */
         TestUtil.doTestScriptModularly(PATH, "effects.testBasic", Util.stringType(), new StringLiteral("basic.m3()"));
     }
 
     @Test
-    public void testBasic1() throws ParseException {
+    public void testBasic1() throws ParseException, BreakException {
         /* Uses a module that doesn't use any outside objects, types, or functions. */
         TestUtil.doTestScriptModularly(PATH, "effects.testBasic1", Util.stringType(), new StringLiteral("basic1.m5()"));
     }
 
     @Test
-    public void testFileIO() throws ParseException {
+    public void testFileIO() throws ParseException, BreakException {
         /* Globally available effects (system.FFI) are used in effect definitions in module (only). */
         TestUtil.doTestScriptModularly(PATH, "effects.testFileIO", Util.intType(), new IntegerLiteral(3));
     }
 
     @Test
-    public void testFileIO1() throws ParseException {
+    public void testFileIO1() throws ParseException, BreakException {
         /* Effects defined in a pure module are used in effect definitions in module (only). */
         TestUtil.doTestScriptModularly(PATH, "effects.testFileIO1", Util.intType(), new IntegerLiteral(3));
     }
 
     @Test
-    public void testFileIO2() throws ParseException {
+    public void testFileIO2() throws ParseException, BreakException {
         /* Effects defined in a pure module are used in effect definitions in both type and module. */
         TestUtil.doTestScriptModularly(PATH, "effects.testFileIO2", Util.intType(), new IntegerLiteral(3));
     }
 
     @Test
-    public void testFileIO3() throws ParseException {
+    public void testFileIO3() throws ParseException, BreakException {
         /* Effect names may be the same as method names. */
         TestUtil.doTestScriptModularly(PATH, "effects.testFileIO3", Util.intType(), new IntegerLiteral(3));
     }
 
     @Test
-    public void testFileIO5() throws ParseException {
+    public void testFileIO5() throws ParseException, BreakException {
         /* Effects defined in a pure module are used in effect definitions in both type and module.
          * Pure module imported in type is renamed. */
         TestUtil.doTestScriptModularly(PATH, "effects.testFileIO5", Util.intType(), new IntegerLiteral(3));
     }
 
     @Test
-    public void testLogger() throws ParseException {
+    public void testLogger() throws ParseException, BreakException {
         /* A method has an effect annotation involving a globally available effect (system.FFI)
          * in module but not in type. */
         expectedException.expect(ToolError.class);
@@ -154,7 +155,7 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testLogger1() throws ParseException {
+    public void testLogger1() throws ParseException, BreakException {
         /* Globally available effect (system.FFI) is attempted to be used to annotate a method directly
          * without having exposed the effect definition in the type. */
         expectedException.expect(ToolError.class);
@@ -165,7 +166,7 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testLogger2() throws ParseException {
+    public void testLogger2() throws ParseException, BreakException {
         /* A method has an effect annotation, involving a passed in resource, in module but not in type. */
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString("Method body's type resource type"));
@@ -176,26 +177,26 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testLogger3() throws ParseException {
+    public void testLogger3() throws ParseException, BreakException {
         /* Uses a resource passed as a method argument in the method's effect annotation. */
         TestUtil.doTestScriptModularly(PATH, "effects.testLogger3", Util.intType(), new IntegerLiteral(2));
     }
 
     @Test
-    public void testLogger4() throws ParseException {
+    public void testLogger4() throws ParseException, BreakException {
         /* Globally available effect (system.FFI) is used to annotate a method directly
          * without defining any local effects. */
         TestUtil.doTestScriptModularly(PATH, "effects.testLogger4", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testLogger5() throws ParseException {
+    public void testLogger5() throws ParseException, BreakException {
         /* Effect subtyping: accepting a module with fewer effects than in the expected type. */
         TestUtil.doTestScriptModularly(PATH, "effects.testLogger5", Util.intType(), new IntegerLiteral(6));
     }
 
     @Test
-    public void testNested() throws ParseException {
+    public void testNested() throws ParseException, BreakException {
         /* An object in a module's immutable field defines an effect
          * and uses it in a method annotation inside that object. */
         TestUtil.doTestScriptModularly(PATH, "effects.testNested", Util.intType(), new IntegerLiteral(1));
@@ -203,7 +204,7 @@ public class EffectSystemTests {
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void testNested2() throws ParseException {
+    public void testNested2() throws ParseException, BreakException {
         /* An object in a module's immutable field defines an effect
          * and uses it in a method annotation inside that object.
          * Then that effect is used from outside the module. */
@@ -211,19 +212,19 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork() throws ParseException {
+    public void testNetwork() throws ParseException, BreakException {
         /* Declared in type and module; defined in module; method annotations in both. */
         TestUtil.doTestScriptModularly(PATH, "effects.testNetwork", Util.stringType(), new StringLiteral("Network with effects"));
     }
 
     @Test
-    public void testNetwork1() throws ParseException {
+    public void testNetwork1() throws ParseException, BreakException {
         /* Type and module with no annotations. */
         TestUtil.doTestScriptModularly(PATH, "effects.testNetwork1", Util.stringType(), new StringLiteral("Network1 without effects"));
     }
 
     @Test
-    public void testNetwork2() throws ParseException {
+    public void testNetwork2() throws ParseException, BreakException {
         /* No effect declarations. Undefined method annotations in module (doesn't match the valid type signature,
          * to isolate testing for just method-checking in module). */
         expectedException.expect(ToolError.class);
@@ -233,14 +234,14 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork3() throws ParseException {
+    public void testNetwork3() throws ParseException, BreakException {
         /* In addition to declarations (not defined) and method annotations in type,
          * additional declaration and definition in module. */
         TestUtil.doTestScriptModularly(PATH, "effects.testNetwork3", Util.stringType(), new StringLiteral("Network3 with effects"));
     }
 
     @Test
-    public void testNetwork4() throws ParseException {
+    public void testNetwork4() throws ParseException, BreakException {
         /* Parse error due to an effect annotation not being enclosed in "{}" in a method annotation;
          * also the effect is undefined. */
         expectedException.expect(ToolError.class);
@@ -252,7 +253,7 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork5() throws ParseException {
+    public void testNetwork5() throws ParseException, BreakException {
         /* Parse error due to an effect annotation not being enclosed in "{}" in a method annotation in a module;
          * however, the effect is defined. */
         expectedException.expect(ToolError.class);
@@ -264,7 +265,7 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork6() throws ParseException {
+    public void testNetwork6() throws ParseException, BreakException {
         /* Parse error due to an effect in the right-hand side of an effect definition not being enclosed in "{}" in a module. */
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString("Parse error: Encountered \"something\""));
@@ -275,13 +276,13 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork7() throws ParseException {
+    public void testNetwork7() throws ParseException, BreakException {
         /* Two effect declarations, one of which is defined in type; method annotations in both type and module. */
         TestUtil.doTestScriptModularly(PATH, "effects.testNetwork7", Util.stringType(), new StringLiteral("Network7 with effects"));
     }
 
     @Test
-    public void testNetwork8() throws ParseException {
+    public void testNetwork8() throws ParseException, BreakException {
         /* Invalid effect (actually DSL block instead) due to the module having "effect receive = {{}}". */
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString("Invalid characters for effect--should not be a DSL block: "
@@ -292,25 +293,25 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork9() throws ParseException {
+    public void testNetwork9() throws ParseException, BreakException {
         /* No method annotations despite effect declarations in type and module. */
         TestUtil.doTestScriptModularly(PATH, "effects.testNetwork9", Util.stringType(), new StringLiteral("Network9 with effects"));
     }
 
     @Test
-    public void testNetwork10() throws ParseException {
+    public void testNetwork10() throws ParseException, BreakException {
         /* Globally available effects defined in a pure module. */
         TestUtil.doTestScriptModularly(PATH, "effects.testNetwork10", Util.stringType(), new StringLiteral("Network10 with effects"));
     }
 
     @Test
-    public void testNetwork11() throws ParseException {
+    public void testNetwork11() throws ParseException, BreakException {
         /* All effects defined in type and module. */
         TestUtil.doTestScriptModularly(PATH, "effects.testNetwork11", Util.stringType(), new StringLiteral("Network11 with effects"));
     }
 
     @Test
-    public void testNetwork12() throws ParseException {
+    public void testNetwork12() throws ParseException, BreakException {
         /* Parse error due to an effect being undefined in a module. */
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString("Parse error: Encountered \"\""));
@@ -321,7 +322,7 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork13() throws ParseException {
+    public void testNetwork13() throws ParseException, BreakException {
         /* Nonexistent effect in method annotation in type (not in module);
          * error should be reported before module is evaluated). */
         expectedException.expect(ToolError.class);
@@ -330,7 +331,7 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork14() throws ParseException {
+    public void testNetwork14() throws ParseException, BreakException {
         /* A field is used in a method effect annotation in a type. */
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString("Effect \"n\" is undefined"));
@@ -338,7 +339,7 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork15() throws ParseException {
+    public void testNetwork15() throws ParseException, BreakException {
         /* Bogus right-hand side of an effect definition in a module;
          * the effect was left undefined in the type and isn't actually used
          * in any method annotation (so that we can be sure that the checking is happening upon definition). */
@@ -349,7 +350,7 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork16() throws ParseException {
+    public void testNetwork16() throws ParseException, BreakException {
         /* Trying to use a nonexistent effect of an object in scope in a module;
          * the effect was left undefined in the type and is not actually used
          * in any method annotation (so that we can be sure that the checking is happening upon definition). */
@@ -362,7 +363,7 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork17() throws ParseException {
+    public void testNetwork17() throws ParseException, BreakException {
         /* Incorrect effect definition (effect receive = {something}, should report error here)
          * and method annotation (def sendData(data : String) : {error} Unit) -- both in type signature *only*,
          * to isolate testing in type signature. */
@@ -373,19 +374,19 @@ public class EffectSystemTests {
     }
 
     @Test
-    public void testNetwork18() throws ParseException {
+    public void testNetwork18() throws ParseException, BreakException {
         /* An effect defined in a pure module is used in a method annotation in the same module. */
         TestUtil.doTestScriptModularly(PATH, "effects.testNetwork18", Util.stringType(), new StringLiteral("Network18 with effects"));
     }
 
     @Test
-    public void testNetwork19() throws ParseException {
+    public void testNetwork19() throws ParseException, BreakException {
         /* An effect defined in a pure module is used in another effect definition in the same module. */
         TestUtil.doTestScriptModularly(PATH, "effects.testNetwork19", Util.stringType(), new StringLiteral("Network19 with effects"));
     }
 
     @Test
-    public void testObjNetwork() throws ParseException {
+    public void testObjNetwork() throws ParseException, BreakException {
         /* Object with effect annotations. */
         TestUtil.doTestScriptModularly(PATH, "effects.objNetwork", Util.stringType(), new StringLiteral("ObjNetwork with effects"));
     }

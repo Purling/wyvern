@@ -3,6 +3,7 @@ package wyvern.target.corewyvernIL.type;
 import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.ASTNode;
 import wyvern.target.corewyvernIL.IASTNode;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
@@ -18,7 +19,7 @@ public abstract class Type extends ASTNode implements IASTNode {
         super(loc);
     }
     public abstract ValueType getValueType();
-    public abstract NominalType getParentType(View view);
+    public abstract NominalType getParentType(View view) throws BreakException;
 
     /**
      * Returns a type that is equivalent to this type
@@ -26,12 +27,12 @@ public abstract class Type extends ASTNode implements IASTNode {
      * then a type of the form x.g.T will be mapped to the
      * type y.f.g.T
      */
-    public abstract Type adapt(View v);
+    public abstract Type adapt(View v) throws BreakException;
 
     /**
      * Checks if this type is well-formed, throwing an exception if not
      */
-    public abstract void checkWellFormed(TypeContext ctx);
+    public abstract void checkWellFormed(TypeContext ctx) throws BreakException;
 
     public BytecodeOuterClass.TypeDesc emitBytecodeTypeDesc() {
         System.out.println("emitBytecode not implemented for " + this.getClass().getName());
@@ -39,11 +40,11 @@ public abstract class Type extends ASTNode implements IASTNode {
     }
 
     // TODO: depth limit is hacky, find a more principled approach to avoidance
-    public abstract Type doAvoid(String varName, TypeContext ctx, int depth);
-    public abstract boolean isTagged(TypeContext ctx);
-    public abstract boolean isTSubtypeOf(Type sourceType, TypeContext ctx, FailureReason reason);
+    public abstract Type doAvoid(String varName, TypeContext ctx, int depth) throws BreakException;
+    public abstract boolean isTagged(TypeContext ctx) throws BreakException;
+    public abstract boolean isTSubtypeOf(Type sourceType, TypeContext ctx, FailureReason reason) throws BreakException;
     
-    public static boolean typesEquiv(ValueType t1, ValueType t2, TypeContext ctx, FailureReason reason) {
+    public static boolean typesEquiv(ValueType t1, ValueType t2, TypeContext ctx, FailureReason reason) throws BreakException {
         if (t1 == null && t2 == null) {
             return true;
         }

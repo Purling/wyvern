@@ -21,9 +21,9 @@ import wyvern.tools.errors.HasLocation;
 public interface CallableExprGenerator {
     IExpr genExpr(FileLocation loc);
 
-    IExpr genExprWithArgs(List<? extends IExpr> args, HasLocation loc, boolean isTailCall, TypeContext ctx);
+    IExpr genExprWithArgs(List<? extends IExpr> args, HasLocation loc, boolean isTailCall, TypeContext ctx) throws BreakException;
 
     /* Returns null if no argument type is expected */
-    DefDeclType getDeclType(TypeContext ctx);
+    DefDeclType getDeclType(TypeContext ctx) throws BreakException;
 
 }

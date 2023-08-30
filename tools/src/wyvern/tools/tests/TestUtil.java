@@ -7,6 +7,7 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.util.LinkedList;
 
+import edu.umn.cs.melt.copper.runtime.logging.CopperParserException;
 import org.junit.Assert;
 
 import wyvern.stdlib.Globals;
@@ -21,6 +22,7 @@ import wyvern.target.corewyvernIL.expression.SeqExpr;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.modules.Module;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.InterpreterState;
@@ -213,7 +215,7 @@ public final class TestUtil {
         TaggedInfo.clearGlobalTaggedInfos();
     }
 
-    public static void doTestScript(String fileName, ValueType expectedType, Value expectedValue) throws ParseException {
+    public static void doTestScript(String fileName, ValueType expectedType, Value expectedValue) throws ParseException, BreakException {
         String source = TestUtil.readFile(BASE_PATH + fileName);
         ExpressionAST ast = (ExpressionAST) TestUtil.getNewAST(source, "test input");
         InterpreterState state = new InterpreterState(InterpreterState.PLATFORM_JAVA, new File(TestUtil.BASE_PATH), null);
@@ -222,12 +224,12 @@ public final class TestUtil {
         TestUtil.doChecks(program, expectedType, expectedValue, true);
     }
 
-    public static void doTestInt(String input, int expectedIntResult) throws ParseException {
+    public static void doTestInt(String input, int expectedIntResult) throws ParseException, BreakException {
         TestUtil.doTest(input, Util.intType(), new IntegerLiteral(expectedIntResult));
     }
 
     // TODO: make other string tests call this function
-    public static void doTest(String input, ValueType expectedType, Value expectedResult) throws ParseException {
+    public static void doTest(String input, ValueType expectedType, Value expectedResult) throws ParseException, BreakException {
         ExpressionAST ast = (ExpressionAST) getNewAST(input, "test input");
         GenContext genCtx = Globals.getGenContext(getInterpreterState());
         final LinkedList<TypedModuleSpec> dependencies = new LinkedList<TypedModuleSpec>();
@@ -247,12 +249,12 @@ public final class TestUtil {
     }
 
     // TODO: make other script tests call this function
-    public static void doTestScriptModularly(String qualifiedName, ValueType expectedType, Value expectedValue) throws ParseException {
+    public static void doTestScriptModularly(String qualifiedName, ValueType expectedType, Value expectedValue) throws ParseException, BreakException {
         doTestScriptModularly(BASE_PATH, qualifiedName, expectedType, expectedValue);
     }
 
     // TODO: make other script tests call this function
-    public static void doTestScriptModularlyFailing(String qualifiedName, ErrorMessage expectedMessage) throws ParseException {
+    public static void doTestScriptModularlyFailing(String qualifiedName, ErrorMessage expectedMessage) throws ParseException, BreakException {
         try {
             doTestScriptModularly(BASE_PATH, qualifiedName, null, null);
         } catch (ToolError e) {
@@ -261,16 +263,16 @@ public final class TestUtil {
         }
     }
 
-    public static void doParseTypeModularly(String searchPath, String qualifiedName) throws ParseException {
+    public static void doParseTypeModularly(String searchPath, String qualifiedName) throws ParseException, BreakException {
         InterpreterState state = new InterpreterState(InterpreterState.PLATFORM_JAVA, new File(searchPath), new File(LIB_PATH));
         state.getResolver().resolveType(qualifiedName, null);
     }
 
-    public static void doTestScriptModularly(String searchPath, String qualifiedName, ValueType expectedType, Value expectedValue) throws ParseException {
+    public static void doTestScriptModularly(String searchPath, String qualifiedName, ValueType expectedType, Value expectedValue) throws ParseException, BreakException {
         doTestScriptModularly(searchPath, qualifiedName, expectedType, expectedValue, true);
     }
     public static void doTestScriptModularly(String searchPath, String qualifiedName, ValueType expectedType, Value expectedValue, boolean doRun)
-            throws ParseException {
+            throws ParseException, BreakException {
         InterpreterState state = new InterpreterState(InterpreterState.PLATFORM_JAVA, new File(searchPath), new File(LIB_PATH));
         final Module module = state.getResolver().resolveModule(qualifiedName, true, false);
         IExpr program = state.getResolver().wrap(module.getExpression(), module.getDependencies());
@@ -278,7 +280,7 @@ public final class TestUtil {
         TestUtil.doChecks(program, expectedType, expectedValue, doRun);
     }
 
-    public static void doChecks(IExpr program, ValueType expectedType, Value expectedValue, boolean doRun) {
+    public static void doChecks(IExpr program, ValueType expectedType, Value expectedValue, boolean doRun) throws BreakException {
         // resolveModule already typechecked, but we'll do it again to verify the type
         TypeContext ctx = Globals.getStandardTypeContext();
         ValueType t = null;
@@ -305,7 +307,7 @@ public final class TestUtil {
     }
 
     /** Evaluates the input, using the interpreter state from the current thread if possible */
-    public static Value evaluate(String input) throws ParseException {
+    public static Value evaluate(String input) throws ParseException, BreakException {
         // Parse to AST
         ExpressionAST ast = (ExpressionAST) getNewAST(input, "eval input");
 
@@ -327,7 +329,7 @@ public final class TestUtil {
         return program.interpret(Globals.getStandardEvalContext());
     }
 
-    public static void doTestModule(String input, String fieldName, ValueType expectedType, Value expectedValue) throws ParseException {
+    public static void doTestModule(String input, String fieldName, ValueType expectedType, Value expectedValue) throws ParseException, BreakException {
         TypedAST ast = TestUtil.getNewAST(input, "test input");
         GenContext genCtx = Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA, null, null));
         wyvern.target.corewyvernIL.decl.Declaration decl = ((Declaration) ast).topLevelGen(genCtx, new LinkedList<TypedModuleSpec>());
@@ -336,7 +338,7 @@ public final class TestUtil {
         doChecks(program, expectedType, expectedValue, true);
     }
 
-    public static void doTestTypeFail(String input) throws ParseException {
+    public static void doTestTypeFail(String input) throws ParseException, BreakException {
         ExpressionAST ast = (ExpressionAST) TestUtil.getNewAST(input, "test input");
         GenContext genCtx = Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA, null, null));
         try {
@@ -347,7 +349,7 @@ public final class TestUtil {
         }
     }
 
-    public static void doTestTypeFailOnLine(String input, int line) throws ParseException {
+    public static void doTestTypeFailOnLine(String input, int line) throws ParseException, BreakException {
         ExpressionAST ast = (ExpressionAST) TestUtil.getNewAST(input, "test input");
         GenContext genCtx = Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA, null, null));
         try {

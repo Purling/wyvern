@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import wyvern.target.corewyvernIL.expression.Variable;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
@@ -71,7 +72,13 @@ public class EffectSet {
     /** Check that all effects in the set are well-formed, reports an error upon the first not found. */
     public void effectsCheck(TypeContext ctx) {
         if (getEffects() != null) {
-            getEffects().stream().forEach(e -> e.effectCheck(ctx));
+            getEffects().stream().forEach(e -> {
+                try {
+                    e.effectCheck(ctx);
+                } catch (BreakException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
         }
     }
 
@@ -80,7 +87,13 @@ public class EffectSet {
     public void verifyInType(GenContext ctx) {
         if (getEffects() != null) {
             // TODO: what's below should check out, except verifyInType is called a lot when the effects still are on a null variable
-            getEffects().stream().forEach(e -> e.findEffectDeclType(ctx));
+            getEffects().stream().forEach(e -> {
+                try {
+                    e.findEffectDeclType(ctx);
+                } catch (BreakException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
         }
     }
 
@@ -89,7 +102,7 @@ public class EffectSet {
     /**
      * Check if this effect set is a subeffect of es
      */
-    public boolean isSubeffectOf(EffectSet es, TypeContext ctx) {
+    public boolean isSubeffectOf(EffectSet es, TypeContext ctx) throws BreakException {
         Set<Effect> effects1 = getEffects();
         Set<Effect> effects2 = es.getEffects();
 
@@ -158,7 +171,7 @@ public class EffectSet {
      * @param e Expose the definition of e
      * @return The effect set after decomposition, or null if e can't be decomposed
      */
-    private EffectSet decomposeEffectSet(EffectSet effects, Effect e, DecomposeType t, TypeContext ctx) {
+    private EffectSet decomposeEffectSet(EffectSet effects, Effect e, DecomposeType t, TypeContext ctx) throws BreakException {
         //TODO I don't understand why I need h
         Set<Effect> h = new HashSet<>(effects.getEffects());
         assert (h.contains(e));
@@ -213,7 +226,7 @@ public class EffectSet {
      * Avoid variables and effect set stays the same
      * @return Effect set if avoidance is possible, null if not possible
      */
-    public EffectSet exactAvoid(String varName, TypeContext ctx, int count) {
+    public EffectSet exactAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         if (effectSet.isEmpty()) {
             return this;
         }
@@ -233,7 +246,7 @@ public class EffectSet {
      * Avoid variables, and allows increase in effect set
      * @return Effect set if avoidance is possible, null if not possible
      */
-    public EffectSet increasingAvoid(String varName, TypeContext ctx, int count) {
+    public EffectSet increasingAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         if (effectSet.isEmpty()) {
             return this;
         }
@@ -253,7 +266,7 @@ public class EffectSet {
      * Avoid variables and allows decrease in effect set
      * @return Effect set if avoidance is possible, null if not possible
      */
-    public EffectSet decreasingAvoid(String varName, TypeContext ctx, int count) {
+    public EffectSet decreasingAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         if (effectSet.isEmpty()) {
             return this;
         }
@@ -269,7 +282,7 @@ public class EffectSet {
         return new EffectSet(newSet);
     }
 
-    public EffectSet doAvoid(String varName, TypeContext ctx, int count) {
+    public EffectSet doAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         return increasingAvoid(varName, ctx, count);
     }
 
@@ -282,7 +295,7 @@ public class EffectSet {
     }
 
     /** replaces variables in the effects with the corresponding gen expressions, where they exist */
-    public void contextualize(GenContext ctx) {
+    public void contextualize(GenContext ctx) throws BreakException {
         if (effectSet.isEmpty()) {
             return;
         }

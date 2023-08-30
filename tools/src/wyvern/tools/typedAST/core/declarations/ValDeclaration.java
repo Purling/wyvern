@@ -6,6 +6,7 @@ import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.ValDeclType;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -67,12 +68,12 @@ public class ValDeclaration extends Declaration implements CoreAST {
 
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
         return visitor.visit(state, this);
     }
 
     @Override
-    public void genTopLevel(TopLevelContext tlc) {
+    public void genTopLevel(TopLevelContext tlc) throws BreakException {
         ValueType declType = getILValueType(tlc.getContext());
 
         // obtain LHS and RHS types and expressions
@@ -99,7 +100,7 @@ public class ValDeclaration extends Declaration implements CoreAST {
 
     // raises an error if the type is null
     @Override
-    public void checkAnnotated(GenContext ctxWithoutThis) {
+    public void checkAnnotated(GenContext ctxWithoutThis) throws BreakException {
         if (binding.getType() == null) {
             try {
                 ValueType vt = getILValueType(ctxWithoutThis);
@@ -110,12 +111,12 @@ public class ValDeclaration extends Declaration implements CoreAST {
     }
     
     @Override
-    public DeclType genILType(GenContext ctx) {
+    public DeclType genILType(GenContext ctx) throws BreakException {
         ValueType vt = getILValueType(ctx);
         return new ValDeclType(getName(), vt);
     }
 
-    private ValueType getILValueType(GenContext ctx) {
+    private ValueType getILValueType(GenContext ctx) throws BreakException {
         /* this method does not work properly if called when the variable being
          * declared has already been added to ctx.  We solve this problem by
          * caching the value resulting from the first time this method is
@@ -145,7 +146,7 @@ public class ValDeclaration extends Declaration implements CoreAST {
     }
 
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
+    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) throws BreakException {
 
         ValueType expectedType = getILValueType(thisContext);
         /* uses ctx for generating the definition, as the selfName is not in scope */
@@ -159,7 +160,7 @@ public class ValDeclaration extends Declaration implements CoreAST {
     }
 
     @Override
-    public void addModuleDecl(TopLevelContext tlc) {
+    public void addModuleDecl(TopLevelContext tlc) throws BreakException {
         wyvern.target.corewyvernIL.decl.Declaration decl =
                 new wyvern.target.corewyvernIL.decl.ValDeclaration(getName(),
                         getILValueType(tlc.getContext()),

@@ -16,6 +16,7 @@ import wyvern.target.corewyvernIL.astvisitor.PlatformSpecializationVisitor;
 import wyvern.target.corewyvernIL.astvisitor.TailCallVisitor;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.Module;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.Util;
@@ -33,7 +34,7 @@ import wyvern.tools.typedAST.interfaces.TypedAST;
 public final class PythonCompiler {
     private PythonCompiler() { }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws BreakException {
         if (args.length < 1) {
             System.err.println("usage: wypy FILENAME [-o OUTPUT_FILE] [-dIL] [-dAST]");
             System.exit(1);

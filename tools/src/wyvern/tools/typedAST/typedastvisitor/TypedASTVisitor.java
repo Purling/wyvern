@@ -1,5 +1,6 @@
 package wyvern.tools.typedAST.typedastvisitor;
 
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.tools.parsing.DSLLit;
 import wyvern.tools.typedAST.core.Script;
 import wyvern.tools.typedAST.core.Sequence;
@@ -38,27 +39,27 @@ import wyvern.tools.typedAST.core.values.RationalConstant;
 
 public abstract class TypedASTVisitor<S, T> {
     public abstract T visit(S state, NameBindingImpl ast);
-    public abstract T visit(S state, DeclSequence ast);
-    public abstract T visit(S state, DefDeclaration ast);
+    public abstract T visit(S state, DeclSequence ast) throws BreakException;
+    public abstract T visit(S state, DefDeclaration ast) throws BreakException;
     public abstract T visit(S state, ForwardDeclaration ast);
     public abstract T visit(S state, EffectDeclaration ast);
     public abstract T visit(S state, ImportDeclaration ast);
     public abstract T visit(S state, Instantiation ast);
-    public abstract T visit(S state, ModuleDeclaration ast);
+    public abstract T visit(S state, ModuleDeclaration ast) throws BreakException;
     public abstract T visit(S state, TypeAbbrevDeclaration ast);
     public abstract T visit(S state, TypeDeclaration ast);
     public abstract T visit(S state, TypeVarDecl ast);
-    public abstract T visit(S state, ValDeclaration ast);
-    public abstract T visit(S state, VarDeclaration ast);
-    public abstract T visit(S state, Application ast);
+    public abstract T visit(S state, ValDeclaration ast) throws BreakException;
+    public abstract T visit(S state, VarDeclaration ast) throws BreakException;
+    public abstract T visit(S state, Application ast) throws BreakException;
     public abstract T visit(S state, Assertion ast);
-    public abstract T visit(S state, Assignment ast);
-    public abstract T visit(S state, Case ast);
-    public abstract T visit(S state, Fn ast);
-    public abstract T visit(S state, Invocation ast);
-    public abstract T visit(S state, LetExpr ast);
-    public abstract T visit(S state, Match ast);
-    public abstract T visit(S state, New ast);
+    public abstract T visit(S state, Assignment ast) throws BreakException;
+    public abstract T visit(S state, Case ast) throws BreakException;
+    public abstract T visit(S state, Fn ast) throws BreakException;
+    public abstract T visit(S state, Invocation ast) throws BreakException;
+    public abstract T visit(S state, LetExpr ast) throws BreakException;
+    public abstract T visit(S state, Match ast) throws BreakException;
+    public abstract T visit(S state, New ast) throws BreakException;
     public abstract T visit(S state, TaggedInfo ast);
     public abstract T visit(S state, Variable ast);
     public abstract T visit(S state, RationalConstant ast);
@@ -69,7 +70,7 @@ public abstract class TypedASTVisitor<S, T> {
     public abstract T visit(S state, StringConstant ast);
     public abstract T visit(S state, UnitVal ast);
     public abstract T visit(S state, Script ast);
-    public abstract T visit(S state, Sequence ast);
+    public abstract T visit(S state, Sequence ast) throws BreakException;
     public abstract T visit(S state, DSLLit ast);
     public abstract T visit(S state, Try ast);
 }

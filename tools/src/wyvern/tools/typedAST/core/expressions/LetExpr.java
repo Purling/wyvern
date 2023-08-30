@@ -5,6 +5,7 @@ import java.util.List;
 
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.FileLocation;
@@ -48,7 +49,7 @@ public class LetExpr extends AbstractExpressionAST implements CoreAST {
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
         return visitor.visit(state, this);
     }
 

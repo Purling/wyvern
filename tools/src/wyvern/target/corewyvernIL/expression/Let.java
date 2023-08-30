@@ -8,6 +8,7 @@ import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -53,7 +54,7 @@ public class Let extends Expression {
     }
 
     @Override
-    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
         /*ValueType t = getToReplace().typeCheck(ctx, effectAccumulator);
         if (!t.isSubtypeOf(binding.getType(), ctx)) {
             ValueType q = binding.getType();
@@ -80,12 +81,12 @@ public class Let extends Expression {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public Value interpret(EvalContext ctx) {
+    public Value interpret(EvalContext ctx) throws BreakException {
         EvalContext extendedCtx = binding.interpret(ctx);
         //Value v = getToReplace().interpret(ctx);
         return inExpr.interpret(extendedCtx); //ctx.extend(getVarName(), v));

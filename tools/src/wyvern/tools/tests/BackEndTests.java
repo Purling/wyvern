@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import wyvern.stdlib.Globals;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.BytecodeCompiler;
 import wyvern.tools.imports.extensions.WyvernResolver;
@@ -35,7 +36,7 @@ public class BackEndTests {
   }
 
   @Test
-  public void testVerifier() throws ParseException {
+  public void testVerifier() throws ParseException, BreakException {
       // generate bytecode for examples/verification/verifyTest.wyv
       BytecodeCompiler.wyvernHome.set(TestUtil.WYVERN_HOME);
       BytecodeCompiler.main(new String[] {"../examples/verification/verifyTest.wyv"});

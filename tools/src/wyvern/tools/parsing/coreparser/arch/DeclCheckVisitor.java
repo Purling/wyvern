@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
@@ -209,8 +210,12 @@ public class DeclCheckVisitor extends ArchParserDefaultVisitor {
                     node.getLocation(), node.getTypeName());
         }
         node.collectPorts();
-        if (node.checkModule(state)) {
-            componentTypes.put(node.getTypeName(), node);
+        try {
+            if (node.checkModule(state)) {
+                componentTypes.put(node.getTypeName(), node);
+            }
+        } catch (BreakException e) {
+            throw new RuntimeException(e);
         }
         return super.visit(node, data);
     }
@@ -222,8 +227,12 @@ public class DeclCheckVisitor extends ArchParserDefaultVisitor {
                     node.getLocation(), node.getTypeName());
         }
         node.collectVals();
-        if (node.checkModule(state)) {
-            connectorTypes.add(node.getTypeName());
+        try {
+            if (node.checkModule(state)) {
+                connectorTypes.add(node.getTypeName());
+            }
+        } catch (BreakException e) {
+            throw new RuntimeException(e);
         }
         return super.visit(node, data);
     }

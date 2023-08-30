@@ -17,6 +17,7 @@ import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.MethodCall;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
 import wyvern.target.corewyvernIL.type.StructuralType;
@@ -108,7 +109,7 @@ public class DefDeclaration extends DeclarationWithGenerics implements CoreAST, 
         return name;
     }
 
-    public EffectSet getEffectSet(GenContext ctx) {
+    public EffectSet getEffectSet(GenContext ctx) throws BreakException {
         if (!adapted && effectSet != null) {
             effectSet.contextualize(ctx);
             adapted = true;
@@ -118,7 +119,7 @@ public class DefDeclaration extends DeclarationWithGenerics implements CoreAST, 
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
         return visitor.visit(state, this);
     }
 
@@ -140,7 +141,7 @@ public class DefDeclaration extends DeclarationWithGenerics implements CoreAST, 
     }
 
     @Override
-    public DeclType genILType(GenContext ctx) {
+    public DeclType genILType(GenContext ctx) throws BreakException {
         List<FormalArg> args = new LinkedList<FormalArg>();
 
         ctx = this.serializeArguments(args, ctx);
@@ -149,7 +150,7 @@ public class DefDeclaration extends DeclarationWithGenerics implements CoreAST, 
         return ret;
     }
 
-    private GenContext serializeArguments(List<FormalArg> args, GenContext ctx) {
+    private GenContext serializeArguments(List<FormalArg> args, GenContext ctx) throws BreakException {
         if (isGeneric()) {
             GenContext[] contexts = new GenContext[1];
             contexts[0] = ctx;
@@ -176,12 +177,12 @@ public class DefDeclaration extends DeclarationWithGenerics implements CoreAST, 
         return a.getName().startsWith(GENERIC_PREFIX);
     }
 
-    private ValueType getResultILType(GenContext ctx) {
+    private ValueType getResultILType(GenContext ctx) throws BreakException {
         return returnType.getILType(ctx);
     }
 
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
+    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) throws BreakException {
         List<FormalArg> args = new LinkedList<FormalArg>();
         GenContext methodContext = thisContext;
 
@@ -213,12 +214,12 @@ public class DefDeclaration extends DeclarationWithGenerics implements CoreAST, 
 
 
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) {
+    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) throws BreakException {
         return generateDecl(ctx, ctx);
     }
 
     @Override
-    public void addModuleDecl(TopLevelContext tlc) {
+    public void addModuleDecl(TopLevelContext tlc) throws BreakException {
         /*List<Expression> args = new LinkedList<Expression>();
         for (NameBinding arg : argNames) {
             args.add(new Variable(arg.getName()));

@@ -21,6 +21,7 @@ import wyvern.target.corewyvernIL.astvisitor.EmitOIRVisitor;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.oir.EmitPythonVisitor;
 import wyvern.target.oir.OIRAST;
@@ -41,11 +42,11 @@ public class FFITests {
         WyvernResolver.getInstance().addPath(PATH);
     }
 
-    private void testPyFromInput(String input, String expected) throws ParseException {
+    private void testPyFromInput(String input, String expected) throws ParseException, BreakException {
         testPyFromInput(input, expected, false);
     }
 
-    private void testPyFromInput(String input, String expected, boolean debug) throws ParseException {
+    private void testPyFromInput(String input, String expected, boolean debug) throws ParseException, BreakException {
         // Since the root OIR environment is stateful, reset it between tests
         OIREnvironment.resetRootEnvironment();
         ExpressionAST ast = (ExpressionAST) TestUtil.getNewAST(input, "test input");
@@ -122,7 +123,7 @@ public class FFITests {
     }
 
     @Test
-    public void testPythonImport() throws ParseException {
+    public void testPythonImport() throws ParseException, BreakException {
         String input =
                 "import python:math\n\n"
                       + "type MathType\n"
@@ -136,7 +137,7 @@ public class FFITests {
     }
 
     @Test
-    public void testPythonMultipleImports() throws ParseException {
+    public void testPythonMultipleImports() throws ParseException, BreakException {
         String input =
                 "import python:math\n"
                       + "import python:json\n"

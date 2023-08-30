@@ -7,6 +7,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 
 import wyvern.target.corewyvernIL.expression.StringLiteral;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
@@ -34,13 +35,13 @@ public class FileTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void stdlib() throws ParseException {
+    public void stdlib() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "script", Util.stringType(), new StringLiteral("abc"));
     }
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void editor() throws ParseException {
+    public void editor() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH2, "editor.main", Util.stringType(), new StringLiteral("abc"));
     }
 }

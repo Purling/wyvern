@@ -7,6 +7,7 @@ import org.junit.experimental.categories.Category;
 
 import wyvern.stdlib.Globals;
 import wyvern.target.corewyvernIL.expression.IntegerLiteral;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.Interpreter;
 import wyvern.tools.errors.ErrorMessage;
@@ -28,12 +29,12 @@ public class ILTestsWithPrelude {
     }
 
     @Test
-    public void testIf() throws ParseException {
+    public void testIf() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("tsls.cleanIf", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testListLength() throws ParseException {
+    public void testListLength() throws ParseException, BreakException {
         String src
         = "import wyvern.collections.list\n"
                 + "val x : list.List[Int] = list.make[Int]()\n"
@@ -44,19 +45,19 @@ public class ILTestsWithPrelude {
     }
 
     @Test
-    public void testInterpreterOnScript() {
+    public void testInterpreterOnScript() throws BreakException {
         String[] args = new String[] {TestUtil.EXAMPLES_PATH + "rosetta/hello.wyv"};
         Interpreter.wyvernHome.set("..");
         Interpreter.main(args);
     }
 
     @Test
-    public void testPreviousTopLevelBug() throws ParseException {
+    public void testPreviousTopLevelBug() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("modules.topLevelBug", null, null);
     }
 
     @Test
-    public void testListGet() throws ParseException {
+    public void testListGet() throws ParseException, BreakException {
         String src
         = "import wyvern.collections.list\n"
                 + "val x : list.List[Int] = list.make[Int]()\n"
@@ -67,7 +68,7 @@ public class ILTestsWithPrelude {
     }
 
     @Test
-    public void testListTSL() throws ParseException {
+    public void testListTSL() throws ParseException, BreakException {
         String src
         = "import metadata wyvern.collections.list\n"
                 + "val l : list.List[Int] = {1, 2, 3, 4}\n"
@@ -76,32 +77,32 @@ public class ILTestsWithPrelude {
     }
 
     @Test
-    public void testTSL2() throws ParseException {
+    public void testTSL2() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("tsls.identityClient", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testTSL3() throws ParseException {
+    public void testTSL3() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("tsls.trivialClient", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testTSL4() throws ParseException {
+    public void testTSL4() throws ParseException, BreakException {
         TestUtil.doTestScriptModularlyFailing("tsls.failingClient", ErrorMessage.TSL_ERROR);
     }
 
     @Test
-    public void testPostTSLIndentation() throws ParseException {
+    public void testPostTSLIndentation() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("tsls.postTSLIndentation", Util.intType(), new IntegerLiteral(23));
     }
 
     @Test
-    public void testFunctionInType() throws ParseException {
+    public void testFunctionInType() throws ParseException, BreakException {
         TestUtil.doTestScriptModularlyFailing("errors.ReturnTypeBug", ErrorMessage.QUALIFIED_TYPES_ONLY_FIELDS);
     }
 
     @Test
-    public void testMetadataInterpretation() throws ParseException {
+    public void testMetadataInterpretation() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("modules.importWithMetadata", null, null);
     }
 

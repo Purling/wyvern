@@ -1,5 +1,6 @@
 package wyvern.tools.types.extensions;
 
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.RefinementType;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -30,7 +31,7 @@ public class TypeExtension extends AbstractTypeImpl implements Type {
     }
     
     @Override
-    public ValueType getILType(GenContext ctx) {
+    public ValueType getILType(GenContext ctx) throws BreakException {
         final ValueType baseType = base.getILType(ctx);
         /*List<ConcreteTypeMember> decls = new LinkedList<ConcreteTypeMember>();
         StructuralType st = baseType.getStructuralType(ctx);
@@ -50,7 +51,13 @@ public class TypeExtension extends AbstractTypeImpl implements Type {
 
         return new RefinementType(
                 this.genericArguments.stream()
-                        .map(arg -> wyvern.target.corewyvernIL.generics.GenericArgument.fromHighLevel(ctx, this.getLocation(), arg))
+                        .map(arg -> {
+                            try {
+                                return wyvern.target.corewyvernIL.generics.GenericArgument.fromHighLevel(ctx, this.getLocation(), arg);
+                            } catch (BreakException e) {
+                                throw new RuntimeException(e);
+                            }
+                        })
                         .collect(Collectors.toList()),
                 baseType,
                 this

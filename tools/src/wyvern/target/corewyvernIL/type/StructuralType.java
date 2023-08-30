@@ -17,6 +17,7 @@ import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
 import wyvern.target.corewyvernIL.decltype.VarDeclType;
 import wyvern.target.corewyvernIL.expression.Variable;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.GenContext;
@@ -162,7 +163,7 @@ public class StructuralType extends ValueType {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
         return emitILVisitor.visit(state, this);
     }
 
@@ -172,7 +173,7 @@ public class StructuralType extends ValueType {
     }
 
     @Override
-    public boolean isSubtypeOf(ValueType t, TypeContext ctx, FailureReason reason) {
+    public boolean isSubtypeOf(ValueType t, TypeContext ctx, FailureReason reason) throws BreakException {
 
         t = t.getCanonicalType(ctx);
         if (t instanceof DynamicType) {
@@ -220,7 +221,13 @@ public class StructuralType extends ValueType {
                 return false;
             }
             // filter ones that don't match
-            candidates.removeIf(c -> !c.isSubtypeOf(dt, extendedCtx, reason));
+            candidates.removeIf(c -> {
+                try {
+                    return !c.isSubtypeOf(dt, extendedCtx, reason);
+                } catch (BreakException e) {
+                    throw new RuntimeException(e);
+                }
+            });
             // if empty, error
             if (candidates.isEmpty()) {
                 if (!reason.isDefined()) {
@@ -281,7 +288,7 @@ public class StructuralType extends ValueType {
     }
 
     @Override
-    public ValueType adapt(View v) {
+    public ValueType adapt(View v) throws BreakException {
         List<DeclType> newDTs = new LinkedList<DeclType>();
         for (DeclType dt : getDeclTypes()) {
             newDTs.add(dt.adapt(v));
@@ -290,7 +297,7 @@ public class StructuralType extends ValueType {
     }
 
     @Override
-    public ValueType interpret(EvalContext ctx) {
+    public ValueType interpret(EvalContext ctx) throws BreakException {
         List<DeclType> newDTs = new LinkedList<DeclType>();
         for (DeclType dt : getDeclTypes()) {
             newDTs.add(dt.interpret(ctx));
@@ -299,7 +306,7 @@ public class StructuralType extends ValueType {
     }
 
     @Override
-    public void checkWellFormed(TypeContext ctx) {
+    public void checkWellFormed(TypeContext ctx) throws BreakException {
         boolean needsResource = false;
         final TypeContext selfCtx = ctx.extend(selfSite, this);
         for (DeclType dt : declTypes) {
@@ -312,7 +319,7 @@ public class StructuralType extends ValueType {
     }
 
     @Override
-    public ValueType doAvoid(String varName, TypeContext ctx, int count) {
+    public ValueType doAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         if (count > MAX_RECURSION_DEPTH) {
             ToolError.reportError(ErrorMessage.CANNOT_AVOID_VARIABLE, (HasLocation) null, varName);
         }

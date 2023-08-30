@@ -58,7 +58,7 @@ public final class QuantificationLifter {
      * @return The result of applying the quantification lifting transformation to the expression that was passed in, if
      * possible, or null if the transformation is not possible
      */
-    public static New liftIfPossible(final GenContext ctx, final IExpr expression, boolean isLifted) {
+    public static New liftIfPossible(final GenContext ctx, final IExpr expression, boolean isLifted) throws BreakException {
         if (!(expression instanceof New)) {
             return null;
         }
@@ -116,7 +116,7 @@ public final class QuantificationLifter {
      * @param functor The functor to lift
      * @return The result of applying the quantification lifting transformation to the functor that was passed in
      */
-    private static DefDeclaration lift(final GenContext ctx, final DefDeclaration functor) {
+    private static DefDeclaration lift(final GenContext ctx, final DefDeclaration functor) throws BreakException {
         // Construct new formal (generic) argument for the effect polymorphism
 
         final String genericName = wyvern.tools.typedAST.core.declarations.DefDeclaration.GENERIC_PREFIX + MONOMORPHIZED_EFFECT;
@@ -222,11 +222,17 @@ public final class QuantificationLifter {
     }
 
 
-    private static New handleNew(TypeContext ctx, DeclarationLifter declarationLifter, New oldNew) {
+    private static New handleNew(TypeContext ctx, DeclarationLifter declarationLifter, New oldNew) throws BreakException {
         // Construct new declarations
         List<Declaration> oldDeclarations = oldNew.getDecls();
         List<NamedDeclaration> newDeclarations = oldDeclarations.stream().map(
-                d -> d.acceptVisitor(declarationLifter, new State())
+                d -> {
+                    try {
+                        return d.acceptVisitor(declarationLifter, new State());
+                    } catch (BreakException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
         ).collect(Collectors.toList());
 
         // Construct new structural type
@@ -287,7 +293,7 @@ public final class QuantificationLifter {
 
         @Override
         // Transforms the nominal type into its structural type
-        public ValueType visit(State state, NominalType nominalType) {
+        public ValueType visit(State state, NominalType nominalType) throws BreakException {
             if (nominalType.equals(state.getNominalType())) {
                 // TODO (@justinlubin) recursive?
                 return nominalType;
@@ -307,14 +313,20 @@ public final class QuantificationLifter {
         public ValueType visit(State state, StructuralType structuralType) {
             final List<DeclType> oldDeclTypes = structuralType.getDeclTypes();
             final List<DeclType> newDeclTypes = oldDeclTypes.stream().map(dt ->
-                    dt.acceptVisitor(this.declTypeLifter, state)
+                    {
+                        try {
+                            return dt.acceptVisitor(this.declTypeLifter, state);
+                        } catch (BreakException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
             ).collect(Collectors.toList());
             return new StructuralType(structuralType.getSelfSite(), newDeclTypes, structuralType.isResource(this.ctx));
         }
 
         @Override
         // Transforms the refinement type into its structural type
-        public ValueType visit(State state, RefinementType refinementType) {
+        public ValueType visit(State state, RefinementType refinementType) throws BreakException {
             StructuralType st = refinementType.getStructuralType(this.ctx);
             return st == null ? null : st.acceptVisitor(this, state);
         }
@@ -347,21 +359,21 @@ public final class QuantificationLifter {
             }
 
             @Override
-            public DeclType visit(State state, VarDeclType varDeclType) {
+            public DeclType visit(State state, VarDeclType varDeclType) throws BreakException {
                 final ValueType oldType = varDeclType.getRawResultType();
                 final ValueType newType = oldType.acceptVisitor(TypeLifter.this, state);
                 return new VarDeclType(varDeclType.getName(), newType);
             }
 
             @Override
-            public DeclType visit(State state, ValDeclType valDeclType) {
+            public DeclType visit(State state, ValDeclType valDeclType) throws BreakException {
                 final ValueType oldType = valDeclType.getRawResultType();
                 final ValueType newType = oldType.acceptVisitor(TypeLifter.this, state);
                 return new ValDeclType(valDeclType.getName(), newType);
             }
 
             @Override
-            public DeclType visit(State state, DefDeclType defDeclType) {
+            public DeclType visit(State state, DefDeclType defDeclType) throws BreakException {
                 // Return type
                 final ValueType oldReturnType = defDeclType.getRawResultType();
                 final ValueType newReturnType = oldReturnType.acceptVisitor(TypeLifter.this, state);
@@ -370,10 +382,16 @@ public final class QuantificationLifter {
                 final List<FormalArg> oldFormalArgs = defDeclType.getFormalArgs();
                 final List<FormalArg> newFormalArgs =
                         oldFormalArgs.stream().map(arg ->
-                                new FormalArg(
-                                        arg.getSite(),
-                                        arg.getType().acceptVisitor(TypeLifter.this, state)
-                                )
+                                {
+                                    try {
+                                        return new FormalArg(
+                                                arg.getSite(),
+                                                arg.getType().acceptVisitor(TypeLifter.this, state)
+                                        );
+                                    } catch (BreakException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
                         ).collect(Collectors.toList());
 
                 // Effects
@@ -399,7 +417,7 @@ public final class QuantificationLifter {
             }
 
             @Override
-            public DeclType visit(State state, ConcreteTypeMember concreteTypeMember) {
+            public DeclType visit(State state, ConcreteTypeMember concreteTypeMember) throws BreakException {
                 final ValueType oldType = concreteTypeMember.getRawResultType();
                 final ValueType newType = oldType.acceptVisitor(TypeLifter.this, state);
                 return new ConcreteTypeMember(
@@ -441,21 +459,21 @@ public final class QuantificationLifter {
         }
 
         @Override
-        public NamedDeclaration visit(State state, VarDeclaration varDecl) {
+        public NamedDeclaration visit(State state, VarDeclaration varDecl) throws BreakException {
             final ValueType oldType = varDecl.getType();
             final ValueType newType = oldType.acceptVisitor(this.typeLifter, state);
             return new VarDeclaration(varDecl.getName(), newType, varDecl.getDefinition(), varDecl.getLocation());
         }
 
         @Override
-        public NamedDeclaration visit(State state, ValDeclaration valDecl) {
+        public NamedDeclaration visit(State state, ValDeclaration valDecl) throws BreakException {
             final ValueType oldType = valDecl.getType();
             final ValueType newType = oldType.acceptVisitor(this.typeLifter, state);
             return new ValDeclaration(valDecl.getName(), newType, valDecl.getDefinition(), valDecl.getLocation());
         }
 
         @Override
-        public NamedDeclaration visit(State state, DefDeclaration defDecl) {
+        public NamedDeclaration visit(State state, DefDeclaration defDecl) throws BreakException {
             // Return type
             final ValueType oldReturnType = defDecl.getType();
             final ValueType newReturnType = oldReturnType.acceptVisitor(this.typeLifter, state);
@@ -464,10 +482,16 @@ public final class QuantificationLifter {
             final List<FormalArg> oldFormalArgs = defDecl.getFormalArgs();
             final List<FormalArg> newFormalArgs =
                     oldFormalArgs.stream().map(arg ->
-                            new FormalArg(
-                                    arg.getSite(),
-                                    arg.getType().acceptVisitor(this.typeLifter, state)
-                            )
+                            {
+                                try {
+                                    return new FormalArg(
+                                            arg.getSite(),
+                                            arg.getType().acceptVisitor(this.typeLifter, state)
+                                    );
+                                } catch (BreakException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
                     ).collect(Collectors.toList());
 
             // Effects
@@ -503,7 +527,7 @@ public final class QuantificationLifter {
         }
 
         @Override
-        public NamedDeclaration visit(State state, TypeDeclaration typeDecl) {
+        public NamedDeclaration visit(State state, TypeDeclaration typeDecl) throws BreakException {
             final ValueType oldType = typeDecl.getSourceType().getValueType();
             final ValueType newType = oldType.acceptVisitor(this.typeLifter, state);
             return new TypeDeclaration(typeDecl.getName(), newType, typeDecl.getMeta(), typeDecl.getLocation());

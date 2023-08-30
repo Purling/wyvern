@@ -6,6 +6,7 @@ import java.util.List;
 
 import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
@@ -39,7 +40,7 @@ public class DataType extends TagType {
     }
 
     @Override
-    public void checkWellFormed(TypeContext ctx) {
+    public void checkWellFormed(TypeContext ctx) throws BreakException {
         super.checkWellFormed(ctx);
         for (NominalType t:cases) {
             t.checkWellFormed(ctx);
@@ -51,7 +52,7 @@ public class DataType extends TagType {
     }
 
     @Override
-    public TagType adapt(View v) {
+    public TagType adapt(View v) throws BreakException {
         NominalType newCT = (NominalType) getParentType(v);
         List<NominalType> newCases = new LinkedList<NominalType>();
         for (NominalType t : cases) {
@@ -79,7 +80,7 @@ public class DataType extends TagType {
     }
 
     @Override
-    public TagType doAvoid(String varName, TypeContext ctx, int depth) {
+    public TagType doAvoid(String varName, TypeContext ctx, int depth) throws BreakException {
         NominalType newCT = getParentType() != null ? (NominalType) getParentType().doAvoid(varName, ctx, depth) : null;
         List<NominalType> newCases = new LinkedList<NominalType>();
         for (NominalType t : cases) {
@@ -94,7 +95,7 @@ public class DataType extends TagType {
     }
 
     @Override
-    public boolean isTSubtypeOf(Type sourceType, TypeContext ctx, FailureReason reason) {
+    public boolean isTSubtypeOf(Type sourceType, TypeContext ctx, FailureReason reason) throws BreakException {
         if (!(sourceType instanceof DataType)) {
             return false;
         }

@@ -2,6 +2,7 @@ package wyvern.target.corewyvernIL.generics;
 
 import wyvern.target.corewyvernIL.effects.Effect;
 import wyvern.target.corewyvernIL.effects.EffectSet;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
@@ -21,7 +22,7 @@ public class GenericArgument {
     private final ValueType type;
     private final EffectSet effect;
 
-    public static GenericArgument fromHighLevel(GenContext ctx, FileLocation loc, wyvern.tools.generics.GenericArgument ga) {
+    public static GenericArgument fromHighLevel(GenContext ctx, FileLocation loc, wyvern.tools.generics.GenericArgument ga) throws BreakException {
         switch (ga.getKind()) {
             case TYPE:
                 return new GenericArgument(ga.getType().getILType(ctx));
@@ -92,7 +93,7 @@ public class GenericArgument {
         return this.effect;
     }
 
-    public GenericArgument adapt(View v) {
+    public GenericArgument adapt(View v) throws BreakException {
         switch (this.getKind()) {
             case TYPE:
                 return new GenericArgument(this.getType().adapt(v));
@@ -103,7 +104,7 @@ public class GenericArgument {
         }
     }
 
-    public GenericArgument doAvoid(String varName, TypeContext ctx, int depth) {
+    public GenericArgument doAvoid(String varName, TypeContext ctx, int depth) throws BreakException {
         switch (this.getKind()) {
             case TYPE:
                 return new GenericArgument(this.getType().doAvoid(varName, ctx, depth));

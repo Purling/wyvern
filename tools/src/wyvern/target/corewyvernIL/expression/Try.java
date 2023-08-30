@@ -39,7 +39,7 @@ public class Try extends Expression {
     }
 
     @Override
-    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
 
         ctx = ctx.extend(site, type);
 
@@ -65,7 +65,7 @@ public class Try extends Expression {
     }
 
     @Override
-    public Value interpret(EvalContext ctx) {
+    public Value interpret(EvalContext ctx) throws BreakException {
         try {
             ctx = ctx.extend(site, type.getMetadata(ctx));
 
@@ -76,20 +76,20 @@ public class Try extends Expression {
             }
 
             if (returnExpr != null) {
+                System.out.printf(returnExpr.toString());
                 throw new BreakException(BreakException.GetNextID(), returnExpr.interpret(ctx));
             } else {
                 return expressions.get(expressions.size() - 1).interpret(ctx);
             }
-        } catch (
-                BreakException e) {
+        } catch (BreakException e) {
             if (e.ID != 1) {
                 return (Value) e.retVal;
             } else {
-//                throw e;
-//            }
+                throw e;
             }
-        }
-        return null;
+            }
+//        }
+//        return null;
     }
 
     @Override

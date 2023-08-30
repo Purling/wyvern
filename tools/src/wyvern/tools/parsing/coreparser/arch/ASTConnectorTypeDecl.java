@@ -14,6 +14,7 @@ import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.New;
 import wyvern.target.corewyvernIL.expression.SeqExpr;
 import wyvern.target.corewyvernIL.modules.Module;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.StructuralType;
@@ -56,7 +57,7 @@ public class ASTConnectorTypeDecl extends SimpleNode {
         }
     }
 
-    public boolean checkModule(InterpreterState state) {
+    public boolean checkModule(InterpreterState state) throws BreakException {
         Module mod = null;
         try {
             mod = state.getResolver().resolveType(typeName + "Properties", null);

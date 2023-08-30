@@ -13,6 +13,7 @@ import wyvern.target.corewyvernIL.expression.Invokable;
 import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -67,7 +68,7 @@ public class DSLLit extends AbstractExpressionAST implements ExpressionAST {
 
 
     @Override
-    public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
+    public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) throws BreakException {
         if (expectedType == null) {
             ToolError.reportError(ErrorMessage.NO_EXPECTED_TYPE, this);
         }

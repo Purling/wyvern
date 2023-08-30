@@ -4,6 +4,7 @@ import java.util.List;
 
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.CallableExprGenerator;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
@@ -19,12 +20,12 @@ public interface ExpressionAST extends TypedAST {
      * @param dependencies TODO
      * @return
      */
-    IExpr generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies);
+    IExpr generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) throws BreakException;
 
-    CallableExprGenerator getCallableExpr(GenContext ctx);
+    CallableExprGenerator getCallableExpr(GenContext ctx) throws BreakException;
 
     @Override
-    default void genTopLevel(TopLevelContext topLevelContext) {
+    default void genTopLevel(TopLevelContext topLevelContext) throws BreakException {
         final IExpr exp = generateIL(topLevelContext.getContext(), null, topLevelContext.getDependencies());
         ValueType type = exp.typeCheck(topLevelContext.getContext(), null);
         topLevelContext.addExpression(exp, type);

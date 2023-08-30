@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.parsing.coreparser.ParseException;
@@ -18,55 +19,55 @@ public class EffectSeparationTests {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void testSeparation1() throws ParseException {
+    public void testSeparation1() throws ParseException, BreakException {
         /* Add empty effect set where annotation is missing */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client1", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation2() throws ParseException {
+    public void testSeparation2() throws ParseException, BreakException {
         /* Fully annotated module */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client2", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation3() throws ParseException {
+    public void testSeparation3() throws ParseException, BreakException {
         /* Unannotated module with type annotated */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client3", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation4() throws ParseException {
+    public void testSeparation4() throws ParseException, BreakException {
         /* Unannotated module */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client4", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation5() throws ParseException {
+    public void testSeparation5() throws ParseException, BreakException {
         /* Unannotated moduledef */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client5", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation6() throws ParseException {
+    public void testSeparation6() throws ParseException, BreakException {
         /* Unannotated moduledef with type annotation */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client6", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation7() throws ParseException {
+    public void testSeparation7() throws ParseException, BreakException {
         /* Annotated moduledef */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client7", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation8() throws ParseException {
+    public void testSeparation8() throws ParseException, BreakException {
         /* Annotated moduledef with type annotation */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client8", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation9() throws ParseException {
+    public void testSeparation9() throws ParseException, BreakException {
         // Import effect-unannotated module from annotated module
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString("Effect-annotated module"));
@@ -74,25 +75,25 @@ public class EffectSeparationTests {
     }
 
     @Test
-    public void testSeparation10() throws ParseException {
+    public void testSeparation10() throws ParseException, BreakException {
         /* importing annotated module from annotated module */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client10", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation11() throws ParseException {
+    public void testSeparation11() throws ParseException, BreakException {
         /* import lifted unannotated module from annotated module */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client11", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation12() throws ParseException {
+    public void testSeparation12() throws ParseException, BreakException {
         /* Correctly annotated module def */
         TestUtil.doTestScriptModularly(PATH, "effectSeparation.client12", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testSeparation13() throws ParseException {
+    public void testSeparation13() throws ParseException, BreakException {
         // Module Def has incorrect effect annotation
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString("not a subtype of effects that method produces"));
@@ -100,7 +101,7 @@ public class EffectSeparationTests {
     }
 
     @Test
-    public void testSeparation14() throws ParseException {
+    public void testSeparation14() throws ParseException, BreakException {
         // Pure module having non-empty annotation
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString("Pure module should always have empty effect annotation "));

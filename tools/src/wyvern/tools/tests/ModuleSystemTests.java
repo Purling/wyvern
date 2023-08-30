@@ -10,6 +10,7 @@ import org.junit.experimental.categories.Category;
 
 import wyvern.stdlib.Globals;
 import wyvern.target.corewyvernIL.expression.IntegerLiteral;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.ToolError;
@@ -42,61 +43,61 @@ public class ModuleSystemTests {
     }
 
     @Test
-    public void testADT() throws ParseException {
+    public void testADT() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("modules.listClient", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testTransitiveAuthorityGood() throws ParseException {
+    public void testTransitiveAuthorityGood() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("modules.databaseClientGood", Util.intType(), new IntegerLiteral(1));
     }
 
     @Test
-    public void testTransitiveAuthorityBad() throws ParseException {
+    public void testTransitiveAuthorityBad() throws ParseException, BreakException {
         TestUtil.doTestScriptModularlyFailing("modules.databaseClientBad", ErrorMessage.NO_SUCH_METHOD);
     }
 
     @Test
-    public void testTopLevelVars() throws ParseException {
+    public void testTopLevelVars() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("modules.databaseUser", Util.intType(), new IntegerLiteral(10));
     }
 
     @Test
-    public void testTopLevelVarsWithAliasing() throws ParseException {
+    public void testTopLevelVarsWithAliasing() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("modules.databaseUserTricky", Util.intType(), new IntegerLiteral(10));
     }
 
     @Test
-    public void testTopLevelVarGet() throws ParseException {
+    public void testTopLevelVarGet() throws ParseException, BreakException {
         String source = "var v : Int = 5\n" + "v\n";
 
         TestUtil.doTestInt(source, 5);
     }
 
     @Test
-    public void testTopLevelVarSet() throws ParseException {
+    public void testTopLevelVarSet() throws ParseException, BreakException {
 
         String source = "var v : Int = 5\n" + "v = 10\n" + "v\n";
         TestUtil.doTestInt(source, 10);
     }
 
     @Test
-    public void testSimpleADT() throws ParseException {
+    public void testSimpleADT() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("modules.simpleADTdriver", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testSimpleADTWithRenamingImport() throws ParseException {
+    public void testSimpleADTWithRenamingImport() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("modules.simpleADTdriver2", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testSimpleADTWithRenamingRequire() throws ParseException {
+    public void testSimpleADTWithRenamingRequire() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("modules.simpleADTdriver3", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testCyclicImports() throws ParseException {
+    public void testCyclicImports() throws ParseException, BreakException {
         String errorMessage = "testCyclicImports should catch a ToolError of type ErrorMesasge.IMPORT_CYCLE";
         try {
             TestUtil.doTestScriptModularly("modules.cyclic.cyclic1a", Util.unitType(), Util.unitValue());
@@ -107,7 +108,7 @@ public class ModuleSystemTests {
     }
 
     @Test
-    public void testLongCyclicImport() throws ParseException {
+    public void testLongCyclicImport() throws ParseException, BreakException {
         String errorMessage = "testLongCyclicImports should catch a ToolError of type ErrorMesasge.IMPORT_CYCLE";
         try {
             TestUtil.doTestScriptModularly("modules.cyclic.cyclic2a", Util.unitType(), Util.unitValue());
@@ -118,7 +119,7 @@ public class ModuleSystemTests {
     }
 
     @Test
-    public void testCircularImportNotInvolvingTopLevel() throws ParseException {
+    public void testCircularImportNotInvolvingTopLevel() throws ParseException, BreakException {
         String errorMessage = "testCyclicImports should catch a ToolError of type ErrorMesasge.IMPORT_CYCLE";
         try {
             TestUtil.doTestScriptModularly("modules.cyclic.cyclic3a", Util.unitType(), Util.unitValue());
@@ -129,12 +130,12 @@ public class ModuleSystemTests {
     }
 
      @Test
-     public void testArrowModuleClient1() throws ParseException {
+     public void testArrowModuleClient1() throws ParseException, BreakException {
          TestUtil.doTestScriptModularly("modules.arrowModuleClient1", Util.unitType(), Util.unitValue());
      }
 
      @Test
-     public void testArrowModuleClient2() throws ParseException {
+     public void testArrowModuleClient2() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("modules.arrowModuleClient2", Util.unitType(), Util.unitValue());
      }
 }

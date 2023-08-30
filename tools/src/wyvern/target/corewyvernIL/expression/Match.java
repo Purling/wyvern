@@ -7,6 +7,7 @@ import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.Case;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -47,7 +48,7 @@ public class Match extends Expression {
     }
 
     @Override
-    public ValueType typeCheck(TypeContext env, EffectAccumulator effectAccumulator) {
+    public ValueType typeCheck(TypeContext env, EffectAccumulator effectAccumulator) throws BreakException {
         // typecheck the match expression
         ValueType matchType = matchExpr.typeCheck(env, effectAccumulator);
         if (!matchType.isTagged(env)) {
@@ -88,7 +89,7 @@ public class Match extends Expression {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
         return emitILVisitor.visit(state, this);
     }
 
@@ -114,7 +115,7 @@ public class Match extends Expression {
     }
 
     @Override
-    public Value interpret(EvalContext ctx) {
+    public Value interpret(EvalContext ctx) throws BreakException {
         Value matchValue = matchExpr.interpret(ctx);
         Tag matchTag;
         if (matchValue instanceof  ObjectValue) {

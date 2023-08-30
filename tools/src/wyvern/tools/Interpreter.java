@@ -12,6 +12,7 @@ import wyvern.target.corewyvernIL.astvisitor.PlatformSpecializationVisitor;
 import wyvern.target.corewyvernIL.astvisitor.TailCallVisitor;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.Module;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.tools.errors.ToolError;
@@ -30,7 +31,7 @@ public final class Interpreter {
      * the file is read in to memory in its entirety, before being executed in
      * an empty context. The resulting value is printed to the screen.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws BreakException {
         // check if at least one argument is supplied.
         if (args.length < 1) {
             // prompt usage message if the number of arguments is less than one.

@@ -12,6 +12,7 @@ import wyvern.stdlib.Globals;
 import wyvern.target.corewyvernIL.expression.BooleanLiteral;
 import wyvern.target.corewyvernIL.expression.IntegerLiteral;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.imports.extensions.WyvernResolver;
@@ -50,13 +51,13 @@ public class ExamplesNoPrelude {
 
 
   @Test
-  public void testDatatypes() throws ParseException {
+  public void testDatatypes() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "introductory.datatypes",
         Util.stringType(), new StringLiteral("(x => x) unit"));
   }
 
   @Test
-  public void testImmutability() throws ParseException {
+  public void testImmutability() throws ParseException, BreakException {
       expectedException.expect(ToolError.class);
       expectedException.expectMessage(StringContains.containsString("This type must be a resource type"));
 
@@ -65,90 +66,90 @@ public class ExamplesNoPrelude {
   }
 
   @Test
-  public void testBox() throws ParseException {
+  public void testBox() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "introductory.box", Util.intType(),
         new IntegerLiteral(15));
   }
 
   @Test
-  public void testKeys() throws ParseException {
+  public void testKeys() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "introductory.keys", Util.stringType(),
         new StringLiteral("m1"));
   }
 
   @Test
-  public void testObjects() throws ParseException {
+  public void testObjects() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "introductory.objects", Util.intType(),
         new IntegerLiteral(7));
   }
 
   @Test
-  public void testStrings() throws ParseException {
+  public void testStrings() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "introductory.strings",
         Util.booleanType(), new BooleanLiteral(true));
   }
 
   @Test
-  public void testCell() throws ParseException {
+  public void testCell() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "introductory.cell", Util.intType(),
         new IntegerLiteral(3));
   }
 
   @Test
-  public void testCore() throws ParseException {
+  public void testCore() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "introductory.core", Util.intType(),
         new IntegerLiteral(3));
   }
 
   @Test
-  public void testMaybe() throws ParseException {
+  public void testMaybe() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "introductory.maybe", Util.intType(),
         new IntegerLiteral(15));
   }
 
   @Test
-  public void testDebug() throws ParseException {
+  public void testDebug() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "introductory.testDebug",
         Util.unitType(), Util.unitValue());
   }
 
   @Test
-  public void testCodeCompletion() throws ParseException {
+  public void testCodeCompletion() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "effects.codeCompletion", null, null);
   }
 
   @Test
-  public void testCodeCompletion2() throws ParseException {
+  public void testCodeCompletion2() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "effects.codeCompletion2", null, null);
   }
 
   @Test
-  public void testLogger() throws ParseException {
+  public void testLogger() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "effects.logger", null, null);
   }
 
   @Test
-  public void testLogger2() throws ParseException {
+  public void testLogger2() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "effects.logger2", null, null);
   }
 
   @Test
-  public void testRemoteLogger() throws ParseException {
+  public void testRemoteLogger() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "effects.remoteLogger", null, null);
   }
 
   @Test
-  public void testUserStats() throws ParseException {
+  public void testUserStats() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "effects.userStats", null, null);
   }
 
   @Test
-  public void testUserStats2() throws ParseException {
+  public void testUserStats2() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "effects.userStats2", null, null);
   }
 
   @Test
-  public void testTwice() throws ParseException {
+  public void testTwice() throws ParseException, BreakException {
     TestUtil.doTestScriptModularly(PATH, "effects.twice", null, null);
   }
 

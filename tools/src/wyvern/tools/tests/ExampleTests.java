@@ -14,6 +14,7 @@ import org.junit.experimental.categories.Category;
 
 import wyvern.stdlib.Globals;
 import wyvern.target.corewyvernIL.expression.IntegerLiteral;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.Interpreter;
 import wyvern.tools.PythonCompiler;
@@ -45,72 +46,72 @@ public class ExampleTests {
     }
     
     @Test
-    public void testFib() throws ParseException {
+    public void testFib() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "rosetta.fibonacci", Util.unitType(),
                 Util.unitValue());
     }
 
     @Test
-    public void testFactorial() throws ParseException {
+    public void testFactorial() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "rosetta.factorial", Util.unitType(),
                 Util.unitValue());
     }
 
     @Test
-    public void testLinkedList() throws ParseException {
+    public void testLinkedList() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "rosetta.linkedList", Util.intType(),
                 Util.intValue(3));
     }
 
     @Test
-    public void testCellModuleClient() throws ParseException {
+    public void testCellModuleClient() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "modules.cellModuleClient",
           Util.intType(), new IntegerLiteral(2));
     }
 
     @Test
-    public void testHello() throws ParseException {
+    public void testHello() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "rosetta.hello", Util.unitType(),
           Util.unitValue());
     }
 
     @Test
-    public void testCellClientMain() throws ParseException {
+    public void testCellClientMain() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "modules.cellClientMain",
           Util.intType(), new IntegerLiteral(1));
     }
 
     @Test
-    public void testCrossPlatformHello() throws ParseException {
+    public void testCrossPlatformHello() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "xplatform.hello-via-writer",
           Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testExplicitCrossPlatformHello() throws ParseException {
+    public void testExplicitCrossPlatformHello() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "xplatform.hello-explicit-writer",
           Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testMembrane() throws ParseException {
+    public void testMembrane() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "capabilities.Membrane", null, null);
     }
     
     @Test
-    public void testHelloExplicit() throws ParseException {
+    public void testHelloExplicit() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "rosetta.hello-explicit",
           Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testFunctions() throws ParseException {
+    public void testFunctions() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "introductory.functions",
           Util.intType(), new IntegerLiteral(6));
     }
 
     @Test
-    public void testIOLibServerClient() throws ParseException {
+    public void testIOLibServerClient() throws ParseException, BreakException {
       ExecutorService executor = Executors.newFixedThreadPool(2);
 
       Future<?> futureServer = executor.submit(() -> {
@@ -163,72 +164,72 @@ public class ExampleTests {
     }
 
     @Test
-    public void testCellClient() throws ParseException {
+    public void testCellClient() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "modules.cellClient", Util.intType(),
           new IntegerLiteral(7));
     }
 
     @Test
-    public void testJavaFFI() throws ParseException {
+    public void testJavaFFI() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "ffi.callFromJava", Util.unitType(),
           Util.unitValue());
     }
 
     @Test
-    public void testTSL() throws ParseException {
+    public void testTSL() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "tsls.postfixClient", Util.intType(),
                 new IntegerLiteral(7));
     }
 
     @Test
-    public void testAlgebra() throws ParseException {
+    public void testAlgebra() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "introductory.algebra",
                 Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testTailCalls() throws ParseException {
+    public void testTailCalls() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "introductory.tailcalls",
                 Util.intType(), new IntegerLiteral(10000));
     }
 
     @Test
-    public void testPalindromeChecker() throws ParseException {
+    public void testPalindromeChecker() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "rosetta.check-palindrome",
                 Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testMultiLambda() throws ParseException {
+    public void testMultiLambda() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "multiLambda",
                 Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testListParameterized() throws ParseException {
+    public void testListParameterized() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "introductory.listClient",
                 Util.intType(), new IntegerLiteral(28));
     }
 
     @Test
-    public void testLambdaCalculus() throws ParseException {
+    public void testLambdaCalculus() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "introductory.lambdaCalculusToJS",
                 null, null);
     }
 
     @Test
-    public void testCaretaker() throws ParseException {
+    public void testCaretaker() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "capabilities.Caretaker", null, null);
     }
 
     @Test
-    public void testSealerUnsealer() throws ParseException {
+    public void testSealerUnsealer() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "capabilities.SealerUnsealer", null,
                 null);
     }
 
     @Test
-    public void testPythonCompilerOnScript() {
+    public void testPythonCompilerOnScript() throws BreakException {
         String[] args = new String[] {TestUtil.EXAMPLES_PATH + "pong/pong.wyv"};
         PythonCompiler.wyvernHome.set("..");
         PythonCompiler.wyvernRoot.set(TestUtil.EXAMPLES_PATH + "pong/");
@@ -236,7 +237,7 @@ public class ExampleTests {
     }
 
     @Test
-    public void testPython2Webserver() {
+    public void testPython2Webserver() throws BreakException {
         String[] args = new String[] {
                 TestUtil.EXAMPLES_PATH + "web-server/python2/webserver.wyv"};
         PythonCompiler.wyvernHome.set("..");
@@ -246,7 +247,7 @@ public class ExampleTests {
     }
 
     @Test
-    public void testPython3Webserver() {
+    public void testPython3Webserver() throws BreakException {
         String[] args = new String[] {
                 TestUtil.EXAMPLES_PATH + "web-server/python3/webserver.wyv"};
         PythonCompiler.wyvernHome.set("..");
@@ -257,49 +258,49 @@ public class ExampleTests {
 
 
     @Test
-    public void testBinarySearchTree() throws ParseException {
+    public void testBinarySearchTree() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "dataStructures.bsttest",
                 Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testMandelbrot() throws ParseException {
+    public void testMandelbrot() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "rosetta.mandelbrot", Util.unitType(),
                 Util.unitValue());
     }
 
     @Test
-    public void testJulia() throws ParseException {
+    public void testJulia() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "rosetta.julia", Util.unitType(),
                 Util.unitValue());
     }
 
     @Test
-    public void testThreads() throws ParseException {
+    public void testThreads() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH, "threads.testThread", Util.unitType(),
                 Util.unitValue());
     }
 
     @Test
-    public void testTextEditorApplication() throws ParseException {
+    public void testTextEditorApplication() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly(PATH + "text-editor", "main", Util.unitType(), Util.unitValue(), false);
     }
 
     @Test
-    public void testCommandLineArguments() throws ParseException {
+    public void testCommandLineArguments() throws ParseException, BreakException {
         String[] args = new String[] {TestUtil.EXAMPLES_PATH + "commandLineArguments.wyv"};
         Interpreter.wyvernHome.set("..");
         Interpreter.main(args);
     }
 
     @Test
-    public void testShortCircuitEvaluation() throws ParseException {
+    public void testShortCircuitEvaluation() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "shortCircuitEval", Util.unitType(),
       Util.unitValue());
     }
 
     @Test
-    public void testOptionTypeSugar() throws ParseException {
+    public void testOptionTypeSugar() throws ParseException, BreakException {
       TestUtil.doTestScriptModularly(PATH, "optionType", Util.unitType(),
       Util.unitValue());
     }

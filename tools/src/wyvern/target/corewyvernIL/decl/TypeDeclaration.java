@@ -9,6 +9,7 @@ import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.ConcreteTypeMember;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.expression.IExpr;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.Type;
 import wyvern.tools.errors.FileLocation;
@@ -36,12 +37,12 @@ public class TypeDeclaration extends NamedDeclaration {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) {
+    public DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) throws BreakException {
         if (metadata != null) {
             metadata.typeCheck(thisCtx, null);
         }

@@ -6,6 +6,7 @@ import java.util.Set;
 import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.ASTNode;
 import wyvern.target.corewyvernIL.IASTNode;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.ILFactory;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -16,7 +17,7 @@ public abstract class Expression extends ASTNode implements IASTNode, IExpr {
     private ValueType exprType;
 //    @Override
 //    public abstract ValueType typeCheck(TypeContext ctx);
-    public abstract Value interpret(EvalContext ctx);
+    public abstract Value interpret(EvalContext ctx) throws BreakException;
     public abstract Set<String> getFreeVariables();
 
     protected Expression(ValueType exprType, FileLocation loc) {

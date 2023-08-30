@@ -112,11 +112,11 @@ public class ModuleResolver {
      * @param qualifiedName
      * @return
      */
-    public Module resolveType(String qualifiedName, FileLocation location) {
+    public Module resolveType(String qualifiedName, FileLocation location) throws BreakException {
         return resolveType(qualifiedName, false, location);
     }
 
-    private Module resolveType(String qualifiedName, boolean toplevel, FileLocation location) {
+    private Module resolveType(String qualifiedName, boolean toplevel, FileLocation location) throws BreakException {
         Module typeDefiningModule;
         if (!unliftedModuleCache.containsKey(qualifiedName)) {
             File f = resolve(qualifiedName, true);
@@ -165,7 +165,7 @@ public class ModuleResolver {
      * @param qualifiedNames
      * @return
      */
-    public EvalContext contextWith(String... qualifiedNames) {
+    public EvalContext contextWith(String... qualifiedNames) throws BreakException {
         EvalContext ctx = Globals.getStandardEvalContext();
         for (String qualifiedName : qualifiedNames) {
             String[] names = qualifiedName.split("\\.");
@@ -188,11 +188,11 @@ public class ModuleResolver {
      *
      * @throws ParseException
      */
-    public Module resolveModule(String qualifiedName) {
+    public Module resolveModule(String qualifiedName) throws BreakException {
         return resolveModule(qualifiedName, false, false);
     }
 
-    public Module resolveModule(String qualifiedName, boolean toplevel, boolean isLifted) {
+    public Module resolveModule(String qualifiedName, boolean toplevel, boolean isLifted) throws BreakException {
         checkNoCyclicDependencies(qualifiedName);
         Map<String, Module> moduleCache = isLifted ? liftedModuleCache : unliftedModuleCache;
         if (!moduleCache.containsKey(qualifiedName)) {
@@ -300,10 +300,10 @@ public class ModuleResolver {
         return f;
     }
 
-    private Module loadContinuation(File file, String qualifiedName, TypedAST ast, boolean loadingType, boolean toplevel) {
+    private Module loadContinuation(File file, String qualifiedName, TypedAST ast, boolean loadingType, boolean toplevel) throws BreakException {
         return loadContinuation(file, qualifiedName, ast, loadingType, toplevel, false);
     }
-    private Module loadContinuation(File file, String qualifiedName, TypedAST ast, boolean loadingType, boolean toplevel, boolean isLifted) {
+    private Module loadContinuation(File file, String qualifiedName, TypedAST ast, boolean loadingType, boolean toplevel, boolean isLifted) throws BreakException {
 
         final List<TypedModuleSpec> dependencies = new LinkedList<TypedModuleSpec>();
         GenContext genCtx = Globals.getGenContext(state);
@@ -406,11 +406,11 @@ public class ModuleResolver {
      * @param state
      * @return
      */
-    public Module load(String qualifiedName, File file, boolean toplevel) {
+    public Module load(String qualifiedName, File file, boolean toplevel) throws BreakException {
         return load(qualifiedName, file, toplevel, false);
     }
 
-    private Module load(String qualifiedName, File file, boolean toplevel, boolean isLifted) {
+    private Module load(String qualifiedName, File file, boolean toplevel, boolean isLifted) throws BreakException {
 
         boolean loadingType = file.getName().endsWith(".wyt");
         TypedAST ast = null;
@@ -431,7 +431,7 @@ public class ModuleResolver {
     private Module createAdaptedModule(File file, String qualifiedName, String valueName,
                                        final List<TypedModuleSpec> dependencies, IExpr program,
                                        TypeContext ctx, boolean toplevel, boolean loadingType, boolean isAnnotated
-                                       ) {
+                                       ) throws BreakException {
 
         ValueType moduleType = program.typeCheck(ctx, null);
         // if this is a platform module, adapt any arguments to take the system.Platform object
@@ -530,7 +530,7 @@ public class ModuleResolver {
         return expr;
     }
 
-    public SeqExpr buildPreludedExpression(Expression expression) {
+    public SeqExpr buildPreludedExpression(Expression expression) throws BreakException {
         Module prelude = Globals.getPreludeModule();
         SeqExpr expr = new SeqExpr();
         expr = addSystemObject(expr);
@@ -539,7 +539,7 @@ public class ModuleResolver {
         return expr;
     }
 
-    public BytecodeOuterClass.Bytecode emitBytecode(Module module) {
+    public BytecodeOuterClass.Bytecode emitBytecode(Module module) throws BreakException {
         List<TypedModuleSpec> dependencies = module.getDependencies();
         BytecodeOuterClass.Bytecode.Builder wyb = BytecodeOuterClass.Bytecode.newBuilder();
         wyb.setVersion(BytecodeOuterClass.Bytecode.Version.newBuilder().setMagic(42)
@@ -641,7 +641,7 @@ public class ModuleResolver {
      * @param ctx          The evaluation context to use; should include the prelude if it is needed
      * @return
      */
-    public SeqExpr wrapWithCtx(IExpr program, List<TypedModuleSpec> dependencies, EvalContext ctx) {
+    public SeqExpr wrapWithCtx(IExpr program, List<TypedModuleSpec> dependencies, EvalContext ctx) throws BreakException {
         SeqExpr seqProg = new SeqExpr();
         List<TypedModuleSpec> noDups = sortDependencies(dependencies);
         for (int i = noDups.size() - 1; i >= 0; --i) {
@@ -666,7 +666,7 @@ public class ModuleResolver {
      * It differs from wrap()/wrapWithCtx() mainly in that it does not turn everything into values,
      * which seems to create problems when exporting to Python.
      */
-    public SeqExpr wrapForPython(IExpr program, List<TypedModuleSpec> dependencies) {
+    public SeqExpr wrapForPython(IExpr program, List<TypedModuleSpec> dependencies) throws BreakException {
         SeqExpr seqProg = new SeqExpr();
         List<TypedModuleSpec> deps = new ArrayList<TypedModuleSpec>(dependencies);
 
@@ -757,7 +757,7 @@ public class ModuleResolver {
         return prelude;
     }
 
-    public SeqExpr loadPrelude(File file) {
+    public SeqExpr loadPrelude(File file) throws BreakException {
         preludeModule = ModuleResolver.getLocal().load("<prelude>", file, true);
         prelude = ModuleResolver.getLocal().wrap(preludeModule.getExpression(), preludeModule.getDependencies());
         TailCallVisitor.annotate(prelude);
@@ -765,7 +765,7 @@ public class ModuleResolver {
         return prelude;
     }
 
-    public Module getPreludeModule() {
+    public Module getPreludeModule() throws BreakException {
         if (prelude == null) {
             Globals.getPrelude();
         }

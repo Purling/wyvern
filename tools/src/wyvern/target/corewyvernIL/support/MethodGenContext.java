@@ -52,7 +52,7 @@ public class MethodGenContext extends GenContext {
     }
 
     @Override
-    public CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) {
+    public CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) throws BreakException {
         if (this.methodName.equals(varName)) {
             return new InvocationExprGenerator(new Variable(objectSite), varName, origCtx, loc);
         } else {

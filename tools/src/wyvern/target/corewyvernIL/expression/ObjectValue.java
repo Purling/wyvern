@@ -11,6 +11,7 @@ import wyvern.target.corewyvernIL.decl.DeclarationWithRHS;
 import wyvern.target.corewyvernIL.decl.DefDeclaration;
 import wyvern.target.corewyvernIL.decl.ForwardDeclaration;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.Util;
@@ -57,7 +58,7 @@ public class ObjectValue extends New implements Invokable {
         return getType();
     }
     
-    public Tag getTag() {
+    public Tag getTag() throws BreakException {
         ValueType vt = this.getType();
         while (vt instanceof RefinementType) {
             vt = ((RefinementType) vt).getBase();
@@ -70,7 +71,7 @@ public class ObjectValue extends New implements Invokable {
     }
 
     @Override
-    public Value invoke(String methodName, List<Value> args, FileLocation loc) {
+    public Value invoke(String methodName, List<Value> args, FileLocation loc) throws BreakException {
         List<String> theStack = stack.get();
         try {
             theStack.add(methodName);

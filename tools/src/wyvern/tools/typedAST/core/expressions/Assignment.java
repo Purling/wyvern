@@ -9,6 +9,7 @@ import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.MethodCall;
 import wyvern.target.corewyvernIL.generics.GenericArgument;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.CallableExprGenerator;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.NominalType;
@@ -61,12 +62,12 @@ public class Assignment extends AbstractExpressionAST implements CoreAST {
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
         return visitor.visit(state, this);
     }
 
 
-    private IExpr generateFieldGet(GenContext ctx, List<TypedModuleSpec> dependencies) {
+    private IExpr generateFieldGet(GenContext ctx, List<TypedModuleSpec> dependencies) throws BreakException {
 
         // In most cases we can get a generator to do this for us.
         CallableExprGenerator cegReceiver = target.getCallableExpr(ctx);
@@ -157,7 +158,7 @@ public class Assignment extends AbstractExpressionAST implements CoreAST {
     public Expression generateIL(
             GenContext ctx,
             ValueType expectedType,
-            List<TypedModuleSpec> dependencies) {
+            List<TypedModuleSpec> dependencies) throws BreakException {
 
         // Figure out expression being assigned and target it is being assigned to
         IExpr lhsExpression = generateFieldGet(ctx, dependencies);

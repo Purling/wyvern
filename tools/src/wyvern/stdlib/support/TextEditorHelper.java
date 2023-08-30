@@ -20,6 +20,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.expression.Value;
+import wyvern.target.corewyvernIL.support.BreakException;
 
 public final class TextEditorHelper {
     private TextEditorHelper() { }
@@ -198,7 +199,11 @@ public final class TextEditorHelper {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (action != null) {
-                action.invoke("apply", new LinkedList<Value>()).executeIfThunk();
+                try {
+                    action.invoke("apply", new LinkedList<Value>()).executeIfThunk();
+                } catch (BreakException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }
@@ -220,7 +225,11 @@ public final class TextEditorHelper {
         @Override
         public void keyPressed(KeyEvent e) {
             if (keyAction != null) {
-                keyAction.invoke("apply", new LinkedList<Value>()).executeIfThunk();
+                try {
+                    keyAction.invoke("apply", new LinkedList<Value>()).executeIfThunk();
+                } catch (BreakException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         }
     }

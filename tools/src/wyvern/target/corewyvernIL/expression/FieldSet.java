@@ -10,6 +10,7 @@ import wyvern.target.corewyvernIL.decl.VarDeclaration;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.VarDeclType;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -45,7 +46,7 @@ public class FieldSet extends Expression {
         return exprToAssign;
     }
 
-    private boolean settingDynamicObject(TypeContext ctx) {
+    private boolean settingDynamicObject(TypeContext ctx) throws BreakException {
         ValueType receiverType = null;
         if (objectExpr instanceof FieldGet) {
             IExpr receiver = ((FieldGet) objectExpr).getObjectExpr();
@@ -61,7 +62,7 @@ public class FieldSet extends Expression {
     }
 
     @Override
-    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
 
         // Setting the field of a dynamic object.
         if (settingDynamicObject(ctx)) {
@@ -93,12 +94,12 @@ public class FieldSet extends Expression {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public Value interpret(EvalContext ctx) {
+    public Value interpret(EvalContext ctx) throws BreakException {
         // Evaluate object whose field is being set.
         Value objExprVal = objectExpr.interpret(ctx);
         if (!(objExprVal instanceof ObjectValue)) {

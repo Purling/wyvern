@@ -9,6 +9,7 @@ import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.ValDeclType;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -29,7 +30,7 @@ public class ValDeclaration extends DeclarationWithRHS {
     private ValueType type;
 
     @Override
-    public boolean containsResource(TypeContext ctx) {
+    public boolean containsResource(TypeContext ctx) throws BreakException {
         return type.isResource(ctx);
     }
 
@@ -58,7 +59,7 @@ public class ValDeclaration extends DeclarationWithRHS {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
         return emitILVisitor.visit(state, this);
     }
 
@@ -68,7 +69,7 @@ public class ValDeclaration extends DeclarationWithRHS {
     }
 
     @Override
-    public Declaration interpret(EvalContext ctx) {
+    public Declaration interpret(EvalContext ctx) throws BreakException {
         Expression newValue = (Expression) getDefinition().interpret(ctx);
         return new ValDeclaration(getName(), type, newValue, getLocation());
     }

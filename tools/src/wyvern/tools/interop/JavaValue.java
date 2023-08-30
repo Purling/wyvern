@@ -22,6 +22,7 @@ import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
 import wyvern.target.corewyvernIL.expression.SuspendedTailCall;
 import wyvern.target.corewyvernIL.expression.Value;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.target.corewyvernIL.type.StructuralType;
@@ -47,7 +48,7 @@ public class JavaValue extends AbstractValue implements Invokable {
     }
 
     @Override
-    public Value invoke(String methodName, List<Value> args, FileLocation loc) {
+    public Value invoke(String methodName, List<Value> args, FileLocation loc) throws BreakException {
         List<Object> javaArgs = new LinkedList<Object>();
         Class<?>[] hints = foreignObject.getTypeHints(methodName);
         int hintNum = 0;
@@ -79,7 +80,7 @@ public class JavaValue extends AbstractValue implements Invokable {
      * Only handles integers, strings, and null right now.
      * null turns into unit.
      */
-    private Value javaToWyvern(Object result) {
+    private Value javaToWyvern(Object result) throws BreakException {
         //if (result instanceof SuspendedTailCall) {
         //    result = MethodCall.trampoline((Value) result);
         //}
@@ -129,7 +130,7 @@ public class JavaValue extends AbstractValue implements Invokable {
      * Only handles integers right now
      * @param hintClass
      */
-    private Object wyvernToJava(Value arg, Class<?> hintClass) {
+    private Object wyvernToJava(Value arg, Class<?> hintClass) throws BreakException {
         if (arg instanceof IntegerLiteral) {
             if (hintClass != null && hintClass == BigInteger.class) {
                 return ((IntegerLiteral) arg).getFullValue();

@@ -22,6 +22,7 @@ import wyvern.target.corewyvernIL.expression.SeqExpr;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.modules.Module;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.ILFactory;
@@ -198,7 +199,7 @@ public class REPL {
      *            code that will be run
      * @return The result of the code
      */
-    public Value updateCode(String input) throws ParseException {
+    public Value updateCode(String input) throws ParseException, BreakException {
         if (input.length() == 0) {
             // sanity check
             return null;
@@ -310,7 +311,7 @@ public class REPL {
      * 
      * @return Module created from the inputed params.
      */
-    private Module resolveModule(TypedAST ast, InterpreterState state, LinkedList<TypedModuleSpec> dependencies) {
+    private Module resolveModule(TypedAST ast, InterpreterState state, LinkedList<TypedModuleSpec> dependencies) throws BreakException {
         GenContext genCtx = Globals.getGenContext(state);
         IExpr program;
         String name = "test_expression";
@@ -357,7 +358,7 @@ public class REPL {
     
     private Module createAdaptedModule(String qualifiedName,
             final List<TypedModuleSpec> dependencies, IExpr program,
-            TypeContext ctx, boolean toplevel, boolean loadingType, InterpreterState state) {
+            TypeContext ctx, boolean toplevel, boolean loadingType, InterpreterState state) throws BreakException {
         
         //System.out.println("ctx = " + ctx);
 
@@ -413,7 +414,7 @@ public class REPL {
         return new Module(spec, program, null, dependencies);
     }
     
-    public SeqExpr wrapWithCtx(IExpr program, List<TypedModuleSpec> dependencies, EvalContext ctx, InterpreterState state) {
+    public SeqExpr wrapWithCtx(IExpr program, List<TypedModuleSpec> dependencies, EvalContext ctx, InterpreterState state) throws BreakException {
         SeqExpr seqProg = new SeqExpr();
         List<TypedModuleSpec> noDups = state.getResolver().sortDependencies(dependencies);
         for (int i = noDups.size() - 1; i >= 0; --i) {

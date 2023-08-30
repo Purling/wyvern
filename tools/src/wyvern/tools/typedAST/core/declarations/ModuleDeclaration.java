@@ -19,6 +19,7 @@ import wyvern.target.corewyvernIL.expression.SeqExpr;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.Module;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.ModuleResolver;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -122,7 +123,7 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
         return visitor.visit(state, this);
     }
 
@@ -134,7 +135,7 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
      * @param ctx the context
      * @return the IL expression
      */
-    private IExpr innerTranslate(Sequence normalSeq, GenContext ctx) {
+    private IExpr innerTranslate(Sequence normalSeq, GenContext ctx) throws BreakException {
         /* Sequence.innerTranslate */
         // The real work is done by the sequence itself.
         return normalSeq.generateModuleIL(ctx, true);
@@ -151,7 +152,7 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
      * @param loadedTypes
      * @return a list of formal arguments
      */
-    private List<FormalArg> getTypes(GenContext ctx, List<Module> loadedTypes) {
+    private List<FormalArg> getTypes(GenContext ctx, List<Module> loadedTypes) throws BreakException {
         /* generate the formal arguments by requiring sequence */
         List<FormalArg> types = new LinkedList<FormalArg>();
 
@@ -166,7 +167,7 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
 
     /** Implements the case of toInternalType for arrows
      */
-    private ValueType getArrowType(Arrow arrowType, GenContext ctx, List<Module> loadedTypes, FileLocation location2) {
+    private ValueType getArrowType(Arrow arrowType, GenContext ctx, List<Module> loadedTypes, FileLocation location2) throws BreakException {
         List<FormalArg> formals = new LinkedList<FormalArg>();
         for (int i = 0; i < arrowType.getArguments().size(); ++i) {
             Type type = arrowType.getArguments().get(i);
@@ -194,7 +195,7 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
      * @param arg         the name binding argument
      * @return a FormalArg object that contains an argument of the module.
      */
-    private FormalArg getArgType(GenContext ctx, List<Module> loadedTypes, FileLocation location, NameBindingImpl arg) {
+    private FormalArg getArgType(GenContext ctx, List<Module> loadedTypes, FileLocation location, NameBindingImpl arg) throws BreakException {
         ValueType valueType = toInternalType(ctx, loadedTypes, location, arg.getType());
         return new FormalArg(arg.getName(), valueType);
     }
@@ -202,7 +203,7 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
     /** Responsibility: convert a external Type to an internal ValueType,
      * side-effecting loadedTypes as needed.
      */
-    private ValueType toInternalType(GenContext ctx, List<Module> loadedTypes, FileLocation location, Type type) {
+    private ValueType toInternalType(GenContext ctx, List<Module> loadedTypes, FileLocation location, Type type) throws BreakException {
         if (type instanceof Arrow) {
             // case when argType is an Arrow type (a lambda expression).
             return getArrowType((Arrow) type, ctx, loadedTypes, location);
@@ -215,7 +216,13 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
             final ValueType baseType = toInternalType(ctx, loadedTypes, location, te.getBase());
             return new RefinementType(
                     te.getGenericArguments().stream()
-                            .map(arg -> wyvern.target.corewyvernIL.generics.GenericArgument.fromHighLevel(ctx, location, arg))
+                            .map(arg -> {
+                                try {
+                                    return wyvern.target.corewyvernIL.generics.GenericArgument.fromHighLevel(ctx, location, arg);
+                                } catch (BreakException e) {
+                                    throw new RuntimeException(e);
+                                }
+                            })
                             .collect(Collectors.toList()),
                     baseType,
                     this
@@ -233,7 +240,7 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
      * @param typeName    the name of the type
      * @return a FormalArg object that contains the type of the module.
      */
-    private ValueType getType(GenContext ctx, List<Module> loadedTypes, FileLocation location, NamedType type) {
+    private ValueType getType(GenContext ctx, List<Module> loadedTypes, FileLocation location, NamedType type) throws BreakException {
         // initialize resulting value type to null;
         ValueType valueType = null;
         
@@ -255,7 +262,7 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
      * @param typeName the name of the type
      * @return a Module object with resolved loaded types.
      */
-    private Module resolveLoadedTypes(GenContext ctx, String typeName, FileLocation location) {
+    private Module resolveLoadedTypes(GenContext ctx, String typeName, FileLocation location) throws BreakException {
         Module lt = ctx.getInterpreterState().getResolver().resolveType(typeName, location);
         return lt;
     }
@@ -302,7 +309,7 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
     }
 
     /** Translates imports, adding them to the passed-in SeqExpr.  Updates the list of dependencies.  Returns an extended context */
-    public GenContext translateImports(List<ImportDeclaration> imports, GenContext ctx, SeqExpr seq, List<TypedModuleSpec> dependencies) {
+    public GenContext translateImports(List<ImportDeclaration> imports, GenContext ctx, SeqExpr seq, List<TypedModuleSpec> dependencies) throws BreakException {
         GenContext current = ctx;
         for (ImportDeclaration imp : imports) {
             Pair<VarBinding, GenContext> bindingAndCtx = imp.genBinding(current, dependencies);
@@ -325,7 +332,7 @@ public class ModuleDeclaration extends DeclarationWithGenerics implements CoreAS
      * Called by ModuleResolver.load() to generate IL code for a module
      */
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) {
+    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) throws BreakException {
         GenContext methodContext = ctx;
         LinkedList<ImportDeclaration> platformDependentImports = new LinkedList<ImportDeclaration>();
         LinkedList<ImportDeclaration> platformIndependentImports = new LinkedList<ImportDeclaration>();

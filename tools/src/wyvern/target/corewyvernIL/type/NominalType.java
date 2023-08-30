@@ -15,6 +15,7 @@ import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Tag;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.expression.Variable;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.SubtypeAssumption;
@@ -56,7 +57,7 @@ public class NominalType extends ValueType {
     }
 
     @Override
-    public boolean isResource(TypeContext ctx) {
+    public boolean isResource(TypeContext ctx) throws BreakException {
         DeclType dt = getSourceDeclType(ctx);
         if (dt instanceof DefinedTypeMember) {
             ValueType vt = ((DefinedTypeMember) dt).getResultType(View.from(path, ctx));
@@ -70,7 +71,7 @@ public class NominalType extends ValueType {
     }
 
     @Override
-    public StructuralType getStructuralType(TypeContext ctx, StructuralType theDefault) {
+    public StructuralType getStructuralType(TypeContext ctx, StructuralType theDefault) throws BreakException {
         DeclType dt = null;
         try {
             dt = getSourceDeclType(ctx);
@@ -91,7 +92,7 @@ public class NominalType extends ValueType {
     private static int nestingCount = 0;
     
     @Override
-    public boolean isTSubtypeOf(Type sourceType, TypeContext ctx, FailureReason reason) {
+    public boolean isTSubtypeOf(Type sourceType, TypeContext ctx, FailureReason reason) throws BreakException {
         if (super.isTSubtypeOf(sourceType, ctx, reason)) {
             return true;
         }
@@ -105,7 +106,7 @@ public class NominalType extends ValueType {
     }
 
     
-    DeclType getSourceDeclType(TypeContext ctx) {
+    DeclType getSourceDeclType(TypeContext ctx) throws BreakException {
         final ValueType t = path.typeCheck(ctx, null);
         synchronized (NominalType.class) {
             nestingCount++;
@@ -123,7 +124,7 @@ public class NominalType extends ValueType {
     }
 
     @Override
-    public ValueType getCanonicalType(TypeContext ctx) {
+    public ValueType getCanonicalType(TypeContext ctx) throws BreakException {
         DeclType dt = null;
         try {
             dt = getSourceDeclType(ctx);
@@ -146,7 +147,7 @@ public class NominalType extends ValueType {
         }
     }
 
-    public NominalType getCanonicalNominalType(TypeContext ctx) {
+    public NominalType getCanonicalNominalType(TypeContext ctx) throws BreakException {
         DeclType dt = null;
         try {
             dt = getSourceDeclType(ctx);
@@ -214,7 +215,7 @@ public class NominalType extends ValueType {
     }
 
     @Override
-    public boolean isSubtypeOf(ValueType t, TypeContext ctx, FailureReason reason) {
+    public boolean isSubtypeOf(ValueType t, TypeContext ctx, FailureReason reason) throws BreakException {
         // check if they are the same type
         if (super.isSubtypeOf(t, ctx, new FailureReason())) {
             return true;
@@ -274,12 +275,12 @@ public class NominalType extends ValueType {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public ValueType adapt(View v) {
+    public ValueType adapt(View v) throws BreakException {
         if (v == null) {
             return this;
         }
@@ -300,7 +301,7 @@ public class NominalType extends ValueType {
     }
 
     @Override
-    public Value getMetadata(TypeContext ctx) {
+    public Value getMetadata(TypeContext ctx) throws BreakException {
         DeclType t = getSourceDeclType(ctx);
         
         // If one requests invalid or undefined member, then t would be null here, hence this check:
@@ -310,7 +311,7 @@ public class NominalType extends ValueType {
     }
 
     @Override
-    public void checkWellFormed(TypeContext ctx) {
+    public void checkWellFormed(TypeContext ctx) throws BreakException {
         // we are well-formed as long as we can get this without an error, and it doesn't return null but instead a well-formed type member
         final DeclType sourceDeclType = this.getSourceDeclType(ctx);
         if (sourceDeclType == null) {
@@ -321,7 +322,7 @@ public class NominalType extends ValueType {
     }
 
     @Override
-    public ValueType doAvoid(String varName, TypeContext ctx, int count) {
+    public ValueType doAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         if (count > MAX_RECURSION_DEPTH) {
             // best effort failed
             // TODO: make this more principled
@@ -351,13 +352,13 @@ public class NominalType extends ValueType {
     }
 
     @Override
-    public boolean isTagged(TypeContext ctx) {
+    public boolean isTagged(TypeContext ctx) throws BreakException {
         DeclType dt = this.getSourceDeclType(ctx);
         return (dt instanceof ConcreteTypeMember) && ((ConcreteTypeMember) dt).getSourceType().isTagged(ctx);
     }
 
     @Override
-    public Tag getTag(EvalContext ctx) {
+    public Tag getTag(EvalContext ctx) throws BreakException {
         Value v = this.getPath().interpret(ctx);
         if (!(v instanceof ObjectValue)) {
             throw new RuntimeError("internal invariant: can only get the tag of part of an object, did this typecheck?");
@@ -383,7 +384,7 @@ public class NominalType extends ValueType {
     }
 
     @Override
-    public void canInstantiate(TypeContext ctx) {
+    public void canInstantiate(TypeContext ctx) throws BreakException {
         DeclType dt = this.getSourceDeclType(ctx);
         if (dt instanceof ConcreteTypeMember) {
             Type t = ((ConcreteTypeMember) dt).getSourceType();
@@ -393,7 +394,7 @@ public class NominalType extends ValueType {
         }
     }
     
-    public boolean nominallyEquals(NominalType parentType, TypeContext ctx) {
+    public boolean nominallyEquals(NominalType parentType, TypeContext ctx) throws BreakException {
         NominalType myCanonical = getCanonicalNominalType(ctx);
         NominalType theirCanonical = getCanonicalNominalType(ctx);
         

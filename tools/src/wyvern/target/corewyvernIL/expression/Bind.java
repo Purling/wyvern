@@ -10,6 +10,7 @@ import java.util.Set;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EmptyTypeContext;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
@@ -55,7 +56,7 @@ public class Bind extends Expression {
     }
 
     @Override
-    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
         TypeContext bodyCtx = EmptyTypeContext.empty();
         for (VarBinding vb : bindings) {
             ValueType t = vb.getExpression().typeCheck(ctx, effectAccumulator);
@@ -83,12 +84,12 @@ public class Bind extends Expression {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public Value interpret(EvalContext ctx) {
+    public Value interpret(EvalContext ctx) throws BreakException {
         EvalContext evalCtx = ctx;
         for (VarBinding vb : bindings) {
             evalCtx = evalCtx.extend(vb.getSite(), vb.getExpression().interpret(ctx));

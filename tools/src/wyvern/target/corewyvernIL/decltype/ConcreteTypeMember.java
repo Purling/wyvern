@@ -6,6 +6,7 @@ import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Value;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -14,18 +15,18 @@ import wyvern.target.corewyvernIL.type.Type;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.ToolError;
 
-
 public class ConcreteTypeMember extends DeclTypeWithResult implements DefinedTypeMember {
 
     public ConcreteTypeMember(String name, Type sourceType) {
         this(name, sourceType, null);
     }
+
     public ConcreteTypeMember(String name, Type sourceType, IExpr metadata) {
         super(name, sourceType);
         this.metadata = metadata;
     }
 
-    private IExpr metadata;
+    private final IExpr metadata;
 
     /*public void setSourceType(ValueType _type)
     {
@@ -33,13 +34,14 @@ public class ConcreteTypeMember extends DeclTypeWithResult implements DefinedTyp
     }*/
 
     @Override
-    public void checkWellFormed(TypeContext ctx) {
+    public void checkWellFormed(TypeContext ctx) throws BreakException {
         /*if (metadata != null) {
             ValueType t = metadata.typeCheck(ctx);
             t.checkWellFormed(ctx);
         }*/
         super.checkWellFormed(ctx);
     }
+
     @Override
     public Value getMetadataValue() {
         if (metadata != null && !(metadata instanceof Value)) {
@@ -49,19 +51,18 @@ public class ConcreteTypeMember extends DeclTypeWithResult implements DefinedTyp
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public boolean isSubtypeOf(DeclType dt, TypeContext ctx, FailureReason reason) {
+    public boolean isSubtypeOf(DeclType dt, TypeContext ctx, FailureReason reason) throws BreakException {
         if (dt instanceof AbstractTypeMember) {
             return true;
         }
-        if (!(dt instanceof ConcreteTypeMember)) {
+        if (!(dt instanceof ConcreteTypeMember ctm)) {
             return false;
         }
-        ConcreteTypeMember ctm = (ConcreteTypeMember) dt;
         Type mySourceType = this.getSourceType();
         Type theirSourceType = ctm.getSourceType();
         boolean subtypeRelationship = mySourceType.isTSubtypeOf(theirSourceType, ctx, reason);
@@ -97,13 +98,9 @@ public class ConcreteTypeMember extends DeclTypeWithResult implements DefinedTyp
             return false;
         }
         if (getSourceType() == null) {
-            if (other.getSourceType() != null) {
-                return false;
-            }
-        } else if (!getSourceType().equals(other.getSourceType())) {
-            return false;
-        }
-        return true;
+            return other.getSourceType() == null;
+        } else
+            return getSourceType().equals(other.getSourceType());
     }
 
     @Override
@@ -120,25 +117,26 @@ public class ConcreteTypeMember extends DeclTypeWithResult implements DefinedTyp
 
         // TODO: serialize metadata
         BytecodeOuterClass.DeclType.DeclTypeDeclaration.Builder dt = BytecodeOuterClass.DeclType.DeclTypeDeclaration.newBuilder().setName(getName())
-                .setTypeDesc(td);
+                                                                                                                    .setTypeDesc(td);
 
         return BytecodeOuterClass.DeclType.newBuilder().setDeclTypeDeclaration(dt).build();
     }
 
     @Override
-    public ConcreteTypeMember adapt(View v) {
+    public ConcreteTypeMember adapt(View v) throws BreakException {
         return new ConcreteTypeMember(getName(), this.getSourceType().adapt(v), metadata);
     }
 
     @Override
-    public DeclType interpret(EvalContext ctx) {
+    public DeclType interpret(EvalContext ctx) throws BreakException {
         if (metadata == null) {
             return this;
         }
         return new ConcreteTypeMember(getName(), this.getSourceType(), metadata.interpret(ctx));
     }
+
     @Override
-    public ConcreteTypeMember doAvoid(String varName, TypeContext ctx, int count) {
+    public ConcreteTypeMember doAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         Type t = this.getSourceType().doAvoid(varName, ctx, count);
         if (t.equals(this.getSourceType())) {
             return this;

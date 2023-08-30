@@ -93,7 +93,7 @@ public class VarGenContext extends GenContext {
     }
 
     @Override
-    public CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) {
+    public CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) throws BreakException {
         if (varName.equals(name)) {
             return new DefaultExprGenerator(expr);
         } else {

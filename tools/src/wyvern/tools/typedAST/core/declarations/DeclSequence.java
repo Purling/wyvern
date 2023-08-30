@@ -12,6 +12,7 @@ import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.New;
 import wyvern.target.corewyvernIL.expression.Variable;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
@@ -155,7 +156,7 @@ public class DeclSequence extends Sequence {
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
         return visitor.visit(state, this);
     }
 
@@ -163,7 +164,7 @@ public class DeclSequence extends Sequence {
      * Top-level translation of a mutually-recursive block of declarations.
      */
     @Override
-    public void genTopLevel(TopLevelContext tlc) {
+    public void genTopLevel(TopLevelContext tlc) throws BreakException {
         String newName = GenContext.generateName();
         BindingSite site = new BindingSite(newName);
 
@@ -215,7 +216,7 @@ public class DeclSequence extends Sequence {
     }
 
     private void updateTLC(TopLevelContext tlc, String newName, BindingSite site,
-            List<wyvern.target.corewyvernIL.decl.Declaration> decls, GenContext newCtx, ValueType type) {
+            List<wyvern.target.corewyvernIL.decl.Declaration> decls, GenContext newCtx, ValueType type) throws BreakException {
         GenContext genCtx = newCtx.extend(site, new Variable(newName), type);
 
         // Do the translation using this updated context
@@ -235,7 +236,7 @@ public class DeclSequence extends Sequence {
      * @param ctx: context to evaluate in.
      * @return structural type of this sequence.
      */
-    public StructuralType inferStructuralType(GenContext ctx, BindingSite site) {
+    public StructuralType inferStructuralType(GenContext ctx, BindingSite site) throws BreakException {
         boolean isResource = false;
 
         // Fake an appropriate context.
@@ -272,7 +273,13 @@ public class DeclSequence extends Sequence {
         if (forwardDecl != null) {
             StructuralType forwardStructuralType = forwardDecl.getType().getILType(ctxTemp).getStructuralType(ctxTemp);
             for (DeclType declType : forwardStructuralType.getDeclTypes()) {
-                if (!declTypes.stream().anyMatch(newDefDecl -> newDefDecl.isSubtypeOf(declType, finalCtxTemp, new FailureReason()))) {
+                if (!declTypes.stream().anyMatch(newDefDecl -> {
+                    try {
+                        return newDefDecl.isSubtypeOf(declType, finalCtxTemp, new FailureReason());
+                    } catch (BreakException e) {
+                        throw new RuntimeException(e);
+                    }
+                })) {
                     declTypes.add(declType);
                 }
             }

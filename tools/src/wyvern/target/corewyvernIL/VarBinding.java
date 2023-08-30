@@ -10,6 +10,7 @@ import wyvern.target.corewyvernIL.effects.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Value;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -66,7 +67,7 @@ public class VarBinding implements HasLocation {
         return expr;
     }
 
-    public TypeContext typecheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+    public TypeContext typecheck(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
         ValueType t = expr.typeCheck(ctx, effectAccumulator);
         FailureReason r = new FailureReason();
         if (!t.isSubtypeOf(type, ctx, r)) {
@@ -85,7 +86,7 @@ public class VarBinding implements HasLocation {
         dest.append('\n');
     }
 
-    public EvalContext interpret(EvalContext ctx) {
+    public EvalContext interpret(EvalContext ctx) throws BreakException {
         Value v = expr.interpret(ctx);
         return ctx.extend(getSite(), v);
     }

@@ -7,6 +7,7 @@ import org.junit.experimental.categories.Category;
 import wyvern.stdlib.Globals;
 import wyvern.stdlib.support.WyvernAssertion;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.parsing.coreparser.ParseException;
@@ -21,7 +22,7 @@ public class StdlibTests {
     }
 
     @Test
-    public void testRegex() throws ParseException {
+    public void testRegex() throws ParseException, BreakException {
         // this test is independent of the standard prelude
         Globals.setUsePrelude(false);
         String input = ""
@@ -36,43 +37,43 @@ public class StdlibTests {
     }
 
     @Test
-    public void testRegexLexer() throws ParseException {
+    public void testRegexLexer() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("tsls.testLexer", Util.stringType(), new StringLiteral("*"));
     }
 
     @Test
-    public void testParser() throws ParseException {
+    public void testParser() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("tsls.testParser", null, null);
     }
 
     @Test
-    public void testArrayList() throws ParseException {
+    public void testArrayList() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("stdlib.platform.java.arraylistTest", null, null);
     }
 
     @Test(expected = ToolError.class)
-    public void testArrayListTypeSafety() throws ParseException {
+    public void testArrayListTypeSafety() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("stdlib.platform.java.arraylistTypeSafetyTest", null, null);
     }
 
     @Test(expected = WyvernAssertion.class)
-    public void testAssertions() throws ParseException {
+    public void testAssertions() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("stdlib.assertionTest", null, null);
     }
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void testLinkedList() throws ParseException {
+    public void testLinkedList() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("stdlib.collections.linkedListTest", null, null);
     }
 
     @Test
-    public void testLinkedListNew() throws ParseException {
+    public void testLinkedListNew() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("stdlib.collections.linkedListTest_new", null, null);
     }
 
     @Test
-    public void arrayListTest() throws ParseException {
+    public void arrayListTest() throws ParseException, BreakException {
         TestUtil.doTestScriptModularly("stdlib.collections.arrayListTest", null, null);
     }
 

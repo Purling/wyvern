@@ -29,6 +29,7 @@ import wyvern.target.corewyvernIL.expression.New;
 import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.expression.SeqExpr;
 import wyvern.target.corewyvernIL.expression.Value;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.target.corewyvernIL.support.Util;
@@ -286,7 +287,7 @@ public final class ArchitectureInterpreter {
         return visitor;
     }
 
-    private static ArrayList<Expression> unwrapGeneratedAST(int numPortAST, Value connectorImpl, InterpreterState state, EvalContext evalCtx) {
+    private static ArrayList<Expression> unwrapGeneratedAST(int numPortAST, Value connectorImpl, InterpreterState state, EvalContext evalCtx) throws BreakException {
         ArrayList<Expression> portInstances = new ArrayList<>();
         Value getFirst = ((Invokable) connectorImpl).invoke("_getFirst", new LinkedList<>()).executeIfThunk();
         // getFirst is an option
@@ -321,7 +322,7 @@ public final class ArchitectureInterpreter {
         return portInstances;
     }
 
-    private static Value javaToWyvernList(Object result) {
+    private static Value javaToWyvernList(Object result) throws BreakException {
         if (result instanceof List) {
             ObjectValue v = null;
             try {

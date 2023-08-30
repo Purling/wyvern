@@ -5,6 +5,7 @@ import java.util.List;
 
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.StructuralType;
 import wyvern.tools.errors.FileLocation;
@@ -70,7 +71,7 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
         return null;
     }
 
-    public List<DeclType> genDeclTypeSeq(GenContext ctx) {
+    public List<DeclType> genDeclTypeSeq(GenContext ctx) throws BreakException {
         List<DeclType> declts = new LinkedList<DeclType>();
         for (Declaration d : decls.getDeclIterator()) {
             // temporary context for verifying existence of variables within the same type so far

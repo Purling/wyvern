@@ -8,6 +8,7 @@ import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.IASTNode;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.EffectSet;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
@@ -97,7 +98,7 @@ public class EffectDeclType extends DeclType implements IASTNode {
      * (effect)DeclTypes before comparing them.
      */
     @Override
-    public boolean isSubtypeOf(DeclType dt, TypeContext ctx, FailureReason reason) {
+    public boolean isSubtypeOf(DeclType dt, TypeContext ctx, FailureReason reason) throws BreakException {
         if (!(dt instanceof EffectDeclType)) {
             return false;
         }
@@ -262,7 +263,7 @@ public class EffectDeclType extends DeclType implements IASTNode {
     }
 
     @Override
-    public DeclType doAvoid(String varName, TypeContext ctx, int count) {
+    public DeclType doAvoid(String varName, TypeContext ctx, int count) throws BreakException {
         // TODO: similar to NominalType.doAvoid()
         if (effectSet != null) {
             EffectSet exactAvoid = getEffectSet().exactAvoid(varName, ctx, count);

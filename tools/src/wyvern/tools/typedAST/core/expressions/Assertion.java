@@ -4,6 +4,7 @@ import java.util.List;
 
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
+import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.ILFactory;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -25,7 +26,7 @@ public class Assertion extends AbstractExpressionAST {
     }
 
     @Override
-    public IExpr generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
+    public IExpr generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) throws BreakException {
         IExpr newExp = expression.generateIL(ctx, expectedType, dependencies);
         ILFactory f = ILFactory.instance();
 
