@@ -19,7 +19,6 @@ import java.util.LinkedList;
 
 import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.expression.Value;
-import wyvern.target.corewyvernIL.support.BreakException;
 
 /* Future -> CompletableFuture conversion as described in 
 http://www.thedevpiece.com/converting-old-java-future-to-completablefuture/ */
@@ -183,7 +182,7 @@ public class NIO {
     }
     
     // applies wyvern function fn to wyvern value param
-    public <T> Value wyvernApplication(T param, ObjectValue fn) throws BreakException {
+    public <T> Value wyvernApplication(T param, ObjectValue fn) {
         LinkedList<Value> params = new LinkedList<>();
         params.add((Value) param);
         return fn.invoke("apply", params).executeIfThunk();
@@ -194,13 +193,7 @@ public class NIO {
         Future<T> f = (Future<T>) obj;
         CompletableFuture<T> completableFuture = new CompletablePromise<T>(f);
         LinkedList<Value> params = new LinkedList<>();
-        return completableFuture.thenApply(res -> {
-            try {
-                return wyvernApplication(res, fn);
-            } catch (BreakException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        return completableFuture.thenApply(res -> wyvernApplication(res, fn));
     }
     
     

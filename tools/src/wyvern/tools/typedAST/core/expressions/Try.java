@@ -6,18 +6,20 @@ import java.util.List;
 import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
+import wyvern.target.corewyvernIL.expression.MethodCall;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.typedAST.abs.AbstractExpressionAST;
+import wyvern.tools.typedAST.core.declarations.DefDeclaration;
 import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.typedastvisitor.TypedASTVisitor;
 import wyvern.tools.types.Type;
+import wyvern.tools.util.GetterAndSetterGeneration;
 
 public class Try extends AbstractExpressionAST implements CoreAST {
 
@@ -47,7 +49,7 @@ public class Try extends AbstractExpressionAST implements CoreAST {
     }
 
     @Override
-    public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) throws BreakException {
+    public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
         // Create the binding site
         if (site == null) {
             site = new BindingSite(with);

@@ -12,7 +12,6 @@ import wyvern.target.corewyvernIL.effects.EffectSet;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Path;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.RefinementType;
@@ -44,11 +43,11 @@ public class Case extends ASTNode {
         return site;
     }
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) {
         // TODO Auto-generated method stub
         return visitor.visit(state, this);
     }
-    public static ValueType getAdaptedPattern(NominalType pat, ValueType matchType, IExpr matchExpr, TypeContext ctx) throws BreakException {
+    public static ValueType getAdaptedPattern(NominalType pat, ValueType matchType, IExpr matchExpr, TypeContext ctx) {
         return adapt(pat, matchType, matchExpr, ctx);
     }
 
@@ -65,7 +64,7 @@ public class Case extends ASTNode {
         }
     }
 
-    private static ValueType adapt(NominalType basePattern, ValueType matchType, IExpr matchExpr, TypeContext ctx) throws BreakException {
+    private static ValueType adapt(NominalType basePattern, ValueType matchType, IExpr matchExpr, TypeContext ctx) {
         if (matchType instanceof NominalType) {
             // if matchExpr is a path and if matchType has type members, refine the basePattern so that its type members are known to be the same
             if (matchExpr instanceof Path) {

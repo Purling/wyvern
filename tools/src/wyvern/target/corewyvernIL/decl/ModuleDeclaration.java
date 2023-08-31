@@ -11,7 +11,6 @@ import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Let;
 import wyvern.target.corewyvernIL.modules.Module;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.target.corewyvernIL.support.ModuleResolver;
@@ -32,7 +31,7 @@ public class ModuleDeclaration extends DefDeclaration {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) {
         return visitor.visit(state, this);
     }
 
@@ -40,7 +39,7 @@ public class ModuleDeclaration extends DefDeclaration {
         return dependencies;
     }
 
-    public Pair<Declaration, List<TypedModuleSpec>> specialize(String platform, GenContext ctx) throws BreakException {
+    public Pair<Declaration, List<TypedModuleSpec>> specialize(String platform, GenContext ctx) {
         ModuleResolver interpResolver = ModuleResolver.getLocal();
         ModuleResolver resolver = interpResolver; //new ModuleResolver(platform, interpResolver.getRootDir(), interpResolver.getLibDir());
         resolver.setInterpreterState(InterpreterState.getLocalThreadInterpreter());
@@ -63,7 +62,7 @@ public class ModuleDeclaration extends DefDeclaration {
     }
 
     @Override
-    public DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) throws BreakException {
+    public DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) {
         ModuleResolver resolver = InterpreterState.getLocalThreadInterpreter().getResolver();
         for (Pair<ImportDeclaration, ValueType> pair: dependencies) {
             Module module = resolver.resolveModule(pair.getFirst().getUri().getSchemeSpecificPart());

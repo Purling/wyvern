@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import wyvern.stdlib.Globals;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.parsing.coreparser.ParseException;
 import wyvern.tools.tests.suites.CurrentlyBroken;
@@ -25,14 +24,14 @@ public class CoreParserTests {
 
 
     @Test
-    public void testIdentityApp() throws ParseException, BreakException {
+    public void testIdentityApp() throws ParseException {
         String input = "((x: Int) => x)(3) \n";
         TestUtil.doTestInt(input, 3);
     }
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void testValVar() throws ParseException, BreakException {
+    public void testValVar() throws ParseException {
         String input = "require stdout\n\n"
                 + "val x = \"Hello, \"\n"
                 + "var y : String = \"World\"\n"
@@ -44,7 +43,7 @@ public class CoreParserTests {
     }
 
     @Test
-    public void testNewInvoke() throws ParseException, BreakException {
+    public void testNewInvoke() throws ParseException {
         String input = "val obj = new\n"
                 + "    def getValue():Int\n"
                 + "        5\n"
@@ -53,7 +52,7 @@ public class CoreParserTests {
     }
 
     @Test
-    public void testFieldRead() throws ParseException, BreakException {
+    public void testFieldRead() throws ParseException {
         String input = "val obj = new\n"
                 + "    val v:Int = 5\n"
                 + "obj.v\n";
@@ -61,7 +60,7 @@ public class CoreParserTests {
     }
 
     @Test
-    public void testVarField() throws ParseException, BreakException {
+    public void testVarField() throws ParseException {
         String input = "val obj = new\n"
                 + "    var v:Int = 5\n"
                 + "obj.v = 3\n"
@@ -70,7 +69,7 @@ public class CoreParserTests {
     }
 
     @Test
-    public void testTypeDecl() throws ParseException, BreakException {
+    public void testTypeDecl() throws ParseException {
         String input = ""
                 + "type ValHolder\n"
                 + "    def getValue():Int\n"
@@ -82,7 +81,7 @@ public class CoreParserTests {
     }
 
     @Test
-    public void testDatatypeDecl() throws ParseException, BreakException {
+    public void testDatatypeDecl() throws ParseException {
         String input = ""
                 + "datatype Exp\n"
                 + "    Var(name: Int)\n"
@@ -110,7 +109,7 @@ public class CoreParserTests {
     }
 
     @Test
-    public void testDatatypeDecl2() throws ParseException, BreakException {
+    public void testDatatypeDecl2() throws ParseException {
         String input = ""
                 + "datatype Color\n"
                 + "    Red\n"

@@ -15,7 +15,6 @@ import wyvern.target.corewyvernIL.effects.EffectSet;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Variable;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.QuantificationLifter;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -98,12 +97,12 @@ public class DefDeclaration extends NamedDeclaration {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) throws BreakException {
+    public DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) {
 
         TypeContext methodCtx = thisCtx;
         for (final FormalArg arg : formalArgs) {
@@ -144,7 +143,7 @@ public class DefDeclaration extends NamedDeclaration {
     }
 
     /** check that all effects in annotation exist (assume that those from method calls are valid). */
-    private void effectsCheck(TypeContext methodCtx, EffectAccumulator effectAccumulator) throws BreakException {
+    private void effectsCheck(TypeContext methodCtx, EffectAccumulator effectAccumulator) {
         // TODO: make uniform, regardless of whether we're in an obj definition or module def
 
         if (effectSet.getEffects() != null) {

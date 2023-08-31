@@ -4,7 +4,6 @@ import java.util.List;
 
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -38,7 +37,7 @@ public class Script extends AbstractExpressionAST implements CoreAST {
         return body.getLocation();
     }
 
-    public TopLevelContext generateTLC(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) throws BreakException {
+    public TopLevelContext generateTLC(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
         TopLevelContext tlc = new TopLevelContext(ctx, expectedType);
         for (ImportDeclaration i: requires) {
             i.genTopLevel(tlc);
@@ -56,7 +55,7 @@ public class Script extends AbstractExpressionAST implements CoreAST {
     }
     
     @Override
-    public IExpr generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) throws BreakException {
+    public IExpr generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
         return this.generateTLC(ctx, expectedType, dependencies).getExpression();
     }
 

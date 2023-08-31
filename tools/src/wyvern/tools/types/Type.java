@@ -1,6 +1,5 @@
 package wyvern.tools.types;
 
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.FileLocation;
@@ -19,5 +18,5 @@ public interface Type extends TreeWritable, HasLocation {
         throw new WyvernException("Cannot generate IL form for unresolved type", FileLocation.UNKNOWN);
     }
 
-    ValueType getILType(GenContext ctx) throws BreakException;
+    ValueType getILType(GenContext ctx);
 }

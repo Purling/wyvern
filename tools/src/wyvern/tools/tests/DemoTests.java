@@ -8,7 +8,6 @@ import org.junit.experimental.categories.Category;
 import wyvern.stdlib.Globals;
 import wyvern.target.corewyvernIL.expression.IntegerLiteral;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
@@ -36,12 +35,12 @@ public class DemoTests {
 
 
     @Test
-    public void testSafeSQL() throws ParseException, BreakException {
+    public void testSafeSQL() throws ParseException {
         TestUtil.doTestScriptModularly("modules.sqlMain", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testWebServer() throws ParseException, BreakException {
+    public void testWebServer() throws ParseException {
         Globals.resetState();
         Globals.setUsePrelude(true);
         TestUtil.doTestScriptModularly("webarch.driver", Util.stringType(), new StringLiteral("ha"));
@@ -49,7 +48,7 @@ public class DemoTests {
     }
 
     @Test
-    public void testListClient() throws ParseException, BreakException {
+    public void testListClient() throws ParseException {
         Globals.setUsePrelude(true);
         TestUtil.doTestScriptModularly("demo.ListClient", Util.intType(), new IntegerLiteral(8));
         Globals.setUsePrelude(false);

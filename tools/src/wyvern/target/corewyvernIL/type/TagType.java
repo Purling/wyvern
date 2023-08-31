@@ -3,7 +3,6 @@ package wyvern.target.corewyvernIL.type;
 import java.util.List;
 
 import wyvern.target.corewyvernIL.decltype.ConcreteTypeMember;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
@@ -23,7 +22,7 @@ public abstract class TagType extends Type {
         this.selfType = selfType;
     }
 
-    public NominalType getParentType(View v) throws BreakException {
+    public NominalType getParentType(View v) {
         return parentType != null ? (NominalType) parentType.adapt(v) : null;
     }
 
@@ -37,7 +36,7 @@ public abstract class TagType extends Type {
     }
 
     @Override
-    public void checkWellFormed(TypeContext ctx) throws BreakException {
+    public void checkWellFormed(TypeContext ctx) {
         valueType.checkWellFormed(ctx);
         if (parentType != null) {
             parentType.checkWellFormed(ctx);
@@ -63,13 +62,7 @@ public abstract class TagType extends Type {
             if (dtm.getSourceType() instanceof DataType) {
                 List<NominalType> cases = ((DataType) dtm.getSourceType()).getCases();
                 
-                if (!cases.stream().anyMatch(e -> {
-                    try {
-                        return e.nominallyEquals(this.selfType, ctx);
-                    } catch (BreakException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                })) {
+                if (!cases.stream().anyMatch(e -> e.nominallyEquals(this.selfType, ctx))) {
                     ToolError.reportError(ErrorMessage.COMPRISES_EXCLUDES_TAG,
                             this,
                             selfType.desugar(ctx),
@@ -80,9 +73,9 @@ public abstract class TagType extends Type {
     }
 
     @Override
-    public abstract TagType doAvoid(String varName, TypeContext ctx, int depth) throws BreakException;
+    public abstract TagType doAvoid(String varName, TypeContext ctx, int depth);
     @Override
-    public abstract TagType adapt(View v) throws BreakException;
+    public abstract TagType adapt(View v);
 
     protected NominalType getParentType() {
         return parentType;

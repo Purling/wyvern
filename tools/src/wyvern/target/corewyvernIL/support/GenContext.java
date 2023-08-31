@@ -52,7 +52,7 @@ public abstract class GenContext extends TypeContext {
      * @param loc       the location to report in an error message, if the name is not found
      * @return
      */
-    public final IExpr lookupExp(String varName, FileLocation loc) throws BreakException {
+    public final IExpr lookupExp(String varName, FileLocation loc) {
         try {
             return getCallableExpr(varName).genExpr(loc);
         } catch (RuntimeException e) {
@@ -126,7 +126,7 @@ public abstract class GenContext extends TypeContext {
      * @param origCtx the original context the lookupValue was performed in
      * @return the CallableExprGenerator
      */
-    abstract CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) throws BreakException;
+    abstract CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx);
 
     /**
      * Gets a CallableExprGenerator for the variable.
@@ -137,7 +137,7 @@ public abstract class GenContext extends TypeContext {
      * @param varName the method name
      * @return the CallableExprGenerator
      */
-    public final CallableExprGenerator getCallableExpr(String varName) throws BreakException {
+    public final CallableExprGenerator getCallableExpr(String varName) {
         return getCallableExprRec(varName, this);
     }
 

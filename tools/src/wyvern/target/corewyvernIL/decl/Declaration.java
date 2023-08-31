@@ -6,26 +6,25 @@ import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.ASTNode;
 import wyvern.target.corewyvernIL.IASTNode;
 import wyvern.target.corewyvernIL.decltype.DeclType;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.tools.errors.FileLocation;
 
 public abstract class Declaration extends ASTNode implements IASTNode {
-    public boolean containsResource(TypeContext ctx) throws BreakException {
+    public boolean containsResource(TypeContext ctx) {
         return false;
     }
 
     public Declaration(FileLocation loc) {
         super(loc);
     }
-    public abstract DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) throws BreakException;
+    public abstract DeclType typeCheck(TypeContext ctx, TypeContext thisCtx);
 
     /**
      * Interprets val and var declarations down to a value binding.
      * For other declarations this just returns the receiver
      */
-    public Declaration interpret(EvalContext ctx) throws BreakException {
+    public Declaration interpret(EvalContext ctx) {
         return this;
     }
 

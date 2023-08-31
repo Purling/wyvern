@@ -5,12 +5,11 @@ import java.util.List;
 
 import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.expression.Value;
-import wyvern.target.corewyvernIL.support.BreakException;
 
 public class CallFromJava {
     public static final CallFromJava callFromJava = new CallFromJava();
 
-    public void callFive(ObjectValue lambda) throws BreakException {
+    public void callFive(ObjectValue lambda) {
         List<Value> args = new LinkedList<Value>();
         lambda.invoke("apply", args).executeIfThunk();
     }

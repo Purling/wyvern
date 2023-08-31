@@ -1,6 +1,5 @@
 package wyvern.tools.typedAST.typedastvisitor;
 
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.tools.typedAST.core.expressions.Try;
 import wyvern.tools.typedAST.interfaces.TypedAST;
@@ -49,7 +48,7 @@ public class AnnotatedEffectVisitor extends TypedASTVisitor<GenContext, Void> {
     }
 
     @Override
-    public Void visit(GenContext state, DeclSequence ast) throws BreakException {
+    public Void visit(GenContext state, DeclSequence ast) {
         Sequence normalSeq = ast.filterNormal();
         Iterator<TypedAST> astIterator = normalSeq.flatten();
         while (astIterator.hasNext()) {
@@ -60,7 +59,7 @@ public class AnnotatedEffectVisitor extends TypedASTVisitor<GenContext, Void> {
     }
 
     @Override
-    public Void visit(GenContext state, DefDeclaration ast) throws BreakException {
+    public Void visit(GenContext state, DefDeclaration ast) {
         if (ast.getEffectSet(state) == null) {
             ast.setEmptyEffectSet();
         }
@@ -88,7 +87,7 @@ public class AnnotatedEffectVisitor extends TypedASTVisitor<GenContext, Void> {
     }
 
     @Override
-    public Void visit(GenContext state, ModuleDeclaration ast) throws BreakException {
+    public Void visit(GenContext state, ModuleDeclaration ast) {
         ast.getInner().acceptVisitor(this, state);
         return null;
     }
@@ -109,19 +108,19 @@ public class AnnotatedEffectVisitor extends TypedASTVisitor<GenContext, Void> {
     }
 
     @Override
-    public Void visit(GenContext state, ValDeclaration ast) throws BreakException {
+    public Void visit(GenContext state, ValDeclaration ast) {
         ast.getDefinition().acceptVisitor(this, state);
         return null;
     }
 
     @Override
-    public Void visit(GenContext state, VarDeclaration ast) throws BreakException {
+    public Void visit(GenContext state, VarDeclaration ast) {
         ast.getDefinition().acceptVisitor(this, state);
         return null;
     }
 
     @Override
-    public Void visit(GenContext state, Application ast) throws BreakException {
+    public Void visit(GenContext state, Application ast) {
         ast.getFunction().acceptVisitor(this, state);
         for (TypedAST typedAST : ast.getArguments()) {
             typedAST.acceptVisitor(this, state);
@@ -135,26 +134,26 @@ public class AnnotatedEffectVisitor extends TypedASTVisitor<GenContext, Void> {
     }
 
     @Override
-    public Void visit(GenContext state, Assignment ast) throws BreakException {
+    public Void visit(GenContext state, Assignment ast) {
         ast.getValue().acceptVisitor(this, state);
         ast.getTarget().acceptVisitor(this, state);
         return null;
     }
 
     @Override
-    public Void visit(GenContext state, Case ast) throws BreakException {
+    public Void visit(GenContext state, Case ast) {
         ast.getAST().acceptVisitor(this, state);
         return null;
     }
 
     @Override
-    public Void visit(GenContext state, Fn ast) throws BreakException {
+    public Void visit(GenContext state, Fn ast) {
         ast.getBody().acceptVisitor(this, state);
         return null;
     }
 
     @Override
-    public Void visit(GenContext state, Invocation ast) throws BreakException {
+    public Void visit(GenContext state, Invocation ast) {
         if (ast.getArgument() != null) {
             ast.getArgument().acceptVisitor(this, state);
         }
@@ -165,13 +164,13 @@ public class AnnotatedEffectVisitor extends TypedASTVisitor<GenContext, Void> {
     }
 
     @Override
-    public Void visit(GenContext state, LetExpr ast) throws BreakException {
+    public Void visit(GenContext state, LetExpr ast) {
         ast.getBody().acceptVisitor(this, state);
         return null;
     }
 
     @Override
-    public Void visit(GenContext state, Match ast) throws BreakException {
+    public Void visit(GenContext state, Match ast) {
         ast.getMatchingOver().acceptVisitor(this, state);
         ast.getDefaultCase().getAST().acceptVisitor(this, state);
         for (Case cse : ast.getCases()) {
@@ -181,7 +180,7 @@ public class AnnotatedEffectVisitor extends TypedASTVisitor<GenContext, Void> {
     }
 
     @Override
-    public Void visit(GenContext state, New ast) throws BreakException {
+    public Void visit(GenContext state, New ast) {
         ast.getDecls().acceptVisitor(this, state);
         return null;
     }
@@ -237,7 +236,7 @@ public class AnnotatedEffectVisitor extends TypedASTVisitor<GenContext, Void> {
     }
 
     @Override
-    public Void visit(GenContext state, Sequence ast) throws BreakException {
+    public Void visit(GenContext state, Sequence ast) {
         for (TypedAST exp : ast.getExps()) {
             exp.acceptVisitor(this, state);
         }

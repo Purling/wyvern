@@ -23,7 +23,7 @@ public class InvocationExprGenerator implements CallableExprGenerator {
     private List<DeclType> dtList; // non-null if there are multiple matching decls
     private final FileLocation location;
 
-    public InvocationExprGenerator(IExpr iExpr, String operationName, GenContext ctx, FileLocation loc) throws BreakException {
+    public InvocationExprGenerator(IExpr iExpr, String operationName, GenContext ctx, FileLocation loc) {
         this.receiver = iExpr;
         this.location = loc;
 
@@ -66,7 +66,7 @@ public class InvocationExprGenerator implements CallableExprGenerator {
     }
 
     @Override
-    public IExpr genExprWithArgs(List<? extends IExpr> args, HasLocation loc, boolean isTailCall, TypeContext ctx) throws BreakException {
+    public IExpr genExprWithArgs(List<? extends IExpr> args, HasLocation loc, boolean isTailCall, TypeContext ctx) {
         if (declType instanceof ValDeclType || declType instanceof VarDeclType) {
             if (dtList != null) {
                 ValueType receiverType = receiver.typeCheck(ctx, null);
@@ -91,7 +91,7 @@ public class InvocationExprGenerator implements CallableExprGenerator {
     }
 
     @Override
-    public DefDeclType getDeclType(TypeContext ctx) throws BreakException {
+    public DefDeclType getDeclType(TypeContext ctx) {
         if (declType == null || dtList != null) {
             // no DeclType is known, either because the receiver has type Dynamic or because there is more than one DeclType with the right name
             return null;

@@ -22,7 +22,6 @@ import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.expression.SeqExpr;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.Module;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EmptyGenContext;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
@@ -96,7 +95,7 @@ public final class Globals {
         gettingPrelude = false;
     }*/
 
-    public static Module getPreludeModule() throws BreakException {
+    public static Module getPreludeModule() {
         if (!usePrelude) {
             throw new RuntimeException("may not call getPreludeModule if preludes are disabled");
         }
@@ -111,7 +110,7 @@ public final class Globals {
         return s.getResolver().getPreludeIfPresent();
     }
 
-    public static SeqExpr getPrelude() throws BreakException {
+    public static SeqExpr getPrelude() {
         if (!usePrelude) {
             SeqExpr result = new SeqExpr();
             result.addBinding(system, Globals.getSystemType(), Globals.getSystemValue(), false);
@@ -139,11 +138,11 @@ public final class Globals {
         return javascriptWhiteList.contains(importPath);
     }
 
-    public static GenContext getStandardGenContext() throws BreakException {
+    public static GenContext getStandardGenContext() {
         return Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA, new File(TestUtil.BASE_PATH), new File(TestUtil.LIB_PATH)));
     }
 
-    public static GenContext getGenContext(InterpreterState state) throws BreakException {
+    public static GenContext getGenContext(InterpreterState state) {
         if (state.getGenContext() != null) {
             return state.getGenContext();
         }
@@ -304,7 +303,7 @@ public final class Globals {
         return systemType;
     }
 
-    public static TypeContext getStandardTypeContext() throws BreakException {
+    public static TypeContext getStandardTypeContext() {
         GenContext ctx = GenContext.empty();
         ctx = ctx.extend(system, new Variable(system), getSystemType());
         ctx = GenUtil.ensureJavaTypesPresent(ctx);
@@ -313,7 +312,7 @@ public final class Globals {
         return newCtx;
     }
 
-    public static EvalContext getStandardEvalContext() throws BreakException {
+    public static EvalContext getStandardEvalContext() {
         EvalContext ctx = EvalContext.empty();
         ctx = ctx.extend(system, Globals.getSystemValue());
         SeqExpr sexpr = getPreludeIfPresent();
@@ -323,11 +322,11 @@ public final class Globals {
         return ctx;
     }
 
-    private static Declaration platformTypeDeclaration(String platform) throws BreakException {
+    private static Declaration platformTypeDeclaration(String platform) {
         return new TypeDeclaration(platform, ((ConcreteTypeMember) getSystemType().findDecl(platform, null)).getSourceType(), FileLocation.UNKNOWN);
     }
 
-    public static ObjectValue getSystemValue() throws BreakException {
+    public static ObjectValue getSystemValue() {
         // construct a type for the system object
         List<Declaration> decls = new LinkedList<Declaration>();
         decls.add(new TypeDeclaration("Rational", new NominalType("this", "Rational"), FileLocation.UNKNOWN));

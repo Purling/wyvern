@@ -5,7 +5,6 @@ import java.util.Set;
 
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -26,18 +25,18 @@ public class Cast extends Expression {
     }
 
     @Override
-    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
+    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
         toCastExpr.typeCheck(ctx, effectAccumulator);
         return getType().getCanonicalType(ctx);
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public Value interpret(EvalContext ctx) throws BreakException {
+    public Value interpret(EvalContext ctx) {
         Value value = getToCastExpr().interpret(ctx);
         ValueType actualType = value.typeCheck(ctx, null);
         ValueType goalType = getType();

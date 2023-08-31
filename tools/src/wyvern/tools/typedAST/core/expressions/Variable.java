@@ -6,7 +6,6 @@ import java.util.List;
 
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.CallableExprGenerator;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -55,7 +54,7 @@ public class Variable extends AbstractExpressionAST implements CoreAST, Assignab
     public IExpr generateIL(
             GenContext ctx,
             ValueType expectedType,
-            List<TypedModuleSpec> dependencies) throws BreakException {
+            List<TypedModuleSpec> dependencies) {
         IExpr match = ctx.lookupExp(getName(), location);
         
         if (match instanceof wyvern.target.corewyvernIL.expression.Variable
@@ -69,7 +68,7 @@ public class Variable extends AbstractExpressionAST implements CoreAST, Assignab
     }
 
     @Override
-    public CallableExprGenerator getCallableExpr(GenContext ctx) throws BreakException {
+    public CallableExprGenerator getCallableExpr(GenContext ctx) {
         try {
             return ctx.getCallableExpr(getName());
         } catch (RuntimeException e) {

@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
@@ -36,12 +35,12 @@ public class ExtensibleTagType extends TagType {
     }
 
     @Override
-    public TagType adapt(View v) throws BreakException {
+    public TagType adapt(View v) {
         return new ExtensibleTagType((NominalType) getParentType(v), getValueType().adapt(v), getSelfType(), getLocation());
     }
 
     @Override
-    public TagType doAvoid(String varName, TypeContext ctx, int depth) throws BreakException {
+    public TagType doAvoid(String varName, TypeContext ctx, int depth) {
         final NominalType newPT = getParentType() != null ? (NominalType) getParentType().doAvoid(varName, ctx, depth) : null;
         return new ExtensibleTagType(newPT, getValueType().doAvoid(varName, ctx, depth), getSelfType(), getLocation());
     }
@@ -69,7 +68,7 @@ public class ExtensibleTagType extends TagType {
     }
 
     @Override
-    public boolean isTSubtypeOf(Type sourceType, TypeContext ctx, FailureReason reason) throws BreakException {
+    public boolean isTSubtypeOf(Type sourceType, TypeContext ctx, FailureReason reason) {
         if (!(sourceType instanceof ExtensibleTagType)) {
             return false;
         }

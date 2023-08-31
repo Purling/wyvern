@@ -9,7 +9,6 @@ import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.SeqExpr;
 import wyvern.target.corewyvernIL.expression.Value;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.ModuleResolver;
 
@@ -105,7 +104,7 @@ public class Module {
      * @param ctx
      * @return
      */
-    public Value getAsValue(EvalContext ctx) throws BreakException {
+    public Value getAsValue(EvalContext ctx) {
         if (cachedValue == null) {
             cachedValue = expr.interpret(ctx);
         }
@@ -118,7 +117,7 @@ public class Module {
      *
      * @return
      */
-    public Value getAsValue(ModuleResolver resolver) throws BreakException {
+    public Value getAsValue(ModuleResolver resolver) {
         if (cachedValue == null) {
             cachedValue = resolver.wrapWithCtx(expr, dependencies, Globals.getStandardEvalContext()).interpret(Globals.getStandardEvalContext());
         }

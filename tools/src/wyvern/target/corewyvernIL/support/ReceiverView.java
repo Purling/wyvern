@@ -12,7 +12,7 @@ public class ReceiverView extends View {
     private Path to;
     private TypeContext ctx;
 
-    public ReceiverView(IExpr e, TypeContext ctx) throws BreakException {
+    public ReceiverView(IExpr e, TypeContext ctx) {
         this.ctx = ctx;
         if (e instanceof Variable) {
             to = (Variable) e;

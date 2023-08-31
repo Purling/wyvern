@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import wyvern.target.corewyvernIL.expression.IntegerLiteral;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
@@ -23,28 +22,28 @@ public class Figures {
     }
 
     @Test
-    public void testFigure2() throws ParseException, BreakException {
+    public void testFigure2() throws ParseException {
         TestUtil.doTestScriptModularly("figs.figure2driver",
                 Util.intType(),
                 new IntegerLiteral(5));
     }
 
     @Test
-    public void testFigure3() throws ParseException, BreakException {
+    public void testFigure3() throws ParseException {
         TestUtil.doTestScriptModularly("figs.figure3driver",
                 Util.intType(),
                 new IntegerLiteral(5));
     }
 
     @Test
-    public void testFigure4() throws ParseException, BreakException {
+    public void testFigure4() throws ParseException {
         TestUtil.doTestScriptModularly("figs.figure4driver",
                 Util.intType(),
                 new IntegerLiteral(5));
     }
 
     @Test
-    public void testFigure4bit() throws ParseException, BreakException {
+    public void testFigure4bit() throws ParseException {
         TestUtil.doParseTypeModularly(TestUtil.BASE_PATH, "figs.ListFactory2");
     }
 

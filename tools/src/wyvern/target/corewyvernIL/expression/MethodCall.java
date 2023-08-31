@@ -24,7 +24,6 @@ import wyvern.target.corewyvernIL.effects.EffectSet;
 import wyvern.target.corewyvernIL.effects.EffectUtil;
 import wyvern.target.corewyvernIL.metadata.IsTailCall;
 import wyvern.target.corewyvernIL.metadata.Metadata;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.support.EvalContext;
@@ -127,7 +126,7 @@ public class MethodCall extends Expression {
         return args;
     }
 
-    private ValueType getReceiverType(TypeContext ctx) throws BreakException {
+    private ValueType getReceiverType(TypeContext ctx) {
         if (receiverType == null) {
             receiverType = objectExpr.typeCheck(ctx, null);
         }
@@ -135,7 +134,7 @@ public class MethodCall extends Expression {
     }
 
     @Override
-    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
+    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
         // If calling on a dynamic receiver, it types to Dyn (provided the args typecheck)
         if (Util.isDynamicType(getReceiverType(ctx))) {
             for (IExpr arg : args) {
@@ -148,12 +147,12 @@ public class MethodCall extends Expression {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public Value interpret(EvalContext ctx) throws BreakException {
+    public Value interpret(EvalContext ctx) {
         Invokable receiver = (Invokable) objectExpr.interpret(ctx);
         List<Value> argValues;
         // Perform short-circuit evaluation on the evaluation
@@ -182,7 +181,7 @@ public class MethodCall extends Expression {
                 return new SuspendedTailCall(this.getType(), this.getLocation()) {
   
                     @Override
-                    public Value interpret(EvalContext ignored) throws BreakException {
+                    public Value interpret(EvalContext ignored) {
                         return receiver.invoke(methodName, argValues, getLocation());
                     }
   
@@ -197,7 +196,7 @@ public class MethodCall extends Expression {
         }
         return trampoline(receiver.invoke(methodName, argValues, getLocation()));
     }
-    public static Value trampoline(Value v) throws BreakException {
+    public static Value trampoline(Value v) {
         while (v instanceof SuspendedTailCall) {
             v = v.interpret(null);
         }
@@ -224,13 +223,7 @@ public class MethodCall extends Expression {
 
     public static List<ValueType> getArgTypes(TypeContext ctx, List<? extends IExpr> args) {
         return args.stream()
-                .map(arg -> {
-                    try {
-                        return arg.typeCheck(ctx, null);
-                    } catch (BreakException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+                .map(arg -> arg.typeCheck(ctx, null))
                 .collect(Collectors.toList());
     }
 
@@ -238,7 +231,7 @@ public class MethodCall extends Expression {
      * Go into the arguments to see if the effects in bound are redefined
      * @return A map that maps the effect to its definition
      */
-    private static HashMap<String, EffectSet> getEffectDeclarations(TypeContext ctx, List<? extends IExpr> args, List<ValueType> argTypes) throws BreakException {
+    private static HashMap<String, EffectSet> getEffectDeclarations(TypeContext ctx, List<? extends IExpr> args, List<ValueType> argTypes) {
         HashMap<String, EffectSet> decls = new HashMap<>();
         assert (args.size() == argTypes.size());
         for (int i = 0; i < args.size(); i++) {
@@ -260,7 +253,7 @@ public class MethodCall extends Expression {
         return decls;
     }
 
-    private static EffectSet computeUpperBound(TypeContext ctx, List<ValueType> actualArgTypes) throws BreakException {
+    private static EffectSet computeUpperBound(TypeContext ctx, List<ValueType> actualArgTypes) {
         EffectSet ub = null;
         for (int i = 0; i < actualArgTypes.size(); i++) {
             ValueType argType = actualArgTypes.get(i);
@@ -283,7 +276,7 @@ public class MethodCall extends Expression {
         return ub;
     }
 
-    private static void checkUpperBound(TypeContext ctx,  List<ValueType> actualArgTypes) throws BreakException {
+    private static void checkUpperBound(TypeContext ctx,  List<ValueType> actualArgTypes) {
         // see if this is a call with an effect parameter
         if (actualArgTypes.size() == 0) {
             return;
@@ -329,7 +322,7 @@ public class MethodCall extends Expression {
     }
 
     private static void checkHigherOrderEffect(TypeContext ctx, List<ValueType> formalArgTypes,
-                                                List<ValueType> actualArgTypes, List<? extends IExpr> args) throws BreakException {
+                                                List<ValueType> actualArgTypes, List<? extends IExpr> args) {
         // TODO(@anlunx): Consider using args to adapt the scope
         checkUpperBound(ctx, actualArgTypes);
     }
@@ -354,7 +347,7 @@ public class MethodCall extends Expression {
         
     }
     
-    public static MatchResult matches(TypeContext newCtx, ValueType receiver, DeclType declType, List<? extends IExpr> args, IExpr objectExpr) throws BreakException {
+    public static MatchResult matches(TypeContext newCtx, ValueType receiver, DeclType declType, List<? extends IExpr> args, IExpr objectExpr) {
         List<ValueType> actualArgTypes = getArgTypes(newCtx, args);
         StructuralType receiverType = receiver.getStructuralType(newCtx);
         List<ValueType> formalArgTypes = new LinkedList<ValueType>();
@@ -434,7 +427,7 @@ public class MethodCall extends Expression {
      * @param ctx: ctx in which invocation happens.
      * @return the declaration of the method.
      */
-    public DefDeclType typeMethodDeclaration(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
+    public DefDeclType typeMethodDeclaration(TypeContext ctx, EffectAccumulator effectAccumulator) {
         boolean isTarget = false;
         // Typecheck receiver.
         ValueType receiver = getReceiverType(ctx);

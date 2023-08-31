@@ -16,7 +16,6 @@ import wyvern.target.corewyvernIL.expression.IntegerLiteral;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.InterpreterState;
@@ -51,7 +50,7 @@ public class TransformTests {
      * @param program: program to typecheck.
      * @param expectedType: the type you should get from typechecking.l
      */
-    private static void typecheck(IExpr program, ValueType expectedType) throws BreakException {
+    private static void typecheck(IExpr program, ValueType expectedType) {
         TypeContext ctx = Globals.getStandardTypeContext();
         ValueType actualType = program.typeCheck(ctx, null);
         if (expectedType != null) {
@@ -64,7 +63,7 @@ public class TransformTests {
      * @param program: program to run.
      * @param expectedOutput: value you should get from running the program.
      */
-    private static void run(IExpr program, Value expectedOutput) throws BreakException {
+    private static void run(IExpr program, Value expectedOutput) {
         EvalContext ctx = Globals.getStandardEvalContext();
         Value actualOutput = program.interpret(ctx);
         if (expectedOutput != null) {
@@ -77,7 +76,7 @@ public class TransformTests {
      * @param program: program to run.
      * @param expectedError: the error which should be thrown during execution.
      */
-    private static void runWithToolError(IExpr program, ErrorMessage expectedError) throws BreakException {
+    private static void runWithToolError(IExpr program, ErrorMessage expectedError) {
         try {
             run(program, null);
             Assert.fail("Program finished executing, but should have thrown the ToolError " + expectedError);
@@ -93,7 +92,7 @@ public class TransformTests {
      * @return a program in IL code.
      * @throws ParseException: if the source code is malformed.
      */
-    private static IExpr compile(String input) throws ParseException, BreakException {
+    private static IExpr compile(String input) throws ParseException {
         ExpressionAST ast = (ExpressionAST) TestUtil.getNewAST(input, "Transformer Test");
         GenContext genCtx = Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA,
                 new File(TestUtil.BASE_PATH),
@@ -111,7 +110,7 @@ public class TransformTests {
      * @return a program in IL code.
      * @throws ParseException: if the source code is malformed.
      */
-    private static IExpr compile(String input, ASTVisitor<TypeContext, ASTNode>... transformations) throws ParseException, BreakException {
+    private static IExpr compile(String input, ASTVisitor<TypeContext, ASTNode>... transformations) throws ParseException {
         IExpr program = compile(input);
         for (ASTVisitor<TypeContext, ASTNode> transformer : transformations) {
             GenContext ctx = Globals.getStandardGenContext();
@@ -121,7 +120,7 @@ public class TransformTests {
     }
 
     @Test
-    public void testSafeDynCasting() throws ParseException, BreakException {
+    public void testSafeDynCasting() throws ParseException {
 
         String code = "val x : Dyn = 5\n"
                 + "val y : Dyn = x\n"
@@ -140,7 +139,7 @@ public class TransformTests {
     }
 
     @Test
-    public void testUnsafeDynCasting() throws ParseException, BreakException {
+    public void testUnsafeDynCasting() throws ParseException {
 
         String input = "val intToInt: Dyn = new\n"
                 + "    def app():system.Int = 5\n\n"
@@ -159,7 +158,7 @@ public class TransformTests {
     }
 
     @Test
-    public void testSafeFieldAccess() throws ParseException, BreakException {
+    public void testSafeFieldAccess() throws ParseException {
 
         String input = "val obj: Dyn = new\n"
                 + "    val field: system.Int = 5\n"
@@ -177,7 +176,7 @@ public class TransformTests {
     }
 
     @Test
-    public void testUnsafeFieldAccess() throws ParseException, BreakException {
+    public void testUnsafeFieldAccess() throws ParseException {
 
         String input = "val obj: Dyn = new\n"
                 + "    val field: system.String = \"hello\"\n"
@@ -197,7 +196,7 @@ public class TransformTests {
     }
 
     @Test
-    public void testUnsafeFieldWrite() throws ParseException, BreakException {
+    public void testUnsafeFieldWrite() throws ParseException {
 
         String input = "val obj: Dyn = new\n"
                 + "    var field: system.Int = 5\n"
@@ -216,7 +215,7 @@ public class TransformTests {
     }
 
     @Test
-    public void testSafeFieldWrite() throws ParseException, BreakException {
+    public void testSafeFieldWrite() throws ParseException {
 
         String input = "val obj: Dyn = new\n"
                 + "    var field: system.Int = 5\n"
@@ -235,7 +234,7 @@ public class TransformTests {
     }
 
     @Test
-    public void testSafeMethodCall() throws ParseException, BreakException {
+    public void testSafeMethodCall() throws ParseException {
 
         String input = "val obj: Dyn = new\n"
                 + "    def five():system.Int = 5\n"
@@ -254,7 +253,7 @@ public class TransformTests {
     }
 
     @Test
-    public void testUnsafeMethodCall() throws ParseException, BreakException {
+    public void testUnsafeMethodCall() throws ParseException {
 
         String input = "val obj: Dyn = new\n"
                 + "    def five():system.Int = 5\n"
@@ -274,7 +273,7 @@ public class TransformTests {
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void testSafeMethodCall2() throws ParseException, BreakException {
+    public void testSafeMethodCall2() throws ParseException {
 
         String input = "val ticker: Dyn = new\n"
                 + "    val clock = new\n"

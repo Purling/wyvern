@@ -28,7 +28,7 @@ public class DefaultExprGenerator implements CallableExprGenerator {
     }
 
     @Override
-    public DefDeclType getDeclType(TypeContext ctx) throws BreakException {
+    public DefDeclType getDeclType(TypeContext ctx) {
         IExpr e = genExpr(null);
         ValueType vt = e.typeCheck(ctx, null);
         return (DefDeclType) vt.findDecl(Util.APPLY_NAME, ctx);

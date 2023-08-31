@@ -10,7 +10,6 @@ import wyvern.target.corewyvernIL.decltype.ConcreteTypeMember;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -58,7 +57,7 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
     }
 
     @Override
-    public DeclType genILType(GenContext ctx) throws BreakException {
+    public DeclType genILType(GenContext ctx) {
         if (this.reference == null) {
             return new AbstractTypeMember(this.alias);
         }
@@ -73,7 +72,7 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
     }
 
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) throws BreakException {
+    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
         if (reference == null) {
             System.out.println("reference is null with alias =" + alias + ", location = " + getLocation().toString());
         }
@@ -81,7 +80,7 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
     }
 
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) throws BreakException {
+    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) {
         if (reference == null) {
             reportError(ErrorMessage.NO_ABSTRACT_TYPES_IN_OBJECTS, this);
         }
@@ -96,7 +95,7 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
     }
 
     @Override
-    public void addModuleDecl(TopLevelContext tlc) throws BreakException {
+    public void addModuleDecl(TopLevelContext tlc) {
         wyvern.target.corewyvernIL.decl.Declaration decl = topLevelGen(tlc.getContext(), null);
         DeclType dt = genILType(tlc.getContext());
         tlc.addModuleDecl(decl, dt);

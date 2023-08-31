@@ -1,7 +1,6 @@
 package wyvern.target.corewyvernIL.expression;
 
 import wyvern.target.corewyvernIL.decl.TypeDeclaration;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.TagType;
@@ -17,7 +16,7 @@ public class Tag {
         this.nameHint = nameHint;
     }
     
-    boolean isSubTag(Tag t, EvalContext ctx) throws BreakException {
+    boolean isSubTag(Tag t, EvalContext ctx) {
         if (object == t.object && memberName.equals(t.memberName)) {
             return true;
         }
@@ -25,7 +24,7 @@ public class Tag {
         return (parent == null) ? false : parent.isSubTag(t, ctx);
     }
     
-    Tag getParent(EvalContext ctx) throws BreakException {
+    Tag getParent(EvalContext ctx) {
         TypeDeclaration td = (TypeDeclaration) object.findDecl(memberName, true);
         if (!(td.getSourceType() instanceof TagType)) {
             return null;

@@ -8,7 +8,6 @@ package wyvern.target.corewyvernIL.effects;
 import java.util.HashSet;
 import java.util.Set;
 
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
 
@@ -36,7 +35,7 @@ public class EffectAccumulator {
         return effectSet == null ? "null" : effectSet.toString().replace("[", "{").replace("]", "}");
     }
 
-    public void avoidVar(String varName, TypeContext ctx) throws BreakException {
+    public void avoidVar(String varName, TypeContext ctx) {
         if (hasFreeVar(varName)) {
             Set<Effect> newSet = new HashSet<Effect>();
             for (Effect e : effectSet) {

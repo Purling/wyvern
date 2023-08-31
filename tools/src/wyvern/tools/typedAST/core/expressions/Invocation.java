@@ -7,7 +7,6 @@ import wyvern.target.corewyvernIL.expression.FieldGet;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.MethodCall;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.CallableExprGenerator;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.InvocationExprGenerator;
@@ -73,7 +72,7 @@ public class Invocation extends AbstractExpressionAST implements CoreAST, Assign
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
         return visitor.visit(state, this);
     }
 
@@ -81,7 +80,7 @@ public class Invocation extends AbstractExpressionAST implements CoreAST, Assign
     public IExpr generateIL(
             GenContext ctx,
             ValueType expectedType,
-            List<TypedModuleSpec> dependencies) throws BreakException {
+            List<TypedModuleSpec> dependencies) {
 
         CallableExprGenerator generator = getCallableExpr(ctx);
 
@@ -116,7 +115,7 @@ public class Invocation extends AbstractExpressionAST implements CoreAST, Assign
     }
 
     @Override
-    public CallableExprGenerator getCallableExpr(GenContext genCtx) throws BreakException {
+    public CallableExprGenerator getCallableExpr(GenContext genCtx) {
         return new InvocationExprGenerator(
                 receiver.generateIL(genCtx, null, null),
                 operationName,

@@ -9,7 +9,6 @@ import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.RefinementType;
 import wyvern.target.corewyvernIL.type.StructuralType;
@@ -71,7 +70,7 @@ public class New extends AbstractExpressionAST implements CoreAST {
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
         return visitor.visit(state, this);
     }
 
@@ -105,7 +104,7 @@ public class New extends AbstractExpressionAST implements CoreAST {
             GenContext ctx,
             ValueType expectedType,
             List<TypedModuleSpec> dependencies
-            ) throws BreakException {
+            ) {
 
         if (site == null) {
             site = new BindingSite(this.self());

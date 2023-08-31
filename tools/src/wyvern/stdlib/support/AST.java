@@ -46,7 +46,6 @@ import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.generics.GenericArgument;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.ILFactory;
@@ -204,7 +203,7 @@ public class AST {
     }
 
     public ModuleDeclaration moduleDeclaration(String name, List<ObjectValue> formalArgObjs, ObjectValue returnType,
-                                               ObjectValue body, List<String> dependencyURIs) throws URISyntaxException, BreakException {
+                                               ObjectValue body, List<String> dependencyURIs) throws URISyntaxException {
         List<Pair<ImportDeclaration, ValueType>> dependencies = new LinkedList<>();
         for (String dependency : dependencyURIs) {
             ImportDeclaration imp = new ImportDeclaration(new URI(dependency), null, null, false, false, false);
@@ -301,7 +300,7 @@ public class AST {
         return new VarDeclType(field, getType(type));
     }
 
-    public IExpr parseExpression(String input, GenContext ctx) throws ParseException, BreakException {
+    public IExpr parseExpression(String input, GenContext ctx) throws ParseException {
         try {
             ExpressionAST ast = (ExpressionAST) TestUtil.getNewAST(input.trim() + "\n", "TSL Parse");
             // TODO: Handle InterpreterState/GenContext
@@ -312,7 +311,7 @@ public class AST {
         }
     }
 
-    public wyvern.tools.typedAST.core.declarations.ModuleDeclaration parseGeneratedModule(String input) throws ParseException, BreakException {
+    public wyvern.tools.typedAST.core.declarations.ModuleDeclaration parseGeneratedModule(String input) throws ParseException {
         InterpreterState state = getLocalThreadInterpreter();
         GenContext genContext = Globals.getGenContext(state);
         try {
@@ -328,7 +327,7 @@ public class AST {
         }
     }
 
-    public IExpr parseExpressionNoContext(String input) throws ParseException, BreakException {
+    public IExpr parseExpressionNoContext(String input) throws ParseException {
         InterpreterState state = getLocalThreadInterpreter();
         GenContext genContext = Globals.getGenContext(state);
         try {
@@ -351,7 +350,7 @@ public class AST {
         }
     }
 
-    private static List<TypedModuleSpec> getDependencies(List<ImportDeclaration> importDecls, GenContext genContext) throws BreakException {
+    private static List<TypedModuleSpec> getDependencies(List<ImportDeclaration> importDecls, GenContext genContext) {
         List<TypedModuleSpec> dependencies = new ArrayList<>();
         for (ImportDeclaration importDecl : importDecls) {
             importDecl.genBinding(genContext, dependencies);
@@ -359,7 +358,7 @@ public class AST {
         return dependencies;
     }
 
-    public List<IExpr> parseExpressionList(String input, GenContext ctx) throws ParseException, BreakException {
+    public List<IExpr> parseExpressionList(String input, GenContext ctx) throws ParseException {
         List<IExpr> result = new LinkedList<>();
         Reader r = new StringReader(input);
         WyvernParser<TypedAST, Type> wp = ParseUtils.makeParser(new FileLocation("parseExpressionList Parse", 1, 0), r);
@@ -449,16 +448,16 @@ public class AST {
         return count;
     }
     
-    public IExpr getMetadataTypeReceiver(GenContext ctx) throws BreakException {
+    public IExpr getMetadataTypeReceiver(GenContext ctx) {
         return ctx.lookupExp(DSLLit.METADATA_TYPE_RECEIVER, null);
     }
     
-    public ValueType getObjectType(ObjectValue o, GenContext ctx) throws BreakException {
+    public ValueType getObjectType(ObjectValue o, GenContext ctx) {
         IExpr expr = getExpr(o);
         return expr.typeCheck(ctx, null);
     }
     
-    public boolean checkTypeEquality(ObjectValue t1, ObjectValue t2, GenContext ctx) throws BreakException {
+    public boolean checkTypeEquality(ObjectValue t1, ObjectValue t2, GenContext ctx) {
         return getType(t1).equalsInContext(getType(t2), ctx, new FailureReason());
     }
 

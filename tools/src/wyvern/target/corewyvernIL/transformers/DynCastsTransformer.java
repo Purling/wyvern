@@ -40,7 +40,6 @@ import wyvern.target.corewyvernIL.expression.RationalLiteral;
 import wyvern.target.corewyvernIL.expression.SeqExpr;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
 import wyvern.target.corewyvernIL.expression.Variable;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.target.corewyvernIL.type.DataType;
@@ -59,7 +58,7 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
      * @param expr: expr whose type is to be checked.
      * @param ctx: context in which typechecking happens.
      */
-    private boolean hasDynamicType(IExpr expr, TypeContext ctx) throws BreakException {
+    private boolean hasDynamicType(IExpr expr, TypeContext ctx) {
         return Util.isDynamicType(expr.typeCheck(ctx, null));
     }
 
@@ -73,7 +72,7 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
     }
 
     @Override
-    public New visit(TypeContext ctx, New newExpr) throws BreakException {
+    public New visit(TypeContext ctx, New newExpr) {
 
         // Transform all declarations inside the object.
         List<Declaration> newDecls = new LinkedList<>();
@@ -94,7 +93,7 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
     }
 
     @Override
-    public MethodCall visit(TypeContext ctx, MethodCall methCall) throws BreakException {
+    public MethodCall visit(TypeContext ctx, MethodCall methCall) {
 
         // Transform the receiver.
         IExpr receiver = (IExpr) methCall.getObjectExpr().acceptVisitor(this, ctx);
@@ -150,7 +149,7 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
     }
 
     @Override
-    public FieldGet visit(TypeContext ctx, FieldGet fieldGet) throws BreakException {
+    public FieldGet visit(TypeContext ctx, FieldGet fieldGet) {
         IExpr receiver = fieldGet.getObjectExpr();
         ValueType receiverType = receiver.typeCheck(ctx, null);
 
@@ -167,7 +166,7 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
     }
 
     @Override
-    public Let visit(TypeContext ctx, Let let) throws BreakException {
+    public Let visit(TypeContext ctx, Let let) {
 
         // Transform subexpressions.
         IExpr toReplace = let.getToReplace();
@@ -193,7 +192,7 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
     }
 
     @Override
-    public FieldSet visit(TypeContext ctx, FieldSet fieldSet) throws BreakException {
+    public FieldSet visit(TypeContext ctx, FieldSet fieldSet) {
 
         // Transform expression being assigned. Wrap in a cast if necessary.
         IExpr toAssign = (IExpr) fieldSet.getExprToAssign().acceptVisitor(this, ctx);
@@ -233,7 +232,7 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
     }
 
     @Override
-    public DefDeclaration visit(TypeContext ctx, DefDeclaration defDecl) throws BreakException {
+    public DefDeclaration visit(TypeContext ctx, DefDeclaration defDecl) {
 
         // Update context with the arguments.
         TypeContext methodCtx = ctx;
@@ -247,7 +246,7 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
     }
 
     @Override
-    public ModuleDeclaration visit(TypeContext ctx, ModuleDeclaration moduleDecl) throws BreakException {
+    public ModuleDeclaration visit(TypeContext ctx, ModuleDeclaration moduleDecl) {
         return (ModuleDeclaration) ((DefDeclaration) moduleDecl).acceptVisitor(this, ctx);
     }
 

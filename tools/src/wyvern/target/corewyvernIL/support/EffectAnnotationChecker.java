@@ -27,7 +27,7 @@ final class EffectAnnotationChecker {
      * @param dependencies dependencies of the module
      */
     static void checkModule(ModuleResolver resolver, GenContext ctx, ModuleDeclaration moduleDecl,
-                                   List<TypedModuleSpec> dependencies) throws BreakException {
+                                   List<TypedModuleSpec> dependencies) {
         TypedAST typedAST = moduleDecl.getInner();
         if (moduleDecl.isAnnotated()) {
 

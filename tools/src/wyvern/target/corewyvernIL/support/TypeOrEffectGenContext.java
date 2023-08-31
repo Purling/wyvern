@@ -62,7 +62,7 @@ public class TypeOrEffectGenContext extends GenContext {
     }
 
     @Override
-    public CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) throws BreakException {
+    public CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) {
         return getNext().getCallableExprRec(varName, origCtx);
     }
 

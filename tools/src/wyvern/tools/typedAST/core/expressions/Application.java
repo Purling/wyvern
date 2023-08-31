@@ -18,7 +18,6 @@ import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.MethodCall;
 import wyvern.target.corewyvernIL.expression.New;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.CallableExprGenerator;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.StructuralType;
@@ -76,7 +75,7 @@ public class Application extends AbstractExpressionAST implements CoreAST {
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
         return visitor.visit(state, this);
     }
 
@@ -85,7 +84,7 @@ public class Application extends AbstractExpressionAST implements CoreAST {
     public IExpr generateIL(
             GenContext ctx,
             ValueType expectedType,
-            List<TypedModuleSpec> dependencies) throws BreakException {
+            List<TypedModuleSpec> dependencies) {
 
         CallableExprGenerator exprGen = function.getCallableExpr(ctx);
 
@@ -146,7 +145,7 @@ public class Application extends AbstractExpressionAST implements CoreAST {
         return count;
     }
 
-    private void addGenericToArgList(String formalName, GenericArgument generic, List<IExpr> args, GenContext ctx) throws BreakException {
+    private void addGenericToArgList(String formalName, GenericArgument generic, List<IExpr> args, GenContext ctx) {
         final String genericName = formalName.substring(DefDeclaration.GENERIC_PREFIX.length());
         final NamedDeclaration namedDeclaration;
 
@@ -174,7 +173,7 @@ public class Application extends AbstractExpressionAST implements CoreAST {
             List<IExpr> args,
             GenContext ctx,
             List<TypedModuleSpec> dependencies
-            ) throws BreakException {
+            ) {
 
         List<TypedAST> rawArgs = arguments;
         if (formals.size() != rawArgs.size() + args.size()) {
@@ -200,7 +199,7 @@ public class Application extends AbstractExpressionAST implements CoreAST {
             GenContext ctx,
             DefDeclType ddt,
             List<TypedModuleSpec> deps
-            ) throws BreakException {
+            ) {
         int count = countFormalGenerics(formals);
 
         if (count < this.generics.size()) {
@@ -228,7 +227,7 @@ public class Application extends AbstractExpressionAST implements CoreAST {
             GenContext ctx,
             DefDeclType ddt,
             List<TypedModuleSpec> deps
-            ) throws BreakException {
+            ) {
         // First, add any of the pre-existing generics to the argument list.
         addExistingGenerics(args, formals, ctx);
 
@@ -294,7 +293,7 @@ public class Application extends AbstractExpressionAST implements CoreAST {
             List<IExpr> args,
             List<FormalArg> formals,
             GenContext ctx
-            ) throws BreakException {
+            ) {
         for (int i = 0; i < this.generics.size(); i++) {
             String formalName = formals.get(i).getName();
             GenericArgument generic = this.generics.get(i);

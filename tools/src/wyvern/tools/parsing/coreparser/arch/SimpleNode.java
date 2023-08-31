@@ -3,7 +3,6 @@
 NODE_PREFIX=AST,NODE_EXTENDS=,NODE_FACTORY=,SUPPORT_CLASS_VISIBILITY_PUBLIC=true */
 package wyvern.tools.parsing.coreparser.arch;
 
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.tools.errors.FileLocation;
 
 public class SimpleNode implements Node {

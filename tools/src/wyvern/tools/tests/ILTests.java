@@ -23,7 +23,6 @@ import wyvern.target.corewyvernIL.expression.StringLiteral;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.InterpreterState;
@@ -56,7 +55,7 @@ public class ILTests {
     }
 
     @Test
-    public void testLet() throws BreakException {
+    public void testLet() {
         NominalType integer = new NominalType("system", "Int");
         IntegerLiteral five = new IntegerLiteral(5);
         Expression letExpr = new Let(new VarBinding("x", integer, five), new Variable("x"));
@@ -67,7 +66,7 @@ public class ILTests {
     }
 
     @Test
-    public void testLetOutside() throws BreakException {
+    public void testLetOutside() {
         IntegerLiteral six = new IntegerLiteral(6);
         BindingSite ySite = new BindingSite("y");
         Expression letExpr = new Let(new VarBinding("x", Util.intType(), new IntegerLiteral(5)), new Variable("y"));
@@ -78,7 +77,7 @@ public class ILTests {
     }
 
     @Test
-    public void testBind() throws BreakException {
+    public void testBind() {
         NominalType integer = new NominalType("system", "Int");
         IntegerLiteral five = new IntegerLiteral(5);
         Expression bindExpr = new Bind(
@@ -91,7 +90,7 @@ public class ILTests {
     }
 
     @Test
-    public void testMultiVarBind() throws BreakException {
+    public void testMultiVarBind() {
         NominalType integer = new NominalType("system", "Int");
         Expression bindExpr = new Bind(new ArrayList<VarBinding>(Arrays.asList(
                 new VarBinding("x", integer, new IntegerLiteral(1)),
@@ -105,7 +104,7 @@ public class ILTests {
     }
 
     @Test
-    public void testBindOutside() throws BreakException {
+    public void testBindOutside() {
         NominalType integer = new NominalType("system", "Int");
         BindingSite ySite = new BindingSite("y");
         Expression bindExpr = new Bind(
@@ -119,28 +118,28 @@ public class ILTests {
     }
 
     @Test
-    public void testLetValWithParse() throws ParseException, BreakException {
+    public void testLetValWithParse() throws ParseException {
         String input = "val x = 5\n"
                      + "x\n";
         TestUtil.doTestInt(input, 5);
     }
 
     @Test
-    public void testLetValWithString() throws ParseException, BreakException {
+    public void testLetValWithString() throws ParseException {
         String input = "val x = \"five\"\n"
                      + "x\n";
         TestUtil.doTest(input, Util.stringType(), new StringLiteral("five"));
     }
 
     @Test
-    public void testLetValWithString3() throws ParseException, BreakException {
+    public void testLetValWithString3() throws ParseException {
         String input = "val identity = (x: system.Int) => x\n"
                      + "identity(5)";
         TestUtil.doTestInt(input, 5);
     }
 
     @Test(expected = ToolError.class)
-    public void testLetValWithString4() throws ParseException, BreakException {
+    public void testLetValWithString4() throws ParseException {
         String input = "val identity = (x: system.Int) => x\n"
                 + "   identity(5)";
         ExpressionAST ast = (ExpressionAST) TestUtil.getNewAST(input, "test input");
@@ -154,7 +153,7 @@ public class ILTests {
     }
 
     @Test
-    public void testFieldRead() throws ParseException, BreakException {
+    public void testFieldRead() throws ParseException {
         String input = "val obj = new\n"
                 + "    val v = 5\n"
                 + "obj.v\n";
@@ -162,7 +161,7 @@ public class ILTests {
     }
 
     @Test
-    public void testVarFieldRead() throws ParseException, BreakException {
+    public void testVarFieldRead() throws ParseException {
         String input = "val obj = new\n"
                 + "    var v : system.Int = 5\n"
                 + "obj.v\n";
@@ -170,7 +169,7 @@ public class ILTests {
     }
 
     @Test
-    public void testVarFieldReadFromNonExistent() throws ParseException, BreakException {
+    public void testVarFieldReadFromNonExistent() throws ParseException {
         String input = "val obj = new\n"
                 + "    var v : system.Int = 5\n"
                 + "obj.x\n";
@@ -179,7 +178,7 @@ public class ILTests {
     }
 
     @Test
-    public void testVarFieldWrite() throws ParseException, BreakException {
+    public void testVarFieldWrite() throws ParseException {
         String input = "val obj = new\n"
                 + "    var v : system.Int = 2\n"
                 + "obj.v = 5\n"
@@ -188,7 +187,7 @@ public class ILTests {
     }
 
     @Test
-    public void testVarFieldWriteToWrongType() throws ParseException, BreakException {
+    public void testVarFieldWriteToWrongType() throws ParseException {
         String input = "val obj = new\n"
                 + "    var v : system.Int = 3\n"
                 + "obj.v = \"hello\"\n";
@@ -197,7 +196,7 @@ public class ILTests {
     }
 
     @Test
-    public void testVarFieldWriteToNonExistent() throws ParseException, BreakException {
+    public void testVarFieldWriteToNonExistent() throws ParseException {
         String input = "val obj = new\n"
                 + "    var v : system.Int = 3\n"
                 + "obj.x = 5\n";
@@ -206,7 +205,7 @@ public class ILTests {
     }
 
     @Test
-    public void testWriteFieldtoOtherField() throws ParseException, BreakException {
+    public void testWriteFieldtoOtherField() throws ParseException {
         // Need to declare a structural type T, then declare firstObj as var firstObj : T = new ...
         String input = "val firstObj = new\n"
                 + "    var a : system.Int = 5\n"
@@ -218,7 +217,7 @@ public class ILTests {
     }
 
     @Test
-    public void testWriteToValField() throws ParseException, BreakException {
+    public void testWriteToValField() throws ParseException {
         String input = "val object = new \n"
                 + "    val field : system.Int = 5 \n"
                 + "object.field = 10\n";
@@ -226,7 +225,7 @@ public class ILTests {
     }
 
     @Test
-    public void testTypeDeclarations() throws ParseException, BreakException {
+    public void testTypeDeclarations() throws ParseException {
         // TODO: when we have a standard library defined with multiplication, make this really double the number!
         String input = "resource type Doubler\n"
                 + "    def double(argument : system.Int) : system.Int\n"
@@ -257,7 +256,7 @@ public class ILTests {
     }
 
     @Test
-    public void testDefDecl() throws ParseException, BreakException {
+    public void testDefDecl() throws ParseException {
         String input = "val obj = new\n"
                 + "    val v : system.Int = 5\n"
                 + "    def m() : system.Int = 5\n"
@@ -265,7 +264,7 @@ public class ILTests {
         TestUtil.doTestInt(input, 5);
     }
     @Test
-    public void testDefWithValInside() throws ParseException, BreakException {
+    public void testDefWithValInside() throws ParseException {
         String input = "def foo() : system.Int\n"
                 + "    val v : system.Int = 5\n"
                 + "    v\n"
@@ -275,7 +274,7 @@ public class ILTests {
 
     // TODO: add cast checks to make Dyn sound, and wrappers to make it capability-safe
     @Test
-    public void testDyn() throws ParseException, BreakException {
+    public void testDyn() throws ParseException {
         String input = "val v : Dyn = 5\n"
                 + "val v2 : system.Int = v\n"
                 + "v2\n";
@@ -283,7 +282,7 @@ public class ILTests {
     }
 
     @Test
-    public void testArrowSugar2() throws ParseException, BreakException {
+    public void testArrowSugar2() throws ParseException {
         String input = "val id : Int -> Int = (x:Int) => x\n"
                 + "def invoke(f:Int -> Int, x:Int) : Int = f(x)\n"
                 + "invoke(id, 5)\n";
@@ -291,7 +290,7 @@ public class ILTests {
     }
 
     @Test
-    public void testDefWithVarInside() throws ParseException, BreakException {
+    public void testDefWithVarInside() throws ParseException {
         String input = "def foo() : system.Int\n"
                 + "    var v : system.Int = 5\n"
                 + "    v = 10\n"
@@ -301,7 +300,7 @@ public class ILTests {
     }
 
     @Test
-    public void testIdentityCall() throws ParseException, BreakException {
+    public void testIdentityCall() throws ParseException {
         String input = "val obj = new\n"
                 + "    def id(x:system.Int) : system.Int = x\n"
                 + "obj.id(5)\n";
@@ -309,7 +308,7 @@ public class ILTests {
     }
 
     @Test
-    public void testIdentityCallString() throws ParseException, BreakException {
+    public void testIdentityCallString() throws ParseException {
         String input = "val obj = new\n"
                 + "    def id(x:system.String) : system.String = x\n"
                 + "obj.id(\"five\")\n";
@@ -317,7 +316,7 @@ public class ILTests {
     }
 
     @Test
-    public void testType() throws ParseException, BreakException {
+    public void testType() throws ParseException {
         String input = "type IntResult\n"
                 + "    def getResult():system.Int\n\n"
                 + "val r : IntResult = new\n"
@@ -327,7 +326,7 @@ public class ILTests {
     }
 
     @Test()
-    public void testBogusType() throws ParseException, BreakException {
+    public void testBogusType() throws ParseException {
         String input = "val obj = new\n"
                 + "    def id(x:Foo) : Foo = x\n"
                 + "val i : Int = 5\n\n"
@@ -336,7 +335,7 @@ public class ILTests {
     }
 
     @Test
-    public void testTypeAbbrev() throws ParseException, BreakException {
+    public void testTypeAbbrev() throws ParseException {
         String input = "type Int = system.Int\n\n"
                 + "val i : Int = 5\n\n"
                 + "i\n";
@@ -344,7 +343,7 @@ public class ILTests {
     }
 
     @Test
-    public void testSimpleForward() throws ParseException, BreakException {
+    public void testSimpleForward() throws ParseException {
         String input = "type IntResult\n"
                 + "    def getResult():system.Int\n\n"
                 + "val r : IntResult = new\n"
@@ -356,7 +355,7 @@ public class ILTests {
     }
 
     @Test
-    public void testSimpleParameterization() throws ParseException, BreakException {
+    public void testSimpleParameterization() throws ParseException {
         TestUtil.doTestScriptModularly("modules.pclient", Util.intType(), new IntegerLiteral(5));
     }
 
@@ -405,30 +404,30 @@ public class ILTests {
     }*/
 
     @Test
-    public void testNestedFunctions() throws ParseException, BreakException {
+    public void testNestedFunctions() throws ParseException {
       TestUtil.doTestScriptModularly("modules.nestedFunctions", null, null);
     }
 
     @Test
-    public void testRecursiveMethod() throws ParseException, BreakException {
+    public void testRecursiveMethod() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.recursive", null, null);
     }
 
 
 
     @Test
-    public void testRecursiveTypes() throws ParseException, BreakException {
+    public void testRecursiveTypes() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.recursivetypes", null, null);
     }
 
 
     @Test
-    public void testRecursiveFunctions() throws ParseException, BreakException {
+    public void testRecursiveFunctions() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.recursivefunctions", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testFact() throws ParseException, BreakException {
+    public void testFact() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.bool-nat-fact", null, null);
 
         /*String source = TestUtil.readFile(PATH + "bool-nat-fact.wyv");
@@ -446,12 +445,12 @@ public class ILTests {
     }
 
     @Test
-    public void testLambda() throws ParseException, BreakException {
+    public void testLambda() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.lambdatest", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testSimpleLambda() throws ParseException, BreakException {
+    public void testSimpleLambda() throws ParseException {
 
         String input = "type UnitIntFn \n"
                 + "     def apply():system.Int \n"
@@ -465,7 +464,7 @@ public class ILTests {
     /**
      * Checks to see if the .apply() sugar on lambda fns recognizes
      */
-    public void testSimpleLambda2() throws ParseException, BreakException {
+    public void testSimpleLambda2() throws ParseException {
 
         String input = "type UnitIntFn \n"
                 + "     def apply():system.Int \n"
@@ -476,7 +475,7 @@ public class ILTests {
     }
 
     @Test
-    public void testLambdaInferredInValDeclaration() throws ParseException, BreakException {
+    public void testLambdaInferredInValDeclaration() throws ParseException {
 
         String source = "type IntIntFn \n"
                 + "     def apply(x:system.Int):system.Int \n"
@@ -487,7 +486,7 @@ public class ILTests {
     }
 
     @Test
-    public void testLambdaInferredInApplication() throws ParseException, BreakException {
+    public void testLambdaInferredInApplication() throws ParseException {
 
         String source = "type IntIntFn \n"
                 + "     def apply(x:system.Int):system.Int \n"
@@ -501,7 +500,7 @@ public class ILTests {
     }
 
     @Test
-    public void testLambdaInferredInDefDeclarationReturnValue() throws ParseException, BreakException {
+    public void testLambdaInferredInDefDeclarationReturnValue() throws ParseException {
 
         String source = "type IntIntFn \n"
                 + "     def apply(x:system.Int):system.Int \n"
@@ -515,7 +514,7 @@ public class ILTests {
     }
 
     @Test
-    public void testLambdaInferredInVarDeclaration() throws ParseException, BreakException {
+    public void testLambdaInferredInVarDeclaration() throws ParseException {
 
         String source = "type IntIntFn \n"
                 + "     def apply(x:system.Int):system.Int \n"
@@ -526,7 +525,7 @@ public class ILTests {
     }
 
     @Test
-    public void testLambdaInferredInAssignment() throws ParseException, BreakException {
+    public void testLambdaInferredInAssignment() throws ParseException {
 
         String source = "type IntIntFn \n"
                 + "     def apply(x:system.Int):system.Int \n"
@@ -538,7 +537,7 @@ public class ILTests {
     }
 
     @Test
-    public void testTypeMembers() throws ParseException, BreakException {
+    public void testTypeMembers() throws ParseException {
         String input = "type Numeric\n"
                 + "    val n:Int\n\n"
 
@@ -581,7 +580,7 @@ public class ILTests {
     }
 
     @Test
-    public void testJavaImport1() throws ParseException, BreakException {
+    public void testJavaImport1() throws ParseException {
         String input = "module def main(java : Java)\n\n"
 //                + "import testcode/Adder\n\n"
 //                + "type Adder\n"
@@ -592,44 +591,44 @@ public class ILTests {
     }
 
     @Test
-    public void testBigInt() throws ParseException, BreakException {
+    public void testBigInt() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.bigint", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testBool() throws ParseException, BreakException {
+    public void testBool() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.bool", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testListModularly() throws ParseException, BreakException {
+    public void testListModularly() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.list", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testListClient() throws ParseException, BreakException {
+    public void testListClient() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.listClient", Util.intType(), new IntegerLiteral(5));
     }
 
     @Test
-    public void testOperatorPlus() throws ParseException, BreakException {
+    public void testOperatorPlus() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.operator-plus", Util.intType(), new IntegerLiteral(5));
     }
 
 
     @Test
-    public void testTaggedList() throws ParseException, BreakException {
+    public void testTaggedList() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.taggedList", Util.intType(), Util.intValue(0));
     }
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void testParametrizedTaggedList() throws ParseException, BreakException {
+    public void testParametrizedTaggedList() throws ParseException {
         TestUtil.doTestScriptModularly("modules.module.parametrizedList", Util.intType(), Util.intValue(0));
     }
 
     @Test
-    public void testJavaImport2() throws ParseException, BreakException {
+    public void testJavaImport2() throws ParseException {
         String input = "module def main(java : Java)\n\n"
 //                + "import testcode/Adder\n\n"
 //                + "type Adder\n"
@@ -640,7 +639,7 @@ public class ILTests {
     }
 
     @Test
-    public void testResourceTypecheckingVar() throws ParseException, BreakException {
+    public void testResourceTypecheckingVar() throws ParseException {
         String input = "type Constant\n"
                 + "    def getConstant() : system.Int\n"
                 + "val c : Constant = new\n"
@@ -652,7 +651,7 @@ public class ILTests {
     }
 
     @Test
-    public void testDSLParsing() throws ParseException, BreakException {
+    public void testDSLParsing() throws ParseException {
         String input = "def id(x:Int):Int = x\n"
                 + "val n : Int = id(~)\n"
                 + "    4 5 +\n";
@@ -663,17 +662,17 @@ public class ILTests {
     }
 
     @Test
-    public void testVal() throws ParseException, BreakException {
+    public void testVal() throws ParseException {
         TestUtil.doTestScriptModularly(PATH, "tsls.testVal", Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testNonResourceImport() throws ParseException, BreakException {
+    public void testNonResourceImport() throws ParseException {
         TestUtil.doTestScriptModularlyFailing("bugs.a", ErrorMessage.SCRIPT_REQUIRED_MODULE_ONLY_JAVA);
     }
 
     @Test
-    public void testAdditionRegression() throws ParseException, BreakException {
+    public void testAdditionRegression() throws ParseException {
         TestUtil.doTestScriptModularly("bugs.issue162",  Util.intType(), new IntegerLiteral(4));
     }
 
@@ -684,12 +683,12 @@ public class ILTests {
 
     // tests import-dependent types
     @Test
-    public void testIDT() throws ParseException, BreakException {
+    public void testIDT() throws ParseException {
         TestUtil.doTestScriptModularly("modules.idtDriver", Util.intType(), new IntegerLiteral(3));
     }
 
     @Test
-    public void testMetadataParsing() throws ParseException, BreakException {
+    public void testMetadataParsing() throws ParseException {
         String input = "type PostfixExpr\n"
                 + "    def eval():Int\n"
                 + "    metadata 3\n\n";
@@ -701,13 +700,13 @@ public class ILTests {
     }
 
     @Test
-    public void testEmpty() throws ParseException, BreakException {
+    public void testEmpty() throws ParseException {
         String input = "";
         TestUtil.doTest(input, Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testResourceTypecheckingDef() throws ParseException, BreakException {
+    public void testResourceTypecheckingDef() throws ParseException {
         String input = "resource type Resource\n"
                 + " var state : system.Int\n"
                 + "type PseudoPure\n"
@@ -723,7 +722,7 @@ public class ILTests {
     }
 
     @Test
-    public void testWidthAndDepthSubtyping() throws ParseException, BreakException {
+    public void testWidthAndDepthSubtyping() throws ParseException {
         String input = "type SuperType\n"
                 + "    val x:Int\n"
                 + "type SubType\n"
@@ -747,7 +746,7 @@ public class ILTests {
     }
 
     @Test
-    public void testVarMarkedResource() throws ParseException, BreakException {
+    public void testVarMarkedResource() throws ParseException {
         String input = "resource type MarkedResource\n"
                 + " def foo() : system.Int\n"
                 + "type PseudoPure\n"
@@ -765,7 +764,7 @@ public class ILTests {
     }
 
     @Test
-    public void testValMarkedResource() throws ParseException, BreakException {
+    public void testValMarkedResource() throws ParseException {
         String input = "resource type MarkedResource\n"
                 + " def foo() : system.Int\n"
                 + "type PseudoPure\n"
@@ -783,7 +782,7 @@ public class ILTests {
     }
 
     @Test
-    public void testPureVar() throws ParseException, BreakException {
+    public void testPureVar() throws ParseException {
         String input = "type Pure1\n"
                 + " def foo() : system.Int\n"
                 + "type Pure2\n"
@@ -801,7 +800,7 @@ public class ILTests {
     }
 
     @Test
-    public void testPureVal() throws ParseException, BreakException {
+    public void testPureVal() throws ParseException {
         String input = "type Pure1\n"
                 + " def foo() : system.Int\n"
                 + "type Pure2\n"
@@ -835,7 +834,7 @@ public class ILTests {
     }
 
     @Test
-    public void testVarsInTypes() throws ParseException, BreakException {
+    public void testVarsInTypes() throws ParseException {
         String input = "resource type TwoVars\n"
                 + " var one : system.Int\n"
                 + " var two : system.Int\n"
@@ -880,7 +879,7 @@ public class ILTests {
      * some kind of ToolError.
      * @param ast: ast that should fail typechecking.
      */
-    private static void assertTypeCheckFails(ExpressionAST ast, GenContext genCtx) throws BreakException {
+    private static void assertTypeCheckFails(ExpressionAST ast, GenContext genCtx) {
         try {
             IExpr program = ast.generateIL(genCtx, null, new LinkedList<TypedModuleSpec>());
 
@@ -895,7 +894,7 @@ public class ILTests {
     }
 
     @Test
-    public void testIntAdd() throws ParseException, BreakException {
+    public void testIntAdd() throws ParseException {
         String source = ""
                 + "val x : Int = 5\n"
                 + "val y : Int = x + 5\n"
@@ -904,7 +903,7 @@ public class ILTests {
     }
 
     @Test
-    public void testIntOps() throws ParseException, BreakException {
+    public void testIntOps() throws ParseException {
         String source = ""
                 + "val x : Int = 2\n"
                 + "val y : Int = 4 / 2 - x * 2\n"
@@ -913,7 +912,7 @@ public class ILTests {
     }
 
     @Test
-    public void testArrowSugar() throws ParseException, BreakException {
+    public void testArrowSugar() throws ParseException {
 
         String source = "val identity: system.Int->system.Int = (x: system.Int) => x\n"
                 + "identity(10)";
@@ -921,7 +920,7 @@ public class ILTests {
     }
 
     @Test
-    public void testTypeMemberInFunction() throws ParseException, BreakException {
+    public void testTypeMemberInFunction() throws ParseException {
 
         String source = ""
                 + "type IntHolder\n"
@@ -942,7 +941,7 @@ public class ILTests {
 
 
     @Test
-    public void testDependentType() throws ParseException, BreakException {
+    public void testDependentType() throws ParseException {
 
         String input = ""
                 + "type IntHolder\n"
@@ -962,7 +961,7 @@ public class ILTests {
     }
 
     @Test
-    public void testDependentType2() throws ParseException, BreakException {
+    public void testDependentType2() throws ParseException {
 
         String source = ""
                 + "type IntHolder\n"
@@ -981,7 +980,7 @@ public class ILTests {
     }
 
     @Test
-    public void testIfStatement() throws ParseException, BreakException {
+    public void testIfStatement() throws ParseException {
 
         String source = ""
                 + "type Body\n"
@@ -1018,7 +1017,7 @@ public class ILTests {
     }
 
     @Test
-    public void testIfStatement2() throws ParseException, BreakException {
+    public void testIfStatement2() throws ParseException {
 
         String source = ""
                 + "type Body\n"
@@ -1055,7 +1054,7 @@ public class ILTests {
     }
 
     @Test
-    public void testAbstractTypeMember() throws ParseException, BreakException {
+    public void testAbstractTypeMember() throws ParseException {
         String source = ""
                 + "type TypeHolder\n"
                 + "    type T\n"
@@ -1074,7 +1073,7 @@ public class ILTests {
     }
 
     @Test
-    public void testSelfName() throws ParseException, BreakException {
+    public void testSelfName() throws ParseException {
         String source = ""
                 + "type Body (body) => \n"
                 + "    val x: system.Int \n\n"
@@ -1088,7 +1087,7 @@ public class ILTests {
     }
 
     @Test
-    public void testSelfName2() throws ParseException, BreakException {
+    public void testSelfName2() throws ParseException {
         String source = ""
                 + "type Body (body) => \n"
                 + "    type T = system.Int \n"
@@ -1104,7 +1103,7 @@ public class ILTests {
     }
 
     @Test
-    public void testNestedDecl() throws ParseException, BreakException {
+    public void testNestedDecl() throws ParseException {
         String source = ""
                 + "type Body (body) => \n"
                 + "    type T \n"
@@ -1129,7 +1128,7 @@ public class ILTests {
     }
 
     @Test
-    public void testGenericIfStatement() throws ParseException, BreakException {
+    public void testGenericIfStatement() throws ParseException {
 
         String source = ""
                 + "type Body (body) => \n"
@@ -1175,7 +1174,7 @@ public class ILTests {
     }
 
     @Test
-    public void testExplicitParameterization() throws ParseException, BreakException {
+    public void testExplicitParameterization() throws ParseException {
 
         String source = ""
                 + "def identity[K](value: K): K \n"
@@ -1189,7 +1188,7 @@ public class ILTests {
     }
 
     @Test
-    public void testTypeParameterization() throws ParseException, BreakException {
+    public void testTypeParameterization() throws ParseException {
 
         String source = ""
                 + "type Box\n"
@@ -1214,7 +1213,7 @@ public class ILTests {
     }
 
     @Test
-    public void testExplicitTwoParams() throws ParseException, BreakException {
+    public void testExplicitTwoParams() throws ParseException {
 
         String source = ""
                 + "def identity[K, L](value: K, value2: L): L \n"
@@ -1231,7 +1230,7 @@ public class ILTests {
     }
 
     @Test
-    public void testParameterizationInferred() throws ParseException, BreakException {
+    public void testParameterizationInferred() throws ParseException {
 
         String source = ""
                 + "def identity[K](value: K): K \n"
@@ -1245,7 +1244,7 @@ public class ILTests {
     }
 
     @Test
-    public void testInferredTupleParams() throws ParseException, BreakException {
+    public void testInferredTupleParams() throws ParseException {
 
         String source = ""
                 + "def identity[K](value: Int, ignored: K): Int \n"
@@ -1260,7 +1259,7 @@ public class ILTests {
     }
 
     @Test
-    public void testJavaImportNamespace() throws ParseException, BreakException {
+    public void testJavaImportNamespace() throws ParseException {
         String source = "require java\n"
                 + "import java:java.util.ArrayList \n\n"
 
@@ -1275,14 +1274,14 @@ public class ILTests {
 
 
     @Test
-    public void testDeclarationReturn1() throws ParseException, BreakException {
+    public void testDeclarationReturn1() throws ParseException {
         String src = "val something : Dyn = 5\n"
                 + "val five : Int = something";
         TestUtil.doTest(src, Util.unitType(), Util.unitValue());
     }
 
     @Test
-    public void testDeclarationReturn2() throws ParseException, BreakException {
+    public void testDeclarationReturn2() throws ParseException {
         String src = "val something : Dyn = 5\n"
                 + "val five : Int = something\n"
                 + "five";
@@ -1290,7 +1289,7 @@ public class ILTests {
     }
 
     @Test
-    public void testDynamicObjectMethods() throws ParseException, BreakException {
+    public void testDynamicObjectMethods() throws ParseException {
 
         String src = "val obj : Dyn = new\n"
                 + "    def method(): Int = 5\n"
@@ -1300,7 +1299,7 @@ public class ILTests {
     }
 
     @Test
-    public void testDynamicObjectValField() throws ParseException, BreakException {
+    public void testDynamicObjectValField() throws ParseException {
         String src = "val obj: Dyn = new\n"
                 + "    val field: Int = 5\n"
                 + "obj.field";
@@ -1308,7 +1307,7 @@ public class ILTests {
     }
 
     @Test
-    public void testDynamicObjectVarField() throws ParseException, BreakException {
+    public void testDynamicObjectVarField() throws ParseException {
         String src = "val obj: Dyn = new\n"
                 + "    var field: Int = 5\n"
                 + "obj.field";
@@ -1316,7 +1315,7 @@ public class ILTests {
     }
 
     @Test
-    public void testDynamicObjectVarFieldWithUpdate() throws ParseException, BreakException {
+    public void testDynamicObjectVarFieldWithUpdate() throws ParseException {
         String src = "val obj: Dyn = new\n"
                 + "    var field: Int = 5\n"
                 + "obj.field = 10\n"
@@ -1325,7 +1324,7 @@ public class ILTests {
     }
 
     @Test
-    public void testDynamicObjectMethodWithArgs() throws ParseException, BreakException {
+    public void testDynamicObjectMethodWithArgs() throws ParseException {
         String src = "val obj: Dyn = new\n"
                 + "    def method(x: Int): Int = x\n"
                 + "obj.method(5)";
@@ -1333,7 +1332,7 @@ public class ILTests {
     }
 
     @Test
-    public void testObjectSetter() throws ParseException, BreakException {
+    public void testObjectSetter() throws ParseException {
         String src = "val obj = new\n"
                    + "  var x : Int = 0\n"
                    + "  def setX(x : Int) : Int\n"

@@ -10,7 +10,6 @@ import wyvern.target.corewyvernIL.expression.BooleanLiteral;
 import wyvern.target.corewyvernIL.expression.IntegerLiteral;
 import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.expression.Value;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.type.NominalType;
@@ -24,7 +23,7 @@ import wyvern.tools.interop.JavaValue;
  */
 public class Mirror {
 
-    private boolean valueEquals(Value v1, Value v2) throws BreakException {
+    private boolean valueEquals(Value v1, Value v2) {
         // TODO: JavaValue, RationalLiteral, StringLiteral
         if (v1 instanceof BooleanLiteral && v2 instanceof BooleanLiteral) {
             return ((BooleanLiteral) v1).getValue() == ((BooleanLiteral) v2).getValue();
@@ -38,7 +37,7 @@ public class Mirror {
         return false;
     }
 
-    public int equals2(ObjectValue o1, ObjectValue o2) throws BreakException {
+    public int equals2(ObjectValue o1, ObjectValue o2) {
         EvalContext evalCtx = o1.getEvalCtx();
         // o2 is an ObjectMirror
         Value obj = o2.getField("original");
@@ -66,15 +65,15 @@ public class Mirror {
         return 1;
     }
 
-    public StructuralType getObjectType(ObjectValue o) throws BreakException {
+    public StructuralType getObjectType(ObjectValue o) {
         return o.getType().getStructuralType(o.getEvalCtx());
     }
 
-    public Value invoke(ObjectValue o, String methodName, List<Value> argList) throws BreakException {
+    public Value invoke(ObjectValue o, String methodName, List<Value> argList) {
         return o.invoke(methodName, argList);
     }
 
-    public int equalTypes(ObjectValue type1, ObjectValue type2) throws BreakException {
+    public int equalTypes(ObjectValue type1, ObjectValue type2) {
         EvalContext evalCtx = type1.getEvalCtx();
         List<Object> args = new ArrayList<>();
         args.add(evalCtx);

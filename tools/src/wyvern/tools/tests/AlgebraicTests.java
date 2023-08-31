@@ -5,7 +5,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import wyvern.stdlib.Globals;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.imports.extensions.WyvernResolver;
@@ -30,7 +29,7 @@ public class AlgebraicTests {
     }
 
     @Test
-    public void testNonStablePrevention() throws ParseException, BreakException {
+    public void testNonStablePrevention() throws ParseException {
         TestUtil.doTestScriptModularlyFailing( "notStableTypePrevention", ErrorMessage.MISTAKEN_DSL); // TODO make this error message match
     }
 

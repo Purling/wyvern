@@ -4,7 +4,6 @@ import java.util.List;
 
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
@@ -54,7 +53,7 @@ public class ForwardDeclaration extends Declaration implements CoreAST {
     }
 
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) throws BreakException {
+    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
         if (!(target instanceof Variable)) {
             ToolError.reportError(ErrorMessage.FORWARD_MUST_BE_VARIABLE,
                     this,

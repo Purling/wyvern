@@ -6,7 +6,6 @@ import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.RefinementType;
@@ -97,7 +96,7 @@ public class Case {
                 ValueType matchType,
                 IExpr matchExpr,
                 ValueType expectedType,
-                List<TypedModuleSpec> dependencies) throws BreakException {
+                List<TypedModuleSpec> dependencies) {
         String bindingVar = binding.getName();
         BindingSite bindingSite = new BindingSite(bindingVar);
         wyvern.target.corewyvernIL.expression.Variable expr = new wyvern.target.corewyvernIL.expression.Variable(bindingVar);

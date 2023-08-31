@@ -38,7 +38,7 @@ public final class ILFactory {
         return new MethodCall(receiver, name, args, receiver);
     }
     /** Note: the module must have already been loaded; this does not load the module, only mentions an already loaded module */
-    public Variable module(String qualifiedModuleName) throws BreakException {
+    public Variable module(String qualifiedModuleName) {
         String internalName = ModuleResolver.getLocal().resolveModule(qualifiedModuleName).getSpec().getInternalName();
         return new Variable(internalName);
     }

@@ -5,7 +5,6 @@ import java.io.IOException;
 import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.IASTNode;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
@@ -18,12 +17,12 @@ public class VarDeclType extends DeclTypeWithResult implements IASTNode {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public boolean isSubtypeOf(DeclType dt, TypeContext ctx, FailureReason reason) throws BreakException {
+    public boolean isSubtypeOf(DeclType dt, TypeContext ctx, FailureReason reason) {
         if (!(dt instanceof VarDeclType)) {
             if (dt instanceof ValDeclType) {
                 ValDeclType vdt = (ValDeclType) dt;
@@ -42,7 +41,7 @@ public class VarDeclType extends DeclTypeWithResult implements IASTNode {
     }
     
     @Override
-    public DeclType adapt(View v) throws BreakException {
+    public DeclType adapt(View v) {
         return new VarDeclType(getName(), this.getRawResultType().adapt(v));
     }
 
@@ -101,7 +100,7 @@ public class VarDeclType extends DeclTypeWithResult implements IASTNode {
     }
 
     @Override
-    public DeclType doAvoid(String varName, TypeContext ctx, int count) throws BreakException {
+    public DeclType doAvoid(String varName, TypeContext ctx, int count) {
         ValueType t = this.getRawResultType().doAvoid(varName, ctx, count);
         if (t.equals(this.getRawResultType())) {
             return this;

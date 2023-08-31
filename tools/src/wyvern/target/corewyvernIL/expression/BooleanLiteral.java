@@ -9,7 +9,6 @@ import java.util.Set;
 import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.Util;
@@ -91,7 +90,7 @@ public class BooleanLiteral extends Literal implements Invokable {
         case "ifTrue":
             if (this.value) {
                 return new SuspendedTailCall(this.getType(), this.getLocation()) {
-                    @Override public Value interpret(EvalContext ignored) throws BreakException {
+                    @Override public Value interpret(EvalContext ignored) {
                         return ((ObjectValue) args.get(0)).invoke("apply", new ArrayList<>());
                     }
 
@@ -103,7 +102,7 @@ public class BooleanLiteral extends Literal implements Invokable {
                 };
             }
             return new SuspendedTailCall(this.getType(), this.getLocation()) {
-                @Override public Value interpret(EvalContext ignored) throws BreakException {
+                @Override public Value interpret(EvalContext ignored) {
                     return ((ObjectValue) args.get(1)).invoke("apply", new ArrayList<>());
                 }
 

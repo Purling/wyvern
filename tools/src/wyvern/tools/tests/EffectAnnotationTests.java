@@ -5,7 +5,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import wyvern.stdlib.Globals;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
@@ -20,7 +19,7 @@ public class EffectAnnotationTests {
     private static final String HEADER =
             "import wyvern.collections.list\ntype MyType\n  type A\n  effect B\n";
 
-    private static ValueType buildStructuralType(String... declarations) throws ParseException, BreakException {
+    private static ValueType buildStructuralType(String... declarations) throws ParseException {
         StringBuilder b = new StringBuilder(HEADER);
         b.append("new\n  type T");
         for (String d : declarations) {
@@ -31,7 +30,7 @@ public class EffectAnnotationTests {
 
     private static void assertAnnotationStatus(
             boolean annotated, boolean unannotated, String... declarations
-    ) throws ParseException, BreakException {
+    ) throws ParseException {
         Assert.assertEquals(annotated,
                 buildStructuralType(declarations).isEffectAnnotated(Globals.getStandardTypeContext())
         );
@@ -46,63 +45,63 @@ public class EffectAnnotationTests {
     }
 
     @Test
-    public void testBasic1() throws ParseException, BreakException {
+    public void testBasic1() throws ParseException {
         assertAnnotationStatus(true, false,
                 "def foo() : {} Unit"
         );
     }
 
     @Test
-    public void testBasic2() throws ParseException, BreakException {
+    public void testBasic2() throws ParseException {
         assertAnnotationStatus(true, false,
                 "def foo() : {system.FFI} Unit"
         );
     }
 
     @Test
-    public void testBasic3() throws ParseException, BreakException {
+    public void testBasic3() throws ParseException {
         assertAnnotationStatus(true, false,
                 "effect E"
         );
     }
 
     @Test
-    public void testBasic4() throws ParseException, BreakException {
+    public void testBasic4() throws ParseException {
         assertAnnotationStatus(true, false,
                 "effect E = {}"
         );
     }
 
     @Test
-    public void testBasic5() throws ParseException, BreakException {
+    public void testBasic5() throws ParseException {
         assertAnnotationStatus(true, false,
                 "effect E = {system.FFI}"
         );
     }
 
     @Test
-    public void testBasic6() throws ParseException, BreakException {
+    public void testBasic6() throws ParseException {
         assertAnnotationStatus(false, true,
                 "def bar() : Unit"
         );
     }
 
     @Test
-    public void testBasic7() throws ParseException, BreakException {
+    public void testBasic7() throws ParseException {
         assertAnnotationStatus(true, true,
                 "val x : Int"
         );
     }
 
     @Test
-    public void testBasic8() throws ParseException, BreakException {
+    public void testBasic8() throws ParseException {
         assertAnnotationStatus(true, true,
                 "val x : Int"
         );
     }
 
     @Test
-    public void testBasic9() throws ParseException, BreakException {
+    public void testBasic9() throws ParseException {
         assertAnnotationStatus(true, true,
                 "val x : Int",
                 "val y : String",
@@ -112,7 +111,7 @@ public class EffectAnnotationTests {
     }
 
     @Test
-    public void testBasic10() throws ParseException, BreakException {
+    public void testBasic10() throws ParseException {
         assertAnnotationStatus(false, false,
                 "def foo() : {system.FFI} Unit",
                 "def bar() : Unit"
@@ -120,7 +119,7 @@ public class EffectAnnotationTests {
     }
 
     @Test
-    public void testBasic11() throws ParseException, BreakException {
+    public void testBasic11() throws ParseException {
         assertAnnotationStatus(false, false,
                 "def bar() : Unit",
                 "effect E"
@@ -128,7 +127,7 @@ public class EffectAnnotationTests {
     }
 
     @Test
-    public void testBasic12() throws ParseException, BreakException {
+    public void testBasic12() throws ParseException {
         assertAnnotationStatus(false, false,
                 "def bar() : Unit",
                 "effect E = {}"
@@ -136,7 +135,7 @@ public class EffectAnnotationTests {
     }
 
     @Test
-    public void testBasic13() throws ParseException, BreakException {
+    public void testBasic13() throws ParseException {
         assertAnnotationStatus(false, false,
                 "def bar() : Unit",
                 "effect E = {system.FFI}"
@@ -144,7 +143,7 @@ public class EffectAnnotationTests {
     }
 
     @Test
-    public void testBasic14() throws ParseException, BreakException {
+    public void testBasic14() throws ParseException {
         assertAnnotationStatus(true, false,
                 "type U\n      effect E"
         );
@@ -152,35 +151,35 @@ public class EffectAnnotationTests {
     }
 
     @Test
-    public void testBasic15() throws ParseException, BreakException {
+    public void testBasic15() throws ParseException {
         assertAnnotationStatus(true, true,
                 "type U = list.List[Int]"
         );
     }
 
     @Test
-    public void testBasic16() throws ParseException, BreakException {
+    public void testBasic16() throws ParseException {
         assertAnnotationStatus(true, true,
                 "type U = MyType"
         );
     }
 
     @Test
-    public void testBasic17() throws ParseException, BreakException {
+    public void testBasic17() throws ParseException {
         assertAnnotationStatus(true, true,
                 "type U = MyType[Int]"
         );
     }
 
     @Test
-    public void testBasic18() throws ParseException, BreakException {
+    public void testBasic18() throws ParseException {
         assertAnnotationStatus(true, false,
                 "type U = MyType[Int, {}]"
         );
     }
 
     @Test
-    public void testBasic19() throws ParseException, BreakException {
+    public void testBasic19() throws ParseException {
         assertAnnotationStatus(true, false,
                 "type U = MyType[Int, {system.FFI}]"
         );

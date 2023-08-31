@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import wyvern.target.corewyvernIL.expression.IntegerLiteral;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
@@ -23,7 +22,7 @@ public class Illustrations {
     }
 
     @Test
-    public void testFigure5Corrected() throws ParseException, BreakException {
+    public void testFigure5Corrected() throws ParseException {
         // uses "FileIO.wyt", "fileIO.wyv", "Logger.wyt", "logger.wyv", "wavyUnderlineV3.wyv", "example5.wyv", "example5driver.wyv"
         TestUtil.doTestScriptModularly("illustrations.example5driver",
                 Util.intType(),
@@ -75,7 +74,7 @@ public class Illustrations {
     }*/
 
     @Test
-    public void testFigure2() throws ParseException, BreakException {
+    public void testFigure2() throws ParseException {
         // uses "lists.wyv", "UserInfo.wyt", "userInfo.wyv", "DocumentLock.wyv", "example2.wyv"
         TestUtil.doTestScriptModularly("illustrations.example2",
                 Util.intType(),

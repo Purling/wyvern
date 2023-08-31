@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.expression.Value;
-import wyvern.target.corewyvernIL.support.BreakException;
 
 public class ThreadWrapper {
   public static final ThreadWrapper threadwrapper = new ThreadWrapper();
@@ -18,11 +17,7 @@ public class ThreadWrapper {
     }
 
     public void run() {
-      try {
-        value.invoke("apply", new ArrayList<Value>()).executeIfThunk();
-      } catch (BreakException e) {
-        throw new RuntimeException(e);
-      }
+      value.invoke("apply", new ArrayList<Value>()).executeIfThunk();
     }
   }
 

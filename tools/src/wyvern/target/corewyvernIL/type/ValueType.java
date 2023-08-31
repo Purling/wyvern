@@ -11,7 +11,6 @@ import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Tag;
 import wyvern.target.corewyvernIL.expression.Value;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -22,7 +21,7 @@ import wyvern.tools.errors.RuntimeError;
 
 public abstract class ValueType extends Type implements IASTNode {
     @Override
-    public boolean isTSubtypeOf(Type sourceType, TypeContext ctx, FailureReason reason) throws BreakException {
+    public boolean isTSubtypeOf(Type sourceType, TypeContext ctx, FailureReason reason) {
         if (sourceType instanceof ValueType) {
             return isSubtypeOf((ValueType) sourceType, ctx, reason);
         }
@@ -43,7 +42,7 @@ public abstract class ValueType extends Type implements IASTNode {
      *
      * @param ctx TODO
      */
-    public final StructuralType getStructuralType(TypeContext ctx) throws BreakException {
+    public final StructuralType getStructuralType(TypeContext ctx) {
         return getStructuralType(ctx, StructuralType.getEmptyType());
     }
 
@@ -100,27 +99,27 @@ public abstract class ValueType extends Type implements IASTNode {
      *
      * @param ctx TODO
      */
-    public StructuralType getStructuralType(TypeContext ctx, StructuralType theDefault) throws BreakException {
+    public StructuralType getStructuralType(TypeContext ctx, StructuralType theDefault) {
         return theDefault;
     }
 
     /** For nominal types that are transitively equivalent to a known type, return that type.
      *  For all other types, this is the identity.
      */
-    public ValueType getCanonicalType(TypeContext ctx) throws BreakException {
+    public ValueType getCanonicalType(TypeContext ctx) {
         return this;
     }
 
-    public boolean isResource(TypeContext ctx) throws BreakException {
+    public boolean isResource(TypeContext ctx) {
         return false;
     }
 
-    public boolean isSubtypeOf(ValueType t, TypeContext ctx, FailureReason reason) throws BreakException {
+    public boolean isSubtypeOf(ValueType t, TypeContext ctx, FailureReason reason) {
         return t instanceof DynamicType || equals(t); // default
     }
 
     /** Find the declaration type with the specified name, excluding matches for which the exclusionFilter returns true, or return null if it is not present */
-    public DeclType findMatchingDecl(String name, Predicate<? super DeclType> exclusionFilter, TypeContext ctx) throws BreakException {
+    public DeclType findMatchingDecl(String name, Predicate<? super DeclType> exclusionFilter, TypeContext ctx) {
         StructuralType st = getStructuralType(ctx);
         if (st == null) {
             return null;
@@ -129,7 +128,7 @@ public abstract class ValueType extends Type implements IASTNode {
     }
     
     /** Find the declaration type with the specified name, or return null if it is not present */
-    public DeclType findDecl(String declName, TypeContext ctx) throws BreakException {
+    public DeclType findDecl(String declName, TypeContext ctx) {
         StructuralType st = getStructuralType(ctx);
         if (st == null) {
             return null;
@@ -139,7 +138,7 @@ public abstract class ValueType extends Type implements IASTNode {
 
     /** Find the declaration type with the specified name, or return null if it is not present */
     @SuppressWarnings("unchecked")
-    public List<DeclType> findDecls(String declName, TypeContext ctx) throws BreakException {
+    public List<DeclType> findDecls(String declName, TypeContext ctx) {
         StructuralType st = getStructuralType(ctx);
         if (st == null) {
             return (List<DeclType>) Collections.EMPTY_LIST;
@@ -148,19 +147,19 @@ public abstract class ValueType extends Type implements IASTNode {
     }
 
     @Override
-    public abstract ValueType adapt(View v) throws BreakException;
+    public abstract ValueType adapt(View v);
 
     @Override
-    public abstract ValueType doAvoid(String varName, TypeContext ctx, int depth) throws BreakException;
+    public abstract ValueType doAvoid(String varName, TypeContext ctx, int depth);
 
-    public boolean equalsInContext(ValueType otherType, TypeContext ctx, FailureReason reason) throws BreakException {
+    public boolean equalsInContext(ValueType otherType, TypeContext ctx, FailureReason reason) {
         return this.isSubtypeOf(otherType, ctx, reason) && otherType.isSubtypeOf(this, ctx, reason);
     }
 
     /**
      * Evaluates any metadata that might be present in this type to a value
      */
-    public ValueType interpret(EvalContext ctx) throws BreakException {
+    public ValueType interpret(EvalContext ctx) {
         return this;
     }
 
@@ -168,7 +167,7 @@ public abstract class ValueType extends Type implements IASTNode {
      * Gets the metadata, if any, for this type.
      * Returns null if no metadata is associated with this type.
      */
-    public Value getMetadata(TypeContext ctx) throws BreakException {
+    public Value getMetadata(TypeContext ctx) {
         return null;
     }
 
@@ -181,12 +180,12 @@ public abstract class ValueType extends Type implements IASTNode {
      * Returns this type, avoiding the named variable if possible
      * @param count TODO
      */
-    public final ValueType avoid(String varName, TypeContext ctx) throws BreakException {
+    public final ValueType avoid(String varName, TypeContext ctx) {
         return doAvoid(varName, ctx, INIT_RECURSION_DEPTH);
     }
     public static final int INIT_RECURSION_DEPTH = 0;
     public static final int MAX_RECURSION_DEPTH = 10;
-    public Tag getTag(EvalContext ctx) throws BreakException {
+    public Tag getTag(EvalContext ctx) {
         throw new RuntimeError("internal error: getTag not implemented for things other than nominal types");
     }
 
@@ -254,6 +253,6 @@ public abstract class ValueType extends Type implements IASTNode {
      * Assumes this check has already been checked for well-formedness.
      * @param ctx
      */
-    public void canInstantiate(TypeContext ctx) throws BreakException {
+    public void canInstantiate(TypeContext ctx) {
     }
 }

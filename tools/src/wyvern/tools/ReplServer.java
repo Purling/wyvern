@@ -15,7 +15,6 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import wyvern.target.corewyvernIL.expression.Value;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.tools.parsing.coreparser.ParseException;
 
 public final class ReplServer {
@@ -94,11 +93,7 @@ public final class ReplServer {
                         Value v1 = null;
                         Value v2 = null;
                         try {
-                            try {
-                                v1 = requestREPL.updateCode(resourceType);
-                            } catch (BreakException e) {
-                                throw new RuntimeException(e);
-                            }
+                            v1 = requestREPL.updateCode(resourceType);
                             v2 = requestREPL.interpretModule(module);
                             response =  v1.toString() + "\n" + v2.toString();
                         } catch (ParseException e) {
@@ -111,11 +106,7 @@ public final class ReplServer {
                         Value v1 = null;
                         Value v2 = null;
                         try {
-                            try {
-                                v1 = newProgram.updateCode(resourceType);
-                            } catch (BreakException e) {
-                                throw new RuntimeException(e);
-                            }
+                            v1 = newProgram.updateCode(resourceType);
                             v2 = newProgram.interpretModule(module);
                             response = v1.toString() + "\n" + v2.toString();
                         } catch (ParseException e) {

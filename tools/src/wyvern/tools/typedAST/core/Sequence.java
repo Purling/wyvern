@@ -7,7 +7,6 @@ import java.util.Stack;
 
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -222,12 +221,12 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
         return visitor.visit(state, this);
     }
 
     @Override
-    public IExpr generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) throws BreakException {
+    public IExpr generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
         Sequence seqWithBlocks = combine();
         TopLevelContext tlc = new TopLevelContext(ctx, expectedType);
         seqWithBlocks.genTopLevel(tlc, expectedType);
@@ -255,7 +254,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
      *                 true for the body of a module, false for the body of a script
      * @return the IL expression of a module
      */
-    public IExpr generateModuleIL(GenContext ctx, boolean isModule) throws BreakException {
+    public IExpr generateModuleIL(GenContext ctx, boolean isModule) {
         // group blocks of mutually-recursive declarations
         Sequence seqWithBlocks = combine();
 
@@ -269,7 +268,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
     }
 
     @Override
-    public void genTopLevel(TopLevelContext tlc) throws BreakException {
+    public void genTopLevel(TopLevelContext tlc) {
         for (TypedAST ast : exps) {
             ast.genTopLevel(tlc);
             if (ast instanceof Declaration) {
@@ -279,7 +278,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
     }
 
 
-    public void genTopLevel(TopLevelContext tlc, ValueType expectedType) throws BreakException {
+    public void genTopLevel(TopLevelContext tlc, ValueType expectedType) {
         for (int i = 0; i < exps.size() - 1; i++) {
             TypedAST ast =  exps.get(i);
             ast.genTopLevel(tlc);

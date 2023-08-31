@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 
 import wyvern.stdlib.support.backend.BytecodeOuterClass;
 import wyvern.target.corewyvernIL.modules.Module;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.tools.errors.ToolError;
 
@@ -22,7 +21,7 @@ public final class BytecodeCompiler {
      * the file is read in to memory in it's entirety, before being compiled in
      * an empty context. The resulting value is printed to the screen.
      */
-    public static void main(String[] args) throws BreakException {
+    public static void main(String[] args) {
         if (args.length != 1) {
             System.err.println("usage: wyvern <filename>");
             System.exit(1);

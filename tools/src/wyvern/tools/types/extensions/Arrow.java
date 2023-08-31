@@ -7,7 +7,6 @@ import java.util.List;
 import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
 import wyvern.target.corewyvernIL.effects.EffectSet;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.target.corewyvernIL.type.NominalType;
@@ -69,7 +68,7 @@ public class Arrow extends AbstractTypeImpl implements ApplyableType {
     public static final ValueType NOMINAL_UNIT = new NominalType("system", "Unit");
 
     @Override
-    public ValueType getILType(GenContext ctx) throws BreakException {
+    public ValueType getILType(GenContext ctx) {
         List<FormalArg> formals = new LinkedList<FormalArg>();
         for (int i = 0; i < arguments.size(); ++i) {
             ValueType argType = arguments.get(i).getILType(ctx);

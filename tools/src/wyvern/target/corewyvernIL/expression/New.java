@@ -17,7 +17,6 @@ import wyvern.target.corewyvernIL.decl.ForwardDeclaration;
 import wyvern.target.corewyvernIL.decl.NamedDeclaration;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.GenContext;
@@ -125,12 +124,12 @@ public class New extends Expression {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
+    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
         List<DeclType> dts = new LinkedList<DeclType>();
 
         TypeContext thisCtx = ctx.extend(selfSite, getType());
@@ -150,13 +149,7 @@ public class New extends Expression {
             StructuralType forwardStructuralType = forwardObjectType.getStructuralType(thisCtx);
             // new defined declaration will override delegate object's method definition if they had subType relationship
             for (DeclType declType : forwardStructuralType.getDeclTypes()) {
-                if (!dts.stream().anyMatch(newDefDeclType -> {
-                    try {
-                        return newDefDeclType.isSubtypeOf(declType, thisCtx, new FailureReason());
-                    } catch (BreakException e) {
-                        throw new RuntimeException(e);
-                    }
-                })) {
+                if (!dts.stream().anyMatch(newDefDeclType -> newDefDeclType.isSubtypeOf(declType, thisCtx, new FailureReason()))) {
                     dts.add(declType);
                 }
             }
@@ -193,7 +186,7 @@ public class New extends Expression {
     }
 
     @Override
-    public Value interpret(EvalContext ctx) throws BreakException {
+    public Value interpret(EvalContext ctx) {
         Value result = null;
 
         // evaluate all decls

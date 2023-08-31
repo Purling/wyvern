@@ -13,7 +13,6 @@ import wyvern.target.corewyvernIL.expression.AbstractValue;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.Tag;
 import wyvern.target.corewyvernIL.expression.Variable;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.InterpreterState;
@@ -69,7 +68,7 @@ public class FFI extends AbstractValue {
         ).build();
     }
 
-    public Tag getTag(EvalContext ctx) throws BreakException {
+    public Tag getTag(EvalContext ctx) {
         NominalType nt = (NominalType) this.getType();
         return nt.getTag(ctx);
     }

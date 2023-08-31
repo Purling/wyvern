@@ -11,7 +11,6 @@ import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
 import wyvern.target.corewyvernIL.support.TypeOrEffectGenContext;
@@ -107,7 +106,7 @@ public class TypeVarDecl extends Declaration {
     }
 
 
-    private wyvern.target.corewyvernIL.type.Type computeInternalILType(GenContext ctx) throws BreakException {
+    private wyvern.target.corewyvernIL.type.Type computeInternalILType(GenContext ctx) {
         TypeDeclaration td = this.body;
         GenContext ctxWithParams = ctx;
         for (GenericParameter gp : generics) {
@@ -136,13 +135,7 @@ public class TypeVarDecl extends Declaration {
             } else {
                 final GenContext theCtx = ctxWithParams; // final alias
                 List<NominalType> cases = children.stream()
-                                                  .map(child -> {
-                                                      try {
-                                                          return (NominalType) child.getILType(theCtx);
-                                                      } catch (BreakException e) {
-                                                          throw new RuntimeException(e);
-                                                      }
-                                                  })
+                                                  .map(child -> (NominalType) child.getILType(theCtx))
                                                   .collect(Collectors.toList());
                 return new DataType(parentType, thisType, myType, cases, getLocation());
             }
@@ -155,17 +148,17 @@ public class TypeVarDecl extends Declaration {
     }
 
     @Override
-    public DeclType genILType(GenContext ctx) throws BreakException {
+    public DeclType genILType(GenContext ctx) {
         wyvern.target.corewyvernIL.type.Type type = computeInternalILType(ctx);
         return new ConcreteTypeMember(getName(), type, getMetadata(ctx));
     }
 
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) throws BreakException {
+    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
         return computeInternalDecl(thisContext);
     }
 
-    private IExpr getMetadata(GenContext ctx) throws BreakException {
+    private IExpr getMetadata(GenContext ctx) {
         if (metadata != null) {
             if (metadataExp == null) {
                 metadataExp = ((ExpressionAST) metadata).generateIL(ctx, null, null);
@@ -176,7 +169,7 @@ public class TypeVarDecl extends Declaration {
         }
     }
 
-    private wyvern.target.corewyvernIL.decl.Declaration computeInternalDecl(GenContext ctx) throws BreakException {
+    private wyvern.target.corewyvernIL.decl.Declaration computeInternalDecl(GenContext ctx) {
         wyvern.target.corewyvernIL.type.Type type = computeInternalILType(ctx);
         type.checkWellFormed(ctx);
         if (type instanceof StructuralType) {
@@ -190,12 +183,12 @@ public class TypeVarDecl extends Declaration {
     }
 
     @Override
-    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) throws BreakException {
+    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) {
         return computeInternalDecl(ctx);
     }
 
     @Override
-    public void addModuleDecl(TopLevelContext tlc) throws BreakException {
+    public void addModuleDecl(TopLevelContext tlc) {
         wyvern.target.corewyvernIL.decl.Declaration decl = computeInternalDecl(tlc.getContext());
         DeclType dt = genILType(tlc.getContext());
         tlc.addModuleDecl(decl, dt);

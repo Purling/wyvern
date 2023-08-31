@@ -40,7 +40,6 @@ import wyvern.target.corewyvernIL.expression.StringLiteral;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.metadata.IsTailCall;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.type.DataType;
 import wyvern.target.corewyvernIL.type.ExtensibleTagType;
 import wyvern.target.corewyvernIL.type.NominalType;
@@ -57,23 +56,23 @@ import wyvern.tools.interop.FFIImport;
  */
 public class TailCallVisitor extends ASTVisitor<Boolean, Void> {
 
-    public static void annotate(IExpr program) throws BreakException {
+    public static void annotate(IExpr program) {
         program.acceptVisitor(new TailCallVisitor(), false);
     }
 
-    public Void visit(Boolean inTailPosition, New newExpr) throws BreakException {
+    public Void visit(Boolean inTailPosition, New newExpr) {
         for (Declaration decl : newExpr.getDecls()) {
             decl.acceptVisitor(this, false);
         }
         return null;
     }
 
-    public Void visit(Boolean inTailPosition, Case c) throws BreakException {
+    public Void visit(Boolean inTailPosition, Case c) {
         c.getBody().acceptVisitor(this, inTailPosition);
         return null;
     }
 
-    public Void visit(Boolean inTailPosition, MethodCall methodCall) throws BreakException {
+    public Void visit(Boolean inTailPosition, MethodCall methodCall) {
         methodCall.getObjectExpr().acceptVisitor(this, false);
         for (IExpr arg : methodCall.getArgs()) {
             arg.acceptVisitor(this, false);
@@ -91,7 +90,7 @@ public class TailCallVisitor extends ASTVisitor<Boolean, Void> {
     }
 
 
-    public Void visit(Boolean inTailPosition, Match match) throws BreakException {
+    public Void visit(Boolean inTailPosition, Match match) {
         match.getMatchExpr().acceptVisitor(this, false);
         Expression elseExpr = match.getElseExpr();
         if (elseExpr != null) {
@@ -104,20 +103,20 @@ public class TailCallVisitor extends ASTVisitor<Boolean, Void> {
     }
 
 
-    public Void visit(Boolean inTailPosition, FieldGet fieldGet) throws BreakException {
+    public Void visit(Boolean inTailPosition, FieldGet fieldGet) {
         fieldGet.getObjectExpr().acceptVisitor(this, false);
         return null;
     }
 
 
-    public Void visit(Boolean inTailPosition, Let let) throws BreakException {
+    public Void visit(Boolean inTailPosition, Let let) {
         let.getToReplace().acceptVisitor(this, false);
         let.getInExpr().acceptVisitor(this, inTailPosition);
         return null;
     }
 
 
-    public Void visit(Boolean inTailPosition, FieldSet fieldSet) throws BreakException {
+    public Void visit(Boolean inTailPosition, FieldSet fieldSet) {
         fieldSet.getObjectExpr().acceptVisitor(this, false);
         fieldSet.getExprToAssign().acceptVisitor(this, false);
         return null;
@@ -129,23 +128,23 @@ public class TailCallVisitor extends ASTVisitor<Boolean, Void> {
     }
 
 
-    public Void visit(Boolean inTailPosition, Cast cast) throws BreakException {
+    public Void visit(Boolean inTailPosition, Cast cast) {
         cast.getToCastExpr().acceptVisitor(this, false);
         return null;
     }
 
 
-    public Void visit(Boolean inTailPosition, VarDeclaration varDecl) throws BreakException {
+    public Void visit(Boolean inTailPosition, VarDeclaration varDecl) {
         varDecl.getDefinition().acceptVisitor(this, false);
         return null;
     }
 
-    public Void visit(Boolean inTailPosition, DefDeclaration defDecl) throws BreakException {
+    public Void visit(Boolean inTailPosition, DefDeclaration defDecl) {
         defDecl.getBody().acceptVisitor(this, true);
         return null;
     }
 
-    public Void visit(Boolean inTailPosition, ValDeclaration valDecl) throws BreakException {
+    public Void visit(Boolean inTailPosition, ValDeclaration valDecl) {
         valDecl.getDefinition().acceptVisitor(this, false);
         return null;
     }
@@ -219,7 +218,7 @@ public class TailCallVisitor extends ASTVisitor<Boolean, Void> {
     }
 
     @Override
-    public Void visit(Boolean inTailPosition, Bind bind) throws BreakException {
+    public Void visit(Boolean inTailPosition, Bind bind) {
         for (IExpr expr : bind.getToReplaceExps()) {
             expr.acceptVisitor(this, false);
         }
@@ -229,7 +228,7 @@ public class TailCallVisitor extends ASTVisitor<Boolean, Void> {
 
     @Override
     public Void visit(Boolean inTailPosition,
-            ConcreteTypeMember concreteTypeMember) throws BreakException {
+            ConcreteTypeMember concreteTypeMember) {
         Value val = concreteTypeMember.getMetadataValue();
         if (val != null) {
             val.acceptVisitor(this, false);
@@ -290,7 +289,7 @@ public class TailCallVisitor extends ASTVisitor<Boolean, Void> {
     }
 
     @Override
-    public Void visit(Boolean inTailPosition, SeqExpr seqExpr) throws BreakException {
+    public Void visit(Boolean inTailPosition, SeqExpr seqExpr) {
         List<HasLocation> elements = seqExpr.getElements();
         int count = elements.size();
         if (elements.get(count - 1) instanceof IExpr) {

@@ -24,7 +24,6 @@ import wyvern.target.corewyvernIL.astvisitor.TailCallVisitor;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.target.oir.EmitPythonVisitor;
@@ -52,11 +51,11 @@ public class OIRTests {
         WyvernResolver.getInstance().addPath(PATH);
     }
 
-    private void testPyFromInput(String input, String expected) throws ParseException, BreakException {
+    private void testPyFromInput(String input, String expected) throws ParseException {
         testPyFromInput(input, expected, false);
     }
 
-    private void testPyFromInput(String input, String expected, boolean debug) throws ParseException, BreakException {
+    private void testPyFromInput(String input, String expected, boolean debug) throws ParseException {
         // Since the root OIR environment is stateful, reset it between tests
         OIREnvironment.resetRootEnvironment();
         ExpressionAST ast = (ExpressionAST) TestUtil.getNewAST(input, "test input");
@@ -145,7 +144,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testOIRLetValWithParse() throws ParseException, BreakException {
+    public void testOIRLetValWithParse() throws ParseException {
         String input =
                 "val x = 5\n"
                       + "x\n";
@@ -153,7 +152,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testMultipleLets() throws ParseException, BreakException {
+    public void testMultipleLets() throws ParseException {
         String input =
                 "val x = 5\n"
                       + "val y = 7\n"
@@ -162,7 +161,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testOIRLetValWithString() throws ParseException, BreakException {
+    public void testOIRLetValWithString() throws ParseException {
         String input =
                 "val x = \"five\"\n"
                       + "x\n";
@@ -170,7 +169,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testOIRLetValWithString3() throws ParseException, BreakException {
+    public void testOIRLetValWithString3() throws ParseException {
         String input =
                 "val identity = (x: system.Int) => x\n"
                       + "identity(5)";
@@ -178,7 +177,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testOIRFieldRead() throws ParseException, BreakException {
+    public void testOIRFieldRead() throws ParseException {
         String input =
                 "val obj = new\n"
                       + "    val v = 5\n"
@@ -187,7 +186,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testOIRMultipleFields() throws ParseException, BreakException {
+    public void testOIRMultipleFields() throws ParseException {
         String input =
                 "val obj = new\n"
                       + "    val x = 23\n"
@@ -197,7 +196,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testOIRVarFieldRead() throws ParseException, BreakException {
+    public void testOIRVarFieldRead() throws ParseException {
         String input =
                 "val obj = new\n"
                       + "    var v : system.Int = 5\n"
@@ -206,7 +205,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testOIRVarFieldWrite() throws ParseException, BreakException {
+    public void testOIRVarFieldWrite() throws ParseException {
         String input =
                 "val obj = new\n"
                       + "    var v : system.Int = 2\n"
@@ -216,7 +215,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testDefWithVarInside() throws ParseException, BreakException {
+    public void testDefWithVarInside() throws ParseException {
         String input =
                 "def foo() : system.Int\n"
                       + "    var v : system.Int = 5\n"
@@ -227,7 +226,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testDefWithValInside() throws ParseException, BreakException {
+    public void testDefWithValInside() throws ParseException {
         String input =
                 "def foo() : system.Int\n"
                       + "    val v : system.Int = 17\n"
@@ -238,7 +237,7 @@ public class OIRTests {
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void testImportsWithPython() throws ParseException, BreakException {
+    public void testImportsWithPython() throws ParseException {
         String input =
                 "import python.iso\n\n"
                       + "iso.Color(\"green\")\n";
@@ -246,7 +245,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testDefDecl() throws ParseException, BreakException {
+    public void testDefDecl() throws ParseException {
         String input =
                 "val obj = new\n"
                       + "    val v : system.Int = 5\n"
@@ -257,7 +256,7 @@ public class OIRTests {
 
 
     @Test
-    public void testIdentityCall() throws ParseException, BreakException {
+    public void testIdentityCall() throws ParseException {
         String input =
                 "val obj = new\n"
                       + "    def id(x:system.Int) : system.Int = x\n"
@@ -266,7 +265,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testIdentityCallString() throws ParseException, BreakException {
+    public void testIdentityCallString() throws ParseException {
         String input =
                 "val obj = new\n"
                       + "    def id(x:system.String) : system.String = x\n"
@@ -275,7 +274,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testType() throws ParseException, BreakException {
+    public void testType() throws ParseException {
         String input =
                 "type IntResult\n"
                       + "    def getResult() : system.Int\n\n"
@@ -286,7 +285,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testTypeAbbrev() throws ParseException, BreakException {
+    public void testTypeAbbrev() throws ParseException {
         String input =
                 "type Int = system.Int\n"
                       + "val i : Int = 32\n"
@@ -295,7 +294,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testSimpleForward() throws ParseException, BreakException {
+    public void testSimpleForward() throws ParseException {
         String input =
                 "type IntResult\n"
                       + "    def getResult() : system.Int\n"
@@ -308,7 +307,7 @@ public class OIRTests {
     }
 
     @Test
-    public void declareRecursiveFunction() throws ParseException, BreakException {
+    public void declareRecursiveFunction() throws ParseException {
         String input =
                 "val f : system.Int = 3\n"
                       + "def m(y : system.Int) : system.Int = m(y)\n"
@@ -317,7 +316,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testScoping() throws ParseException, BreakException {
+    public void testScoping() throws ParseException {
         String input =
                 "def f(x : system.Int) : system.Int\n"
                       + "    val obj = new\n"
@@ -328,7 +327,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testAssignAsExpression() throws ParseException, BreakException {
+    public void testAssignAsExpression() throws ParseException {
         String input =
                 "val obj = new\n"
                       + "    var x : system.Int = 3\n"
@@ -339,7 +338,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testIfStatement() throws ParseException, BreakException {
+    public void testIfStatement() throws ParseException {
         String input = ""
                 + "type Body\n"
                 + "    type T = system.Int\n"
@@ -374,7 +373,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testTSLIfWithComments() throws ParseException, BreakException {
+    public void testTSLIfWithComments() throws ParseException {
         String input = ""
                      + "val x = 1\n"
                      + "def getString(): String\n"
@@ -390,7 +389,7 @@ public class OIRTests {
 
 
     @Test
-    public void testArithmetic() throws ParseException, BreakException {
+    public void testArithmetic() throws ParseException {
         String input =
                 "val x = ((5 + 3) / 2) * 2 - 1\n"
                       + "x\n";
@@ -398,7 +397,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testNameCollision() throws ParseException, BreakException {
+    public void testNameCollision() throws ParseException {
         String input =
                 "val letFn0 = 3\n"
                       + "val x = 5\n"
@@ -407,7 +406,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testNameCollision2() throws ParseException, BreakException {
+    public void testNameCollision2() throws ParseException {
         String input =
                 "val X = 3\n"
                       + "val x = 5\n"
@@ -416,7 +415,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testNameCollision3() throws ParseException, BreakException {
+    public void testNameCollision3() throws ParseException {
         String input =
                 "val x = 7\n"
                       + "val x = x\n"
@@ -425,7 +424,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testThisAsLocal() throws ParseException, BreakException {
+    public void testThisAsLocal() throws ParseException {
         String input =
                 "val this = 3\n"
                       + "this\n";
@@ -433,7 +432,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testBooleans() throws ParseException, BreakException {
+    public void testBooleans() throws ParseException {
         String input =
                 "val n = 5\n"
                       + "(n < 2).ifTrue(() => 1, () => 2)\n";
@@ -441,7 +440,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testNotBooleans() throws ParseException, BreakException {
+    public void testNotBooleans() throws ParseException {
         // Ensure that we don't translate "ifTrue" methods
         // on non-boolean objects
         String input =
@@ -452,7 +451,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testRecursion() throws ParseException, BreakException {
+    public void testRecursion() throws ParseException {
         String input =
                 "def sum1ToN(n : Int) : Int\n"
                       + "  (n < 2).ifTrue(\n"
@@ -464,7 +463,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testFreeVariableTransitivity() throws ParseException, BreakException {
+    public void testFreeVariableTransitivity() throws ParseException {
         String input =
                 "val x = 5\n"
                       + "def f() : Int\n"
@@ -476,7 +475,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testCounter() throws ParseException, BreakException {
+    public void testCounter() throws ParseException {
         String input =
                 "val counter = new\n"
                       + "  var count : Int = 0\n"
@@ -489,7 +488,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testTCOShadowing() throws ParseException, BreakException {
+    public void testTCOShadowing() throws ParseException {
         String input =
                 "def f() : Int\n"
                       + "  def f() : Int = 7\n"
@@ -499,7 +498,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testTCO() throws ParseException, BreakException {
+    public void testTCO() throws ParseException {
         String input =
                 "def f(n : Int) : Int\n"
                       + "  (n < 0).ifTrue(\n"
@@ -511,7 +510,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testBooleanLiterals() throws ParseException, BreakException {
+    public void testBooleanLiterals() throws ParseException {
         String input =
                 "(true).ifTrue(\n"
                       + "  () => 1,\n"
@@ -520,7 +519,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testImperativeIf() throws ParseException, BreakException {
+    public void testImperativeIf() throws ParseException {
         String input =
                 "(5 > 3).ifTrue(\n"
                       + "  () => 1,\n"
@@ -530,7 +529,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testEquality() throws ParseException, BreakException {
+    public void testEquality() throws ParseException {
         String input =
                 "val x = 7\n"
                       + "val a : Int = (x == 7).ifTrue(\n"
@@ -544,21 +543,21 @@ public class OIRTests {
     }
 
     @Test
-    public void testBooleanAnd() throws ParseException, BreakException {
+    public void testBooleanAnd() throws ParseException {
         String input =
                 "true && false\n";
         testPyFromInput(input, "False");
     }
 
     @Test
-    public void testBooleanOr() throws ParseException, BreakException {
+    public void testBooleanOr() throws ParseException {
         String input =
                 "true || false\n";
         testPyFromInput(input, "True");
     }
 
     @Test
-    public void testBooleanShortCircuit1() throws ParseException, BreakException {
+    public void testBooleanShortCircuit1() throws ParseException {
       String input = "false && ((1 / 0) == 0)\n";
 
       // note that a DivisionByZero exception will be thrown if short circuit evaluation
@@ -567,7 +566,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testBooleanShortCircuit2() throws ParseException, BreakException {
+    public void testBooleanShortCircuit2() throws ParseException {
       String input = "true || ((1 / 0) == 0)\n";
 
       // note that a DivisionByZero exception will be thrown if short circuit evaluation
@@ -577,7 +576,7 @@ public class OIRTests {
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void testBooleanShortCircuit3() throws ParseException, BreakException {
+    public void testBooleanShortCircuit3() throws ParseException {
       String input =
         "val s = \"\"\n"
         + "(s.length() > 0) && (s.substring(0, 1) == \" \")\n";
@@ -589,7 +588,7 @@ public class OIRTests {
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void testBooleanShortCircuit4() throws ParseException, BreakException {
+    public void testBooleanShortCircuit4() throws ParseException {
       String input =
         "val s = \"\"\n"
         + "(s.length() == 0) || (s.substring(0, 1) == \" \")\n";
@@ -601,7 +600,7 @@ public class OIRTests {
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void testNestedLambda() throws ParseException, BreakException {
+    public void testNestedLambda() throws ParseException {
         String input =
                 "val obj = new\n"
                       + "  val x = 5\n"
@@ -611,14 +610,14 @@ public class OIRTests {
     }
 
     @Test
-    public void testNegativeInt() throws ParseException, BreakException {
+    public void testNegativeInt() throws ParseException {
         String input =
                 "-5\n";
         testPyFromInput(input, "-5");
     }
 
     @Test
-    public void testNegativeInt2() throws ParseException, BreakException {
+    public void testNegativeInt2() throws ParseException {
         String input =
                 "def f() : Int\n"
                       + "  -5\n"
@@ -627,7 +626,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testReturnNew() throws ParseException, BreakException {
+    public void testReturnNew() throws ParseException {
         String input =
                 "type T\n"
                       + "  val x : Int\n"
@@ -638,7 +637,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testTailCall() throws ParseException, BreakException {
+    public void testTailCall() throws ParseException {
         String input =
                 "def f() : Int\n"
                       + "  3\n"
@@ -650,7 +649,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testLiteralNewline() throws ParseException, BreakException {
+    public void testLiteralNewline() throws ParseException {
         String input =
                 "val x = \"line 1\\nline 2\"\n"
                       + "x";
@@ -658,7 +657,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testBasicStdout() throws ParseException, BreakException {
+    public void testBasicStdout() throws ParseException {
         String input =
                 "require stdout\n"
                       + "stdout.print(\"Hello, world\")\n"
@@ -668,7 +667,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testPythonBuiltins() throws ParseException, BreakException {
+    public void testPythonBuiltins() throws ParseException {
         String input =
                 "require python\n"
                       + "python.toString(3)\n";
@@ -676,7 +675,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testOption() throws ParseException, BreakException {
+    public void testOption() throws ParseException {
         String input =
                 "require stdout\n"
                       + "import wyvern.option\n"
@@ -691,7 +690,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testDebug() throws ParseException, BreakException {
+    public void testDebug() throws ParseException {
         String input =
                         "require python\n\n"
                       + "import debug\n\n"
@@ -702,7 +701,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testIfResourceType() throws ParseException, BreakException {
+    public void testIfResourceType() throws ParseException {
         String input =
                 "val obj = new\n"
                       + "  var x : Int = 7\n"
@@ -713,7 +712,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testTSLIfElse() throws ParseException, BreakException {
+    public void testTSLIfElse() throws ParseException {
         String input =
 //                "import metadata wyvern.IfTSL\n"
                         "if(false)\n"
@@ -726,7 +725,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testTSLIf() throws ParseException, BreakException {
+    public void testTSLIf() throws ParseException {
         String input =
                 "require python\n"
 //                      + "import metadata wyvern.IfTSL\n"
@@ -740,7 +739,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testTypecheckingLoop() throws ParseException, BreakException {
+    public void testTypecheckingLoop() throws ParseException {
         String input =
                 "type A\n"
                       + "  def foo() : A\n"
@@ -755,7 +754,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testBooleanComparisonOperator() throws ParseException, BreakException {
+    public void testBooleanComparisonOperator() throws ParseException {
       String input =
         "require stdout\n"
             + "stdout.printBoolean(1 >= 2)\n"
@@ -780,7 +779,7 @@ public class OIRTests {
     }
 
     @Test
-    public void testOptionTypeSugar() throws ParseException, BreakException {
+    public void testOptionTypeSugar() throws ParseException {
         String input =
           "require stdout\n"
           + "var str1: String? = \"Hello, World!\"\n"
@@ -803,7 +802,7 @@ public class OIRTests {
 
     @Test
     @Category(CurrentlyBroken.class)
-    public void testRationalOperators() throws ParseException, BreakException {
+    public void testRationalOperators() throws ParseException {
         String input =
                 "require stdout\n"
                         + "stdout.printRational(1/2 + 1/3)\n"

@@ -1,6 +1,5 @@
 package wyvern.target.corewyvernIL.decltype;
 
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.type.DataType;
@@ -29,14 +28,14 @@ public abstract class DeclTypeWithResult extends DeclType {
         }
     }
 
-    public ValueType getResultType(View v) throws BreakException {
+    public ValueType getResultType(View v) {
         ValueType t = getRawResultType(); 
         return t.adapt(v);
     }
 
 
     @Override
-    public void checkWellFormed(TypeContext ctx) throws BreakException {
+    public void checkWellFormed(TypeContext ctx) {
         rawType.checkWellFormed(ctx);
     }
 

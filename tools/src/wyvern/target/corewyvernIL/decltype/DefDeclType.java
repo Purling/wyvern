@@ -14,7 +14,6 @@ import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.Effect;
 import wyvern.target.corewyvernIL.effects.EffectSet;
 import wyvern.target.corewyvernIL.expression.Variable;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.ReceiverView;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -45,12 +44,12 @@ public class DefDeclType extends DeclTypeWithResult {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
         return emitILVisitor.visit(state, this);
     }
 
     @Override
-    public boolean isSubtypeOf(DeclType dt, TypeContext ctx, FailureReason reason) throws BreakException {
+    public boolean isSubtypeOf(DeclType dt, TypeContext ctx, FailureReason reason) {
 
 
         if (!(dt instanceof DefDeclType)) {
@@ -174,7 +173,7 @@ public class DefDeclType extends DeclTypeWithResult {
     }
 
     @Override
-    public DeclType adapt(View v) throws BreakException {
+    public DeclType adapt(View v) {
         List<FormalArg> newArgs = new LinkedList<FormalArg>();
         for (FormalArg a : args) {
             newArgs.add(new FormalArg(a.getSite(), a.getType().adapt(v)));
@@ -195,7 +194,7 @@ public class DefDeclType extends DeclTypeWithResult {
     }
 
     @Override
-    public void checkWellFormed(TypeContext ctx) throws BreakException {
+    public void checkWellFormed(TypeContext ctx) {
         for (FormalArg arg : args) {
             arg.getType().checkWellFormed(ctx);
             ctx = ctx.extend(arg.getSite(), arg.getType());
@@ -207,7 +206,7 @@ public class DefDeclType extends DeclTypeWithResult {
     }
 
     @Override
-    public DeclType doAvoid(String varName, TypeContext ctx, int count) throws BreakException {
+    public DeclType doAvoid(String varName, TypeContext ctx, int count) {
         boolean changed = false;
 
         // Return type

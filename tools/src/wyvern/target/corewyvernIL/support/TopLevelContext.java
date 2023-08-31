@@ -57,7 +57,7 @@ public class TopLevelContext {
         return expr;
     }
 
-    public IExpr getModuleExpression() throws BreakException {
+    public IExpr getModuleExpression() {
         String newName = GenContext.generateName();
 
         // Determine if we need to be a resource type.
@@ -82,7 +82,7 @@ public class TopLevelContext {
     /** Adapts the type vt to account for the names we have to
      * avoid.
      */
-    private ValueType adapt(ValueType vt, String thisName) throws BreakException {
+    private ValueType adapt(ValueType vt, String thisName) {
         for (Map.Entry<BindingSite, Boolean> e : avoidanceMap.entrySet()) {
             Variable v = new Variable(e.getKey());
             boolean isDeclBlock = e.getValue();

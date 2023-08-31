@@ -12,7 +12,6 @@ import wyvern.target.corewyvernIL.BindingSite;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.GenContext;
@@ -74,11 +73,11 @@ public class SeqExpr extends Expression {
     }
 
     @Override
-    public ValueType typecheckNoAvoidance(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
+    public ValueType typecheckNoAvoidance(TypeContext ctx, EffectAccumulator effectAccumulator) {
         return typecheckWithCtx(ctx, effectAccumulator).getSecond();
     }
 
-    public Pair<TypeContext, ValueType> typecheckWithCtx(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
+    public Pair<TypeContext, ValueType> typecheckWithCtx(TypeContext ctx, EffectAccumulator effectAccumulator) {
         TypeContext extendedCtx = ctx;
         ValueType result = Util.unitType();
         Set<VarBinding> bindings = new HashSet<>();
@@ -122,7 +121,7 @@ public class SeqExpr extends Expression {
     }
 
     @Override
-    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) throws BreakException {
+    public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
         Pair<TypeContext, ValueType> p = typecheckWithCtx(ctx, effectAccumulator);
         TypeContext extendedCtx = p.getFirst();
         ValueType result = p.getSecond();
@@ -208,11 +207,11 @@ public class SeqExpr extends Expression {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
         return emitILVisitor.visit(state, this);
     }
 
-    public Pair<Value, EvalContext> interpretCtx(EvalContext ctx) throws BreakException {
+    public Pair<Value, EvalContext> interpretCtx(EvalContext ctx) {
         EvalContext extendedCtx = ctx;
         Value result = Util.unitValue();
         for (HasLocation elem : elements) {
@@ -254,7 +253,7 @@ public class SeqExpr extends Expression {
     }
 
     @Override
-    public Value interpret(EvalContext ctx) throws BreakException {
+    public Value interpret(EvalContext ctx) {
         return interpretCtx(ctx).getFirst();
     }
 

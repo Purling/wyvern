@@ -17,7 +17,6 @@ import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.Module;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.ModuleResolver;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
@@ -141,11 +140,11 @@ public class ImportDeclaration extends Declaration implements CoreAST {
         return ctx;
     }
 
-    public Pair<VarBinding, GenContext> genBinding(GenContext ctx, List<TypedModuleSpec> dependencies) throws BreakException {
+    public Pair<VarBinding, GenContext> genBinding(GenContext ctx, List<TypedModuleSpec> dependencies) {
         return genBinding(ctx.getInterpreterState().getResolver(), ctx, dependencies);
     }
 
-    public Pair<VarBinding, GenContext> genBinding(ModuleResolver resolver, GenContext ctx, List<TypedModuleSpec> dependencies) throws BreakException {
+    public Pair<VarBinding, GenContext> genBinding(ModuleResolver resolver, GenContext ctx, List<TypedModuleSpec> dependencies) {
         // add the import's type to the context, and get the import value
         Expression importExp = null;
         String importName = this.getUri().getSchemeSpecificPart();
@@ -301,7 +300,7 @@ public class ImportDeclaration extends Declaration implements CoreAST {
     }
 
     @Override
-    public void genTopLevel(TopLevelContext tlc) throws BreakException {
+    public void genTopLevel(TopLevelContext tlc) {
         Pair<VarBinding, GenContext> bindingAndCtx = genBinding(tlc.getContext(), tlc.getDependencies());
         VarBinding binding = bindingAndCtx.getFirst();
         GenContext newCtx = bindingAndCtx.getSecond();

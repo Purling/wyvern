@@ -12,7 +12,6 @@ import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.New;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
 import wyvern.target.corewyvernIL.support.Util;
@@ -55,7 +54,7 @@ public class Fn extends AbstractExpressionAST implements CoreAST, BoundCode {
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
         return visitor.visit(state, this);
     }
 
@@ -76,7 +75,7 @@ public class Fn extends AbstractExpressionAST implements CoreAST, BoundCode {
     public Expression generateIL(
             GenContext ctx,
             ValueType expectedType,
-            List<TypedModuleSpec> dependencies) throws BreakException {
+            List<TypedModuleSpec> dependencies) {
         /*
          * First, map the NameBindings to Formal Arguments, dropping the parameters into the IR.
          * Next, find the type of the body. The type of the body is the return type of the function.
@@ -130,7 +129,7 @@ public class Fn extends AbstractExpressionAST implements CoreAST, BoundCode {
         return new New(declList, newType.getSelfSite(), newType, getLocation());
     }
 
-    public  void genTopLevel(TopLevelContext topLevelContext, ValueType expectedType) throws BreakException {
+    public  void genTopLevel(TopLevelContext topLevelContext, ValueType expectedType) {
         final Expression exp = generateIL(topLevelContext.getContext(), expectedType, null);
         topLevelContext.addExpression(exp, expectedType);
     }
@@ -138,7 +137,7 @@ public class Fn extends AbstractExpressionAST implements CoreAST, BoundCode {
     private List<FormalArg> convertBindingToArgs(
             List<NameBinding> bindings,
             GenContext ctx,
-            ValueType declType) throws BreakException {
+            ValueType declType) {
 
         List<FormalArg> expectedFormals =
                 declType == null ? null : getExpectedFormls(ctx, declType, location);
@@ -185,7 +184,7 @@ public class Fn extends AbstractExpressionAST implements CoreAST, BoundCode {
     }
 
     /** Returns the expected types of the formals, or null if the expected type is dyn. */
-    private static List<FormalArg> getExpectedFormls(GenContext ctx, ValueType declType, FileLocation location) throws BreakException {
+    private static List<FormalArg> getExpectedFormls(GenContext ctx, ValueType declType, FileLocation location) {
         if (declType.getCanonicalType(ctx) instanceof DynamicType) {
             return null;
         }
@@ -206,7 +205,7 @@ public class Fn extends AbstractExpressionAST implements CoreAST, BoundCode {
     }
 
     /** Returns the expected type of the result, or null if the expected type is dyn. */
-    private static ValueType getExpectedResult(GenContext ctx, ValueType declType) throws BreakException {
+    private static ValueType getExpectedResult(GenContext ctx, ValueType declType) {
         if (declType.getCanonicalType(ctx) instanceof DynamicType) {
             return null;
         }

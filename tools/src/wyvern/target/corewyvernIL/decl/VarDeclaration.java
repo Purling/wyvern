@@ -10,7 +10,6 @@ import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.VarDeclType;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -63,7 +62,7 @@ public class VarDeclaration extends DeclarationWithRHS {
     }
 
     @Override
-    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
         return emitILVisitor.visit(state, this);
     }
 
@@ -73,7 +72,7 @@ public class VarDeclaration extends DeclarationWithRHS {
     }
 
     @Override
-    public Declaration interpret(EvalContext ctx) throws BreakException {
+    public Declaration interpret(EvalContext ctx) {
         Expression newValue = (Expression) getDefinition().interpret(ctx);
         return new VarDeclaration(getName(), type, newValue, getLocation());
     }

@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.imports.extensions.WyvernResolver;
@@ -31,7 +30,7 @@ public class HigherOrderTests {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void upperBound() throws ParseException, BreakException {
+    public void upperBound() throws ParseException {
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString(
                 "outside of the upper bound"
@@ -40,22 +39,22 @@ public class HigherOrderTests {
     }
 
     @Test
-    public void accepted1() throws ParseException, BreakException {
+    public void accepted1() throws ParseException {
         TestUtil.doTestScriptModularly(PATH, "higherOrderEffects.acceptedClient1", Util.stringType(), new StringLiteral("abc"));
     }
 
     @Test
-    public void accepted1a() throws ParseException, BreakException {
+    public void accepted1a() throws ParseException {
         TestUtil.doTestScriptModularly(PATH, "higherOrderEffects.acceptedClient1a", Util.stringType(), new StringLiteral("abc"));
     }
 
     @Test
-    public void accepted2() throws ParseException, BreakException {
+    public void accepted2() throws ParseException {
         TestUtil.doTestScriptModularly(PATH, "higherOrderEffects.acceptedClient2", Util.stringType(), new StringLiteral("abc"));
     }
 
     @Test
-    public void rejected1() throws ParseException, BreakException {
+    public void rejected1() throws ParseException {
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString(
                 "outside of the upper bound"
@@ -64,7 +63,7 @@ public class HigherOrderTests {
     }
 
     @Test
-    public void rejected2() throws ParseException, BreakException {
+    public void rejected2() throws ParseException {
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString(
                 "The callee method cannot accept"
@@ -73,7 +72,7 @@ public class HigherOrderTests {
     }
 
     @Test
-    public void rejected3() throws ParseException, BreakException {
+    public void rejected3() throws ParseException {
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString(
                 "The callee method cannot accept"
@@ -82,7 +81,7 @@ public class HigherOrderTests {
     }
 
     @Test
-    public void rejected4() throws ParseException, BreakException {
+    public void rejected4() throws ParseException {
         expectedException.expect(ToolError.class);
         expectedException.expectMessage(StringContains.containsString(
                 "outside of the upper bound"

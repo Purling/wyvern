@@ -3,7 +3,6 @@ package wyvern.target.corewyvernIL.effects;
 import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.StructuralType;
@@ -17,7 +16,7 @@ public final class EffectUtil {
     private EffectUtil() {
     }
 
-    private static EffectSet addEffects(EffectSet effects, ValueType type, GenContext ctx) throws BreakException {
+    private static EffectSet addEffects(EffectSet effects, ValueType type, GenContext ctx) {
         EffectSet argEffects = getEffects(type, ctx);
         if (argEffects != null) {
             if (effects == null) {
@@ -28,7 +27,7 @@ public final class EffectUtil {
         return effects;
     }
 
-    private static EffectSet addHOEffects(EffectSet effects, ValueType type, GenContext ctx) throws BreakException {
+    private static EffectSet addHOEffects(EffectSet effects, ValueType type, GenContext ctx) {
         EffectSet argEffects = getHOEffects(type, ctx);
         if (argEffects != null) {
             if (effects == null) {
@@ -40,7 +39,7 @@ public final class EffectUtil {
     }
 
 
-    public static EffectSet getEffects(ValueType type, GenContext ctx) throws BreakException {
+    public static EffectSet getEffects(ValueType type, GenContext ctx) {
         EffectSet effects = null;
         List<DeclType> declTypes = type.getStructuralType(ctx).getDeclTypes();
         for (DeclType declType : declTypes) {
@@ -75,7 +74,7 @@ public final class EffectUtil {
         return !t.toString().contains("this.T") && !t.toString().contains("generic__U");
     }
 
-    public static EffectSet getHOEffects(ValueType type, GenContext ctx) throws BreakException {
+    public static EffectSet getHOEffects(ValueType type, GenContext ctx) {
         EffectSet effects = null;
         StructuralType structuralType = type.getStructuralType(ctx);
         List<DeclType> declTypes = structuralType.getDeclTypes();

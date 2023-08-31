@@ -43,7 +43,6 @@ import wyvern.target.corewyvernIL.expression.RationalLiteral;
 import wyvern.target.corewyvernIL.expression.SeqExpr;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
 import wyvern.target.corewyvernIL.expression.Variable;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.DataType;
@@ -103,7 +102,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return "Interface" + interfaceCount;
     }
 
-    public OIRAST visit(EmitOIRState state, New newExpr) throws BreakException {
+    public OIRAST visit(EmitOIRState state, New newExpr) {
 
         // Set up, initialise collections we'll be using.
         OIREnvironment classEnv = new OIREnvironment(state.getEnvironment());
@@ -165,7 +164,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 
     }
 
-    public OIRAST visit(EmitOIRState state, MethodCall methodCall) throws BreakException {
+    public OIRAST visit(EmitOIRState state, MethodCall methodCall) {
 
         // Process arguments passed to the method call.
         List<OIRExpression> args = new Vector<OIRExpression>();
@@ -185,7 +184,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 
     }
 
-    public OIRAST visit(EmitOIRState state, Match match) throws BreakException {
+    public OIRAST visit(EmitOIRState state, Match match) {
 
         OIRExpression oirMatchExpr = (OIRExpression) match.getMatchExpr().acceptVisitor(this, state);
         OIRExpression oirElseExpr = (OIRExpression) match.getElseExpr().acceptVisitor(this, state);
@@ -208,7 +207,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return oirParentLet;
     }
 
-    public OIRAST visit(EmitOIRState state, FieldGet fieldGet) throws BreakException {
+    public OIRAST visit(EmitOIRState state, FieldGet fieldGet) {
         IExpr object = fieldGet.getObjectExpr();
         OIRExpression oirObject = (OIRExpression) object.acceptVisitor(this, state);
         OIRFieldGet oirFieldGet = new OIRFieldGet(oirObject, fieldGet.getName());
@@ -216,7 +215,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return oirFieldGet;
     }
 
-    public OIRAST visit(EmitOIRState state, Let let) throws BreakException {
+    public OIRAST visit(EmitOIRState state, Let let) {
         TypeContext ctx = state.getContext().extend(let.getSite(), let.getVarType());
         IExpr toReplace = let.getToReplace();
         OIRExpression oirToReplace = (OIRExpression) toReplace.acceptVisitor(this,
@@ -229,7 +228,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return oirLet;
     }
 
-    public OIRAST visit(EmitOIRState state, FieldSet fieldSet) throws BreakException {
+    public OIRAST visit(EmitOIRState state, FieldSet fieldSet) {
         IExpr object = (Expression) fieldSet.getObjectExpr();
         IExpr toSet = fieldSet.getExprToAssign();
         OIRExpression oirObject = (OIRExpression) object.acceptVisitor(this, state);
@@ -245,7 +244,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return oirVar;
     }
 
-    public OIRAST visit(EmitOIRState state, Cast cast) throws BreakException {
+    public OIRAST visit(EmitOIRState state, Cast cast) {
         IExpr expr = cast.getToCastExpr();
         OIRExpression oirExpr = (OIRExpression) expr.acceptVisitor(this, state);
         OIRType oirType = (OIRType) cast.getType().acceptVisitor(this, state);
@@ -254,7 +253,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return oirCast;
     }
 
-    public OIRAST visit(EmitOIRState state, VarDeclaration varDecl) throws BreakException {
+    public OIRAST visit(EmitOIRState state, VarDeclaration varDecl) {
         ValueType varDeclType = varDecl.getType();
         OIRType type = (OIRType) varDeclType.acceptVisitor(this, state);
         OIRFieldDeclaration oirMember = new OIRFieldDeclaration(varDecl.getName(), type);
@@ -262,7 +261,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return oirMember;
     }
 
-    public OIRAST visit(EmitOIRState state, DefDeclaration defDecl) throws BreakException {
+    public OIRAST visit(EmitOIRState state, DefDeclaration defDecl) {
 
         // Set up data structures, contexts, etc. to be used.
         List<OIRFormalArg> listOIRFormalArgs = new Vector<OIRFormalArg>();
@@ -287,7 +286,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 
     }
 
-    public OIRAST visit(EmitOIRState state, ValDeclaration valDecl) throws BreakException {
+    public OIRAST visit(EmitOIRState state, ValDeclaration valDecl) {
         ValueType valDeclType = valDecl.getType();
         OIRType type = (OIRType) valDeclType.acceptVisitor(this, state);
         OIRFieldDeclaration  oirMember = new OIRFieldDeclaration(valDecl.getName(), type, true);
@@ -320,7 +319,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return oirarg;
     }
 
-    public OIRAST visit(EmitOIRState state, VarDeclType varDeclType) throws BreakException {
+    public OIRAST visit(EmitOIRState state, VarDeclType varDeclType) {
         String fieldName = varDeclType.getName();
         OIRMethodDeclarationGroup methodDecls = new OIRMethodDeclarationGroup();
         ValueType type = varDeclType.getRawResultType();
@@ -333,7 +332,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return methodDecls;
     }
 
-    public OIRAST visit(EmitOIRState state, ValDeclType valDeclType) throws BreakException {
+    public OIRAST visit(EmitOIRState state, ValDeclType valDeclType) {
         ValueType type = valDeclType.getRawResultType();
         OIRInterface oirtype = (OIRInterface) type.acceptVisitor(this, state);
         OIRMethodDeclaration methodDecl = new OIRMethodDeclaration(oirtype, "set" + valDeclType.getName(), null);
@@ -343,7 +342,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return methodDecls;
     }
 
-    public OIRAST visit(EmitOIRState state, DefDeclType defDeclType) throws BreakException {
+    public OIRAST visit(EmitOIRState state, DefDeclType defDeclType) {
 
         // Process types of the formal arguments.
         List<OIRFormalArg> listOIRFormalArgs = new Vector<OIRFormalArg>();
@@ -372,7 +371,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return methodDecls;
     }
 
-    public OIRAST visit(EmitOIRState state, StructuralType structuralType) throws BreakException {
+    public OIRAST visit(EmitOIRState state, StructuralType structuralType) {
 
         String interfaceName = generateInterfaceName();
         List<OIRMethodDeclaration> methodDecls = new Vector<OIRMethodDeclaration>();
@@ -398,7 +397,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
         return oirinterface;
     }
 
-    public OIRAST visit(EmitOIRState state, NominalType nominalType) throws BreakException {
+    public OIRAST visit(EmitOIRState state, NominalType nominalType) {
         // Note: This code belongs more in the Match case
         // OIRExpression oirfieldget;
         // Path path;
@@ -528,7 +527,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
     }
 
     @Override
-    public OIRAST visit(EmitOIRState state, SeqExpr seqExpr) throws BreakException {
+    public OIRAST visit(EmitOIRState state, SeqExpr seqExpr) {
         TypeContext ctx = state.getContext();
         LinkedList<Pair<String, OIRExpression>> list = new LinkedList<Pair<String, OIRExpression>>();
         for (HasLocation hl : seqExpr.getElements()) {
@@ -569,7 +568,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
     }
 
     @Override
-    public OIRAST visit(EmitOIRState state, RefinementType type) throws BreakException {
+    public OIRAST visit(EmitOIRState state, RefinementType type) {
         StructuralType defaultType = new StructuralType("emptyType", new ArrayList<DeclType>());
         OIRAST result = defaultType.acceptVisitor(this, state);
         result.copyMetadata(type);

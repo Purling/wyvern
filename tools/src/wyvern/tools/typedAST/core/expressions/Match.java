@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.target.corewyvernIL.support.FailureReason;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.RefinementType;
@@ -56,7 +55,7 @@ public class Match extends AbstractExpressionAST implements CoreAST {
     }
 
     @Override
-    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) throws BreakException {
+    public <S, T> T acceptVisitor(TypedASTVisitor<S, T> visitor, S state) {
         return visitor.visit(state, this);
     }
 
@@ -100,7 +99,7 @@ public class Match extends AbstractExpressionAST implements CoreAST {
     }
 
     @Override
-    public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) throws BreakException {
+    public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
         // First, translate & typecheck the expression we're matching over
         IExpr matchExpr = matchingOver.generateIL(ctx, null, dependencies);
         ValueType expectedMatchType = matchExpr.typeCheck(ctx, null);
@@ -135,13 +134,7 @@ public class Match extends AbstractExpressionAST implements CoreAST {
             elseExpr = (Expression) defaultExp.generateIL(ctx, expectedType, dependencies);
         }
         List<wyvern.target.corewyvernIL.Case> casesIL = cases.stream()
-                                                             .map(c -> {
-                                                                 try {
-                                                                     return c.generateILCase(ctx, matchType, matchExpr, expectedType, dependencies);
-                                                                 } catch (BreakException e) {
-                                                                     throw new RuntimeException(e);
-                                                                 }
-                                                             })
+                                                             .map(c -> c.generateILCase(ctx, matchType, matchExpr, expectedType, dependencies))
                                                              .collect(Collectors.toList());
         ValueType expectedCaseType = expectedType;
         for (wyvern.target.corewyvernIL.Case c : casesIL) {

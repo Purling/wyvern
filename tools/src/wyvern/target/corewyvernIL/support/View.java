@@ -18,7 +18,7 @@ public abstract class View {
     /**
      * Returns a view from the given expression, i.e. mapping from the self name in the type of e to e itself, assuming e is a path
      */
-    public static View from(IExpr e, TypeContext ctx) throws BreakException {
+    public static View from(IExpr e, TypeContext ctx) {
         return new ReceiverView(e, ctx);
     }
     public TypeContext getContext() {

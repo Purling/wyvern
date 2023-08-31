@@ -5,7 +5,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import wyvern.target.corewyvernIL.support.BreakException;
 import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
 import wyvern.tools.tests.suites.RegressionTests;
@@ -26,7 +25,7 @@ public class RossettaCodeTests {
     private static final String PATH = BASE_PATH + "rosetta2/";
 
     @Test
-    public void testInsertionSort() throws ParseException, BreakException {
+    public void testInsertionSort() throws ParseException {
         TestUtil.doTestScriptModularly("rosetta.insertion-sort", null, null);
     }
 }
